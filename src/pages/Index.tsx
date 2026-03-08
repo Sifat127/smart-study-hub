@@ -1,10 +1,20 @@
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Search, BookOpen, Layers, FileText, Shield, Users, Download, Monitor, Zap, Briefcase, ArrowRight, Clock } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { Search, BookOpen, Layers, FileText, Shield, Users, Download, Monitor, Zap, Briefcase, ArrowRight, Clock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Layout from "@/components/Layout";
 import { departments, recentPDFs } from "@/data/mockData";
+import { supabase } from "@/integrations/supabase/client";
+
+interface SearchResult {
+  id: string;
+  code: string;
+  name: string;
+  department: string;
+  semester: number;
+}
 
 const deptIcons: Record<string, React.ElementType> = { Monitor, Zap, Briefcase };
 
@@ -23,6 +33,49 @@ const fadeUp = {
 };
 
 export default function Index() {
+  const navigate = useNavigate();
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowResults(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (query.trim().length < 2) {
+        setResults([]);
+        setShowResults(false);
+        return;
+      }
+      setSearching(true);
+      const { data } = await supabase
+        .from("courses")
+        .select("id, code, name, department, semester")
+        .or(`name.ilike.%${query}%,code.ilike.%${query}%`)
+        .limit(8);
+      setResults(data || []);
+      setShowResults(true);
+      setSearching(false);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  const handleResultClick = (r: SearchResult) => {
+    setShowResults(false);
+    setQuery("");
+    navigate(`/departments/${r.department.toLowerCase()}/semester/${r.semester}/course/${r.id}`);
+  };
+
   return (
     <Layout>
       {/* Hero */}
@@ -60,12 +113,42 @@ export default function Index() {
               </Button>
             </div>
             {/* Search bar */}
-            <div className="max-w-xl mx-auto relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <div className="max-w-xl mx-auto relative" ref={searchRef}>
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground z-10" />
+              {searching && <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-primary-foreground/50 z-10" />}
               <Input
-                placeholder="Search courses, chapters, or PDFs..."
+                placeholder="Search courses by name or code..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onFocus={() => results.length > 0 && setShowResults(true)}
                 className="pl-12 h-12 bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/40 rounded-xl"
               />
+              <AnimatePresence>
+                {showResults && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    className="absolute top-full mt-2 w-full bg-card border border-border rounded-xl shadow-lg overflow-hidden z-50"
+                  >
+                    {results.length > 0 ? results.map((r) => (
+                      <button
+                        key={r.id}
+                        onClick={() => handleResultClick(r)}
+                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/50 transition-colors text-left"
+                      >
+                        <BookOpen className="h-4 w-4 text-primary flex-shrink-0" />
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">{r.code} — {r.name}</p>
+                          <p className="text-xs text-muted-foreground">{r.department} • Semester {r.semester}</p>
+                        </div>
+                      </button>
+                    )) : (
+                      <div className="px-4 py-3 text-sm text-muted-foreground text-center">কোনো কোর্স পাওয়া যায়নি</div>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </motion.div>
         </div>
