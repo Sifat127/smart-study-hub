@@ -249,19 +249,27 @@ export default function Index() {
                   whileInView="visible"
                   viewport={{ once: true }}
                   variants={fadeUp}
+                  whileHover={{ y: -6, transition: { duration: 0.25, ease: "easeOut" } }}
                 >
                   <Link
                     to={`/departments/${dept.id}`}
-                    className="group block bg-card rounded-2xl border border-border p-5 md:p-7 card-shadow hover:card-shadow-hover transition-all duration-300 hover:-translate-y-1 hover:border-accent/30"
+                    className="group relative block bg-card rounded-2xl border border-border p-5 md:p-7 card-shadow transition-all duration-300 hover:border-accent/40 hover:shadow-[0_8px_30px_-8px_hsl(var(--accent)/0.25)] overflow-hidden"
                   >
-                    <div className="h-12 w-12 md:h-16 md:w-16 rounded-xl md:rounded-2xl bg-gradient-primary flex items-center justify-center mb-4 md:mb-5 group-hover:scale-110 transition-transform">
-                      <Icon className="h-6 w-6 md:h-8 md:w-8 text-primary-foreground" />
-                    </div>
-                    <h3 className="font-display text-xl font-bold mb-1">{dept.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-1">{dept.fullName}</p>
-                    <p className="text-sm text-muted-foreground mb-4">{dept.description}</p>
-                    <div className="flex items-center text-primary font-medium text-sm">
-                      Explore <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-accent/0 via-accent/0 to-accent/0 group-hover:from-accent/5 group-hover:via-transparent group-hover:to-primary/5 transition-all duration-500 rounded-2xl" />
+                    <div className="relative z-10">
+                      <motion.div
+                        className="h-12 w-12 md:h-16 md:w-16 rounded-xl md:rounded-2xl bg-gradient-primary flex items-center justify-center mb-4 md:mb-5"
+                        whileHover={{ scale: 1.15, rotate: 5 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                      >
+                        <Icon className="h-6 w-6 md:h-8 md:w-8 text-primary-foreground" />
+                      </motion.div>
+                      <h3 className="font-display text-xl font-bold mb-1 group-hover:text-accent transition-colors duration-300">{dept.name}</h3>
+                      <p className="text-sm text-muted-foreground mb-1">{dept.fullName}</p>
+                      <p className="text-sm text-muted-foreground mb-4">{dept.description}</p>
+                      <div className="flex items-center text-primary font-semibold text-sm group-hover:text-accent transition-colors duration-300">
+                        Explore <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-2 transition-transform duration-300" />
+                      </div>
                     </div>
                   </Link>
                 </motion.div>
