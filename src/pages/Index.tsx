@@ -148,8 +148,8 @@ export default function Index() {
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
-              <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-8 h-12 text-base rounded-xl" asChild>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-7 md:mb-10">
+              <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-6 md:px-8 h-10 md:h-12 text-sm md:text-base rounded-xl" asChild>
                 <Link to="/departments">
                   Explore Departments <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
