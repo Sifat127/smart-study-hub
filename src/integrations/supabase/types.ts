@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      chapters: {
+        Row: {
+          course_id: string
+          description: string | null
+          id: string
+          pdf_name: string | null
+          pdf_path: string | null
+          title: string
+          uploaded_at: string
+        }
+        Insert: {
+          course_id: string
+          description?: string | null
+          id?: string
+          pdf_name?: string | null
+          pdf_path?: string | null
+          title: string
+          uploaded_at?: string
+        }
+        Update: {
+          course_id?: string
+          description?: string | null
+          id?: string
+          pdf_name?: string | null
+          pdf_path?: string | null
+          title?: string
+          uploaded_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapters_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       courses: {
         Row: {
           code: string

@@ -1,41 +1,74 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, Upload, ArrowLeft, FileText, CheckCircle2 } from "lucide-react";
+import { BookOpen, Upload, ArrowLeft, FileText, CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+
+interface CourseOption {
+  id: string;
+  code: string;
+  name: string;
+  department: string;
+  semester: number;
+}
 
 export default function AdminUploadPdf() {
   const { toast } = useToast();
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState("");
-  const [department, setDepartment] = useState("");
-  const [semester, setSemester] = useState("");
+  const [description, setDescription] = useState("");
+  const [courseId, setCourseId] = useState("");
   const [uploading, setUploading] = useState(false);
   const [uploaded, setUploaded] = useState(false);
+  const [courses, setCourses] = useState<CourseOption[]>([]);
+  const [loadingCourses, setLoadingCourses] = useState(true);
+
+  useEffect(() => {
+    async function fetchCourses() {
+      const { data } = await supabase
+        .from("courses")
+        .select("id, code, name, department, semester")
+        .order("department")
+        .order("semester")
+        .order("code");
+      if (data) setCourses(data);
+      setLoadingCourses(false);
+    }
+    fetchCourses();
+  }, []);
 
   const handleUpload = async () => {
-    if (!file || !title || !department || !semester) {
-      toast({ title: "সব ফিল্ড পূরণ করুন", variant: "destructive" });
+    if (!file || !title || !courseId) {
+      toast({ title: "Title, Course এবং PDF ফাইল দিন", variant: "destructive" });
       return;
     }
 
     setUploading(true);
     try {
       const fileName = `${Date.now()}_${file.name}`;
-      const { error } = await supabase.storage.from("pdfs").upload(fileName, file);
+      const { error: uploadError } = await supabase.storage.from("pdfs").upload(fileName, file);
+      if (uploadError) throw uploadError;
 
-      if (error) throw error;
+      const { error: insertError } = await supabase.from("chapters").insert({
+        course_id: courseId,
+        title,
+        description: description || null,
+        pdf_name: file.name,
+        pdf_path: fileName,
+      });
+      if (insertError) throw insertError;
 
       setUploaded(true);
       toast({ title: "PDF সফলভাবে আপলোড হয়েছে!" });
       setFile(null);
       setTitle("");
-      setDepartment("");
-      setSemester("");
+      setDescription("");
+      setCourseId("");
     } catch (err: any) {
       toast({ title: "আপলোড ব্যর্থ হয়েছে", description: err.message, variant: "destructive" });
     } finally {
@@ -69,32 +102,33 @@ export default function AdminUploadPdf() {
 
         <div className="bg-card rounded-xl border border-border p-6 card-shadow space-y-5">
           <div>
-            <Label htmlFor="title">PDF Title</Label>
+            <Label htmlFor="title">Chapter Title</Label>
             <Input id="title" placeholder="e.g. Chapter 1 - Introduction" value={title} onChange={(e) => setTitle(e.target.value)} />
           </div>
 
           <div>
-            <Label htmlFor="department">Department</Label>
-            <Select value={department} onValueChange={setDepartment}>
-              <SelectTrigger><SelectValue placeholder="Select department" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="cse">CSE</SelectItem>
-                <SelectItem value="eee">EEE</SelectItem>
-                <SelectItem value="bba">BBA</SelectItem>
-              </SelectContent>
-            </Select>
+            <Label htmlFor="description">Description (optional)</Label>
+            <Textarea id="description" placeholder="Brief description of this chapter..." value={description} onChange={(e) => setDescription(e.target.value)} rows={3} />
           </div>
 
           <div>
-            <Label htmlFor="semester">Semester</Label>
-            <Select value={semester} onValueChange={setSemester}>
-              <SelectTrigger><SelectValue placeholder="Select semester" /></SelectTrigger>
-              <SelectContent>
-                {Array.from({ length: 12 }, (_, i) => (
-                  <SelectItem key={i + 1} value={String(i + 1)}>Semester {i + 1}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label>Course</Label>
+            {loadingCourses ? (
+              <div className="flex items-center gap-2 py-2 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" /> Loading courses...
+              </div>
+            ) : (
+              <Select value={courseId} onValueChange={setCourseId}>
+                <SelectTrigger><SelectValue placeholder="Select a course" /></SelectTrigger>
+                <SelectContent>
+                  {courses.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.department} - Sem {c.semester} - {c.code} {c.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
 
           <div>
@@ -127,7 +161,7 @@ export default function AdminUploadPdf() {
           </div>
 
           <Button onClick={handleUpload} disabled={uploading} className="w-full">
-            {uploading ? "Uploading..." : "Upload PDF"}
+            {uploading ? <><Loader2 className="h-4 w-4 animate-spin mr-1" /> Uploading...</> : "Upload PDF"}
           </Button>
         </div>
       </div>
