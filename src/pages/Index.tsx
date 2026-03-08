@@ -30,9 +30,9 @@ const features = [
 ];
 
 const stats = [
-  { icon: FolderOpen, value: "15+", label: "Departments" },
-  { icon: BookOpen, value: "330+", label: "Courses" },
-  { icon: FileText, value: "500+", label: "PDFs Shared" },
+  { icon: FolderOpen, value: 15, label: "Departments" },
+  { icon: BookOpen, value: 330, label: "Courses" },
+  { icon: FileText, value: 500, label: "PDFs Shared" },
 ];
 
 const floatingElements = [
