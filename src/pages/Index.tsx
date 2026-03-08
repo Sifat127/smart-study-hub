@@ -283,7 +283,7 @@ export default function Index() {
                 whileInView="visible"
                 viewport={{ once: true }}
                 variants={fadeUp}
-                className="glass rounded-2xl p-6 hover:border-accent/30 transition-all duration-300 hover:card-shadow-hover"
+                className="glass rounded-2xl p-4 md:p-6 hover:border-accent/30 transition-all duration-300 hover:card-shadow-hover"
               >
                 <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
                   <f.icon className="h-6 w-6 text-primary" />
