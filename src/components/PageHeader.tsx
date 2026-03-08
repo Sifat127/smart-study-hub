@@ -29,7 +29,7 @@ export default function PageHeader({ title, subtitle, badge, badgeIcon, children
               {badge}
             </div>
           )}
-          <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-3">
+          <h1 className="font-display text-2xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-2 md:mb-3">
             {title}
           </h1>
           {subtitle && (
