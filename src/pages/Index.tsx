@@ -154,7 +154,7 @@ export default function Index() {
                   Explore Departments <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button size="lg" variant="ghost" className="text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10 font-semibold h-12 text-base rounded-xl" asChild>
+              <Button size="lg" variant="ghost" className="text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10 font-semibold h-10 md:h-12 text-sm md:text-base rounded-xl" asChild>
                 <Link to="/signup">Get Started Free</Link>
               </Button>
             </div>
