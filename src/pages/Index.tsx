@@ -239,7 +239,7 @@ export default function Index() {
             <p className="text-sm md:text-base text-muted-foreground max-w-lg mx-auto">Choose your department to access semester-wise course materials and chapter PDFs.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            {departments.map((dept, i) => {
+            {departments.filter(d => ["cse", "eee", "swe"].includes(d.id)).map((dept, i) => {
               const Icon = deptIcons[dept.icon] || Monitor;
               return (
                 <motion.div
@@ -267,6 +267,11 @@ export default function Index() {
                 </motion.div>
               );
             })}
+          </div>
+          <div className="text-center mt-8">
+            <Button variant="outline" size="lg" className="rounded-xl" asChild>
+              <Link to="/departments">View All Departments <ArrowRight className="ml-2 h-4 w-4" /></Link>
+            </Button>
           </div>
         </div>
       </section>
