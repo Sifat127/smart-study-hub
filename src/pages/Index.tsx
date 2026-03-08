@@ -228,11 +228,11 @@ export default function Index() {
       </section>
 
       {/* Departments */}
-      <section className="py-20">
+      <section className="py-12 md:py-20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="font-display text-3xl md:text-4xl font-bold mb-3">Browse by Department</h2>
-            <p className="text-muted-foreground max-w-lg mx-auto">Choose your department to access semester-wise course materials and chapter PDFs.</p>
+          <div className="text-center mb-8 md:mb-12">
+            <h2 className="font-display text-2xl md:text-4xl font-bold mb-2 md:mb-3">Browse by Department</h2>
+            <p className="text-sm md:text-base text-muted-foreground max-w-lg mx-auto">Choose your department to access semester-wise course materials and chapter PDFs.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {departments.map((dept, i) => {
