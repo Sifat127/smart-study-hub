@@ -73,12 +73,12 @@ export default function Footer() {
           <div className="text-xs md:text-sm text-primary-foreground/40">
             © {new Date().getFullYear()} DIU StudyBank. All rights reserved. An academic resource platform.
           </div>
-          <div className="text-xs text-primary-foreground/50">
-            <span className="text-primary-foreground/30">Web Design & Architecture by</span>
+          <div className="text-xs text-primary-foreground/60 space-y-1">
+            <span className="text-primary-foreground/50 uppercase tracking-widest text-[10px]">Web Design & Architecture by</span>
             <br />
-            <span className="font-semibold text-primary-foreground/70">A.S. Sifat Ahmed</span>
+            <span className="font-bold text-accent text-sm">A.S. Sifat Ahmed</span>
             <br />
-            <span className="text-primary-foreground/40">Student of CSE, Daffodil International University</span>
+            <span className="text-primary-foreground/60">Student of CSE, Daffodil International University</span>
           </div>
         </div>
       </div>
