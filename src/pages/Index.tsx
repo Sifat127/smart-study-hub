@@ -138,7 +138,7 @@ export default function Index() {
             </motion.div>
 
             {/* Heading */}
-            <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-extrabold leading-[1.15] mb-5 tracking-tight">
+            <h1 className="font-display text-2xl md:text-4xl lg:text-5xl font-extrabold leading-[1.15] mb-3 md:mb-5 tracking-tight">
               Your Complete Academic{" "}
               <span className="block text-accent mt-1">Knowledge Hub</span>
             </h1>
