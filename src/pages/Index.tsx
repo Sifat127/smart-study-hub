@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, BookOpen, Layers, FileText, Shield, Users, Download, Monitor, Zap, Briefcase, ArrowRight, Clock, Loader2 } from "lucide-react";
+import { Search, BookOpen, Layers, FileText, Shield, Users, Download, Monitor, Zap, Briefcase, ArrowRight, Clock, Loader2, Sparkles, GraduationCap, FolderOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Layout from "@/components/Layout";
@@ -25,6 +25,20 @@ const features = [
   { icon: Shield, title: "Secure Login", desc: "Role-based access for admins and students." },
   { icon: Users, title: "Admin Management", desc: "Admins can upload, edit, and manage all content." },
   { icon: Download, title: "Direct Download", desc: "Download any PDF with a single click." },
+];
+
+const stats = [
+  { icon: FolderOpen, value: "3+", label: "Departments" },
+  { icon: BookOpen, value: "150+", label: "Courses" },
+  { icon: FileText, value: "500+", label: "PDFs Shared" },
+];
+
+const floatingElements = [
+  { x: "8%", y: "18%", rotate: -12, size: "h-16 w-12", delay: 0, className: "animate-float" },
+  { x: "85%", y: "22%", rotate: 15, size: "h-20 w-14", delay: 0, className: "animate-float-delayed" },
+  { x: "12%", y: "65%", rotate: 8, size: "h-14 w-10", delay: 0, className: "animate-float-slow" },
+  { x: "88%", y: "70%", rotate: -20, size: "h-12 w-9", delay: 0, className: "animate-float" },
+  { x: "50%", y: "85%", rotate: 5, size: "h-10 w-8", delay: 0, className: "animate-float-delayed" },
 ];
 
 const fadeUp = {
@@ -79,49 +93,88 @@ export default function Index() {
   return (
     <Layout>
       {/* Hero */}
-      <section className="bg-gradient-hero text-primary-foreground relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-cyan rounded-full blur-[120px]" />
-          <div className="absolute bottom-10 right-20 w-96 h-96 bg-primary rounded-full blur-[150px]" />
+      <section className="bg-gradient-hero text-primary-foreground relative overflow-hidden min-h-[90vh] flex items-center">
+        {/* Background glows */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-10 w-[500px] h-[500px] bg-accent/8 rounded-full blur-[180px]" />
+          <div className="absolute bottom-20 right-10 w-[600px] h-[600px] bg-primary/8 rounded-full blur-[200px]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-accent/5 rounded-full blur-[150px]" />
         </div>
+
+        {/* Floating PDF elements */}
+        {floatingElements.map((el, i) => (
+          <div
+            key={i}
+            className={`absolute ${el.className} hidden md:flex`}
+            style={{
+              left: el.x,
+              top: el.y,
+              ["--float-rotate" as string]: `${el.rotate}deg`,
+              transform: `rotate(${el.rotate}deg)`,
+            }}
+          >
+            <div className={`${el.size} rounded-lg bg-primary-foreground/5 border border-primary-foreground/10 backdrop-blur-sm flex items-center justify-center`}>
+              <FileText className="h-1/2 w-1/2 text-primary-foreground/20" />
+            </div>
+          </div>
+        ))}
+
         <div className="container mx-auto px-4 py-20 md:py-28 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.7 }}
             className="max-w-3xl mx-auto text-center"
           >
-            <div className="inline-flex items-center gap-2 bg-primary-foreground/10 border border-primary-foreground/20 rounded-full px-4 py-1.5 mb-6 text-sm">
-              <BookOpen className="h-4 w-4" />
-              Academic PDF Library
-            </div>
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
-              Access Your Department PDF Materials in{" "}
-              <span className="text-cyan">One Smart Platform</span>
+            {/* Badge */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="inline-flex items-center gap-2 bg-accent/10 border border-accent/20 rounded-full px-5 py-2 mb-8 text-sm font-medium text-accent"
+            >
+              <Sparkles className="h-4 w-4" />
+              Over 10,000+ course materials shared
+            </motion.div>
+
+            {/* Heading */}
+            <h1 className="font-display text-4xl md:text-5xl lg:text-7xl font-extrabold leading-[1.1] mb-6 tracking-tight">
+              Your Complete Academic{" "}
+              <span className="block text-accent mt-1">Knowledge Hub</span>
             </h1>
-            <p className="text-lg md:text-xl text-primary-foreground/70 mb-8 max-w-2xl mx-auto">
-              DIU Slider helps students easily explore, view, and download course materials by department, semester, course, and chapter.
+
+            <p className="text-lg md:text-xl text-primary-foreground/60 mb-10 max-w-2xl mx-auto leading-relaxed">
+              DIU Slider helps students easily explore, view, and download course materials — organized by department, semester, course, and chapter.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-10">
-              <Button size="lg" className="bg-cyan text-accent-foreground hover:bg-cyan/90 font-semibold px-8" asChild>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
+              <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-8 h-12 text-base rounded-xl" asChild>
                 <Link to="/departments">
                   Explore Departments <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" className="border-primary-foreground/50 text-primary-foreground bg-primary-foreground/10 hover:bg-primary-foreground/20 font-semibold" asChild>
+              <Button size="lg" variant="ghost" className="text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10 font-semibold h-12 text-base rounded-xl" asChild>
                 <Link to="/signup">Get Started Free</Link>
               </Button>
             </div>
+
             {/* Search bar */}
-            <div className="max-w-xl mx-auto relative" ref={searchRef}>
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground z-10" />
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+              className="max-w-xl mx-auto relative mb-12"
+              ref={searchRef}
+            >
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-primary-foreground/30 z-10" />
               {searching && <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-primary-foreground/50 z-10" />}
               <Input
                 placeholder="Search courses by name or code..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onFocus={() => results.length > 0 && setShowResults(true)}
-                className="pl-12 h-12 bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/40 rounded-xl"
+                className="pl-12 h-13 bg-primary-foreground/5 border-primary-foreground/10 text-primary-foreground placeholder:text-primary-foreground/30 rounded-2xl focus-visible:ring-accent/50 text-base"
               />
               <AnimatePresence>
                 {showResults && (
@@ -149,7 +202,27 @@ export default function Index() {
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
+            </motion.div>
+
+            {/* Stats Bar */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+              className="flex flex-wrap items-center justify-center gap-8 md:gap-12"
+            >
+              {stats.map((stat, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                    <stat.icon className="h-5 w-5 text-accent" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-xl md:text-2xl font-bold text-primary-foreground">{stat.value}</p>
+                    <p className="text-xs text-primary-foreground/50 font-medium">{stat.label}</p>
+                  </div>
+                </div>
+              ))}
+            </motion.div>
           </motion.div>
         </div>
       </section>
@@ -175,10 +248,10 @@ export default function Index() {
                 >
                   <Link
                     to={`/departments/${dept.id}`}
-                    className="group block bg-card rounded-xl border border-border p-6 card-shadow hover:card-shadow-hover transition-all duration-300 hover:-translate-y-1"
+                    className="group block bg-card rounded-2xl border border-border p-7 card-shadow hover:card-shadow-hover transition-all duration-300 hover:-translate-y-1 hover:border-accent/30"
                   >
-                    <div className="h-14 w-14 rounded-xl bg-gradient-primary flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <Icon className="h-7 w-7 text-primary-foreground" />
+                    <div className="h-16 w-16 rounded-2xl bg-gradient-primary flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                      <Icon className="h-8 w-8 text-primary-foreground" />
                     </div>
                     <h3 className="font-display text-xl font-bold mb-1">{dept.name}</h3>
                     <p className="text-sm text-muted-foreground mb-1">{dept.fullName}</p>
@@ -210,10 +283,10 @@ export default function Index() {
                 whileInView="visible"
                 viewport={{ once: true }}
                 variants={fadeUp}
-                className="bg-card rounded-xl border border-border p-6 card-shadow hover:card-shadow-hover transition-all duration-300"
+                className="glass rounded-2xl p-6 hover:border-accent/30 transition-all duration-300 hover:card-shadow-hover"
               >
-                <div className="h-11 w-11 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <f.icon className="h-5 w-5 text-primary" />
+                <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+                  <f.icon className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="font-display font-semibold text-lg mb-2">{f.title}</h3>
                 <p className="text-sm text-muted-foreground">{f.desc}</p>
@@ -258,13 +331,26 @@ export default function Index() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 bg-gradient-hero text-primary-foreground">
-        <div className="container mx-auto px-4 text-center">
+      <section className="py-20 bg-gradient-hero text-primary-foreground relative overflow-hidden">
+        {/* Floating decorations */}
+        <div className="absolute left-[5%] top-[20%] animate-float hidden md:block" style={{ ["--float-rotate" as string]: "-8deg" }}>
+          <div className="h-14 w-10 rounded-lg bg-primary-foreground/5 border border-primary-foreground/10 flex items-center justify-center">
+            <FileText className="h-6 w-4 text-primary-foreground/15" />
+          </div>
+        </div>
+        <div className="absolute right-[8%] bottom-[25%] animate-float-delayed hidden md:block" style={{ ["--float-rotate" as string]: "12deg" }}>
+          <div className="h-12 w-9 rounded-lg bg-primary-foreground/5 border border-primary-foreground/10 flex items-center justify-center">
+            <FileText className="h-5 w-4 text-primary-foreground/15" />
+          </div>
+        </div>
+
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <GraduationCap className="h-12 w-12 text-accent mx-auto mb-6" />
           <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">Ready to Get Started?</h2>
-          <p className="text-primary-foreground/70 mb-8 max-w-lg mx-auto">
+          <p className="text-primary-foreground/60 mb-8 max-w-lg mx-auto text-lg">
             Join DIU Slider today and access all your course materials in one organized platform.
           </p>
-          <Button size="lg" className="bg-cyan text-accent-foreground hover:bg-cyan/90 font-semibold px-8" asChild>
+          <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-8 h-12 text-base rounded-xl" asChild>
             <Link to="/signup">Create Free Account <ArrowRight className="ml-2 h-4 w-4" /></Link>
           </Button>
         </div>

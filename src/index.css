@@ -126,4 +126,25 @@
   .glass {
     @apply bg-card/80 backdrop-blur-lg border border-border/50;
   }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: float 8s ease-in-out 2s infinite;
+  }
+
+  .animate-float-slow {
+    animation: float 10s ease-in-out 1s infinite;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(var(--float-rotate, 0deg));
+  }
+  50% {
+    transform: translateY(-20px) rotate(calc(var(--float-rotate, 0deg) + 3deg));
+  }
 }
