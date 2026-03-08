@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, Upload, ArrowLeft, FileText, CheckCircle2, Loader2 } from "lucide-react";
+import { Upload, ArrowLeft, FileText, CheckCircle2, Loader2 } from "lucide-react";
+import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -81,9 +82,7 @@ export default function AdminUploadPdf() {
       <header className="sticky top-0 z-50 glass border-b border-border/50">
         <div className="container mx-auto flex items-center justify-between h-16 px-4">
           <Link to="/admin" className="flex items-center gap-2">
-            <div className="h-9 w-9 rounded-lg bg-gradient-primary flex items-center justify-center">
-              <BookOpen className="h-5 w-5 text-primary-foreground" />
-            </div>
+            <img src={logo} alt="DIU StudyBank" className="h-9 w-9 rounded-lg object-contain" />
             <span className="font-display font-bold text-xl">Upload PDF</span>
           </Link>
           <Button variant="ghost" size="sm" asChild>

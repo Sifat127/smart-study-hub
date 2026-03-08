@@ -148,7 +148,7 @@ export default function Index() {
             </h1>
 
             <p className="text-sm md:text-lg text-primary-foreground/60 mb-6 md:mb-9 max-w-xl mx-auto leading-relaxed">
-              DIU Slider helps students easily explore, view, and download course materials — organized by department, semester, course, and chapter.
+              DIU StudyBank helps students easily explore, view, and download course materials — organized by department, semester, course, and chapter.
             </p>
 
             {/* CTA Buttons */}
@@ -288,7 +288,7 @@ export default function Index() {
       <section className="py-12 md:py-20 bg-muted/50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-8 md:mb-12">
-            <h2 className="font-display text-2xl md:text-4xl font-bold mb-2 md:mb-3">Why Choose DIU Slider?</h2>
+            <h2 className="font-display text-2xl md:text-4xl font-bold mb-2 md:mb-3">Why Choose DIU StudyBank?</h2>
             <p className="text-sm md:text-base text-muted-foreground max-w-lg mx-auto">Everything you need for organized, accessible academic resources.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -373,7 +373,7 @@ export default function Index() {
           <GraduationCap className="h-10 w-10 md:h-12 md:w-12 text-accent mx-auto mb-4 md:mb-6" />
           <h2 className="font-display text-2xl md:text-4xl font-bold mb-3 md:mb-4">Ready to Get Started?</h2>
           <p className="text-primary-foreground/60 mb-6 md:mb-8 max-w-lg mx-auto text-sm md:text-lg">
-            Join DIU Slider today and access all your course materials in one organized platform.
+            Join DIU StudyBank today and access all your course materials in one organized platform.
           </p>
           <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-6 md:px-8 h-10 md:h-12 text-sm md:text-base rounded-xl" asChild>
             <Link to="/signup">Create Free Account <ArrowRight className="ml-2 h-4 w-4" /></Link>

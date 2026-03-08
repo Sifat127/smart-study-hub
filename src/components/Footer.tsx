@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { BookOpen, Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 export default function Footer() {
   return (
@@ -9,11 +10,9 @@ export default function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="h-9 w-9 rounded-lg bg-gradient-primary flex items-center justify-center">
-                <BookOpen className="h-5 w-5 text-primary-foreground" />
-              </div>
+              <img src={logo} alt="DIU StudyBank" className="h-9 w-9 rounded-lg object-contain" />
               <span className="font-display font-bold text-lg text-primary-foreground">
-                DIU Slider
+                DIU StudyBank
               </span>
             </div>
             <p className="text-sm text-primary-foreground/60">
@@ -71,7 +70,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-primary-foreground/10 mt-6 md:mt-8 pt-4 md:pt-6 text-center text-xs md:text-sm text-primary-foreground/40">
-          © {new Date().getFullYear()} DIU Slider. All rights reserved. An academic resource platform.
+          © {new Date().getFullYear()} DIU StudyBank. All rights reserved. An academic resource platform.
         </div>
       </div>
     </footer>

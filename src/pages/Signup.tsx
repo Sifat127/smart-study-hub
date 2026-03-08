@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { BookOpen, Mail, Lock, Eye, EyeOff, User, Loader2, FileText } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, User, Loader2, FileText } from "lucide-react";
+import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -63,12 +64,10 @@ export default function Signup() {
         </div>
         <div className="relative z-10 p-12 max-w-md">
           <div className="flex items-center gap-2 mb-8">
-            <div className="h-10 w-10 rounded-lg bg-gradient-primary flex items-center justify-center">
-              <BookOpen className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <span className="font-display font-bold text-2xl">DIU Slider</span>
+            <img src={logo} alt="DIU StudyBank" className="h-10 w-10 rounded-lg object-contain" />
+            <span className="font-display font-bold text-2xl">DIU StudyBank</span>
           </div>
-          <h2 className="font-display text-3xl font-bold mb-4">Join DIU Slider</h2>
+          <h2 className="font-display text-3xl font-bold mb-4">Join DIU StudyBank</h2>
           <p className="text-primary-foreground/70">
             Create your free account and get instant access to organized academic materials for all departments.
           </p>
@@ -79,10 +78,8 @@ export default function Signup() {
       <div className="flex-1 flex items-center justify-center p-6 relative z-10">
         <div className="w-full max-w-md">
           <div className="lg:hidden flex items-center gap-2 mb-8 justify-center">
-            <div className="h-9 w-9 rounded-lg bg-gradient-primary flex items-center justify-center">
-              <BookOpen className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <span className="font-display font-bold text-xl">DIU Slider</span>
+            <img src={logo} alt="DIU StudyBank" className="h-9 w-9 rounded-lg object-contain" />
+            <span className="font-display font-bold text-xl">DIU StudyBank</span>
           </div>
 
           <h1 className="font-display text-2xl font-bold mb-1">Create Account</h1>

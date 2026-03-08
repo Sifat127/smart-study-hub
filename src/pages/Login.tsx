@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { BookOpen, Mail, Lock, Eye, EyeOff, Loader2, FileText } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, Loader2, FileText } from "lucide-react";
+import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -64,14 +65,12 @@ export default function Login() {
         </div>
         <div className="relative z-10 p-12 max-w-md">
           <div className="flex items-center gap-2 mb-8">
-            <div className="h-10 w-10 rounded-lg bg-gradient-primary flex items-center justify-center">
-              <BookOpen className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <span className="font-display font-bold text-2xl">DIU Slider</span>
+            <img src={logo} alt="DIU StudyBank" className="h-10 w-10 rounded-lg object-contain" />
+            <span className="font-display font-bold text-2xl">DIU StudyBank</span>
           </div>
           <h2 className="font-display text-3xl font-bold mb-4">Welcome Back!</h2>
           <p className="text-primary-foreground/70">
-            Access your department course materials, download PDFs, and stay organized with DIU Slider.
+            Access your department course materials, download PDFs, and stay organized with DIU StudyBank.
           </p>
         </div>
       </div>
@@ -80,10 +79,8 @@ export default function Login() {
       <div className="flex-1 flex items-center justify-center p-6 relative z-10">
         <div className="w-full max-w-md">
           <div className="lg:hidden flex items-center gap-2 mb-8 justify-center">
-            <div className="h-9 w-9 rounded-lg bg-gradient-primary flex items-center justify-center">
-              <BookOpen className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <span className="font-display font-bold text-xl">DIU Slider</span>
+            <img src={logo} alt="DIU StudyBank" className="h-9 w-9 rounded-lg object-contain" />
+            <span className="font-display font-bold text-xl">DIU StudyBank</span>
           </div>
 
           <h1 className="font-display text-2xl font-bold mb-1">Log In</h1>

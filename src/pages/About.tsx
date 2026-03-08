@@ -19,7 +19,7 @@ export default function About() {
   return (
     <Layout>
       <PageHeader
-        title="About DIU Slider"
+        title="About DIU StudyBank"
         subtitle="A modern academic resource platform designed for Daffodil International University students. Making course materials easily accessible, organized, and downloadable."
         badge="Our Story"
         badgeIcon={<BookOpen className="h-4 w-4" />}

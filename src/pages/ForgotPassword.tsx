@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, Mail, Loader2, ArrowLeft } from "lucide-react";
+import { Mail, Loader2, ArrowLeft } from "lucide-react";
+import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -35,10 +36,8 @@ export default function ForgotPassword() {
     <div className="min-h-screen flex items-center justify-center p-6 bg-background">
       <div className="w-full max-w-md">
         <div className="flex items-center gap-2 mb-8 justify-center">
-          <div className="h-9 w-9 rounded-lg bg-gradient-primary flex items-center justify-center">
-            <BookOpen className="h-5 w-5 text-primary-foreground" />
-          </div>
-          <span className="font-display font-bold text-xl">DIU Slider</span>
+          <img src={logo} alt="DIU StudyBank" className="h-9 w-9 rounded-lg object-contain" />
+          <span className="font-display font-bold text-xl">DIU StudyBank</span>
         </div>
 
         {sent ? (
