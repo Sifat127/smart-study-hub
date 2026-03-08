@@ -33,6 +33,49 @@ const fadeUp = {
 };
 
 export default function Index() {
+  const navigate = useNavigate();
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowResults(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (query.trim().length < 2) {
+        setResults([]);
+        setShowResults(false);
+        return;
+      }
+      setSearching(true);
+      const { data } = await supabase
+        .from("courses")
+        .select("id, code, name, department, semester")
+        .or(`name.ilike.%${query}%,code.ilike.%${query}%`)
+        .limit(8);
+      setResults(data || []);
+      setShowResults(true);
+      setSearching(false);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  const handleResultClick = (r: SearchResult) => {
+    setShowResults(false);
+    setQuery("");
+    navigate(`/departments/${r.department.toLowerCase()}/semester/${r.semester}/course/${r.id}`);
+  };
+
   return (
     <Layout>
       {/* Hero */}
