@@ -209,7 +209,7 @@ export default function Index() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.5 }}
-              className="flex flex-wrap items-center justify-center gap-8 md:gap-12"
+              className="flex flex-wrap items-center justify-center gap-5 md:gap-12"
             >
               {stats.map((stat, i) => (
                 <div key={i} className="flex items-center gap-3">
