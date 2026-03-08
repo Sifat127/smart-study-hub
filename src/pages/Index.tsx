@@ -131,7 +131,7 @@ export default function Index() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2, duration: 0.5 }}
-              className="inline-flex items-center gap-2 bg-accent/10 border border-accent/20 rounded-full px-5 py-2 mb-8 text-sm font-medium text-accent"
+              className="inline-flex items-center gap-2 bg-accent/10 border border-accent/20 rounded-full px-4 py-1.5 mb-5 md:mb-8 text-xs md:text-sm font-medium text-accent"
             >
               <Sparkles className="h-4 w-4" />
               Over 10,000+ course materials shared
