@@ -21,7 +21,7 @@ export default function PageHeader({ title, subtitle, badge, badgeIcon, children
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="max-w-3xl"
+          className="max-w-3xl mx-auto text-center"
         >
           {badge && (
             <div className="inline-flex items-center gap-2 bg-accent/10 border border-accent/20 rounded-full px-4 py-1.5 mb-4 text-sm font-medium text-accent">
