@@ -297,11 +297,11 @@ export default function Index() {
       </section>
 
       {/* Recent Materials */}
-      <section className="py-20">
+      <section className="py-12 md:py-20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="font-display text-3xl md:text-4xl font-bold mb-3">Recently Uploaded</h2>
-            <p className="text-muted-foreground">Stay updated with the latest course materials.</p>
+          <div className="text-center mb-8 md:mb-12">
+            <h2 className="font-display text-2xl md:text-4xl font-bold mb-2 md:mb-3">Recently Uploaded</h2>
+            <p className="text-sm md:text-base text-muted-foreground">Stay updated with the latest course materials.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
             {recentPDFs.map((pdf, i) => (
