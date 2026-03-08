@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { FileText } from "lucide-react";
+import logo from "@/assets/logo.png";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
