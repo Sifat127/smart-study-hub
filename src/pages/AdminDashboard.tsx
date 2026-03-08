@@ -10,10 +10,10 @@ const stats = [
 ];
 
 const actions = [
-  { label: "Upload PDF", icon: Upload, desc: "Add new chapter PDFs" },
-  { label: "Manage Courses", icon: BookOpen, desc: "Edit course details" },
-  { label: "Manage Users", icon: Users, desc: "View registered users" },
-  { label: "Settings", icon: Settings, desc: "Platform configuration" },
+  { label: "Upload PDF", icon: Upload, desc: "Add new chapter PDFs", to: "/admin/upload-pdf" },
+  { label: "Manage Courses", icon: BookOpen, desc: "Edit course details", to: "/admin/manage-courses" },
+  { label: "Manage Users", icon: Users, desc: "View registered users", to: "/admin/manage-users" },
+  { label: "Settings", icon: Settings, desc: "Platform configuration", to: "/admin/settings" },
 ];
 
 export default function AdminDashboard() {
@@ -58,16 +58,17 @@ export default function AdminDashboard() {
         <h2 className="font-display text-xl font-semibold mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           {actions.map((a) => (
-            <button
+            <Link
               key={a.label}
-              className="bg-card rounded-xl border border-border p-6 card-shadow hover:card-shadow-hover transition-all duration-300 hover:-translate-y-1 text-left"
+              to={a.to}
+              className="bg-card rounded-xl border border-border p-6 card-shadow hover:card-shadow-hover transition-all duration-300 hover:-translate-y-1 text-left block"
             >
               <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
                 <a.icon className="h-5 w-5 text-primary" />
               </div>
               <h3 className="font-display font-semibold mb-1">{a.label}</h3>
               <p className="text-sm text-muted-foreground">{a.desc}</p>
-            </button>
+            </Link>
           ))}
         </div>
 
