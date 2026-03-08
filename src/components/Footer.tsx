@@ -70,7 +70,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-primary-foreground/10 mt-6 md:mt-8 pt-4 md:pt-6 text-center text-xs md:text-sm text-primary-foreground/40">
-          © {new Date().getFullYear()} DIU Slider. All rights reserved. An academic resource platform.
+          © {new Date().getFullYear()} DIU StudyBank. All rights reserved. An academic resource platform.
         </div>
       </div>
     </footer>
