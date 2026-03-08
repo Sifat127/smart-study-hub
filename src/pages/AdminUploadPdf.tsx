@@ -61,9 +61,9 @@ export default function AdminUploadPdf() {
 
       <div className="container mx-auto px-4 py-8 max-w-2xl">
         {uploaded && (
-          <div className="mb-6 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900 rounded-xl p-4 flex items-center gap-3">
-            <CheckCircle2 className="h-5 w-5 text-green-600" />
-            <p className="text-green-700 dark:text-green-400 font-medium">PDF সফলভাবে আপলোড হয়েছে!</p>
+          <div className="mb-6 bg-accent/20 border border-accent/30 rounded-xl p-4 flex items-center gap-3">
+            <CheckCircle2 className="h-5 w-5 text-accent-foreground" />
+            <p className="text-accent-foreground font-medium">PDF সফলভাবে আপলোড হয়েছে!</p>
           </div>
         )}
 
