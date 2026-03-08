@@ -17,6 +17,10 @@ import ResetPassword from "./pages/ResetPassword";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminUploadPdf from "./pages/AdminUploadPdf";
+import AdminManageCourses from "./pages/AdminManageCourses";
+import AdminManageUsers from "./pages/AdminManageUsers";
+import AdminSettings from "./pages/AdminSettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
