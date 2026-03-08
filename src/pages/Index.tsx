@@ -331,7 +331,7 @@ export default function Index() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-gradient-hero text-primary-foreground relative overflow-hidden">
+      <section className="py-12 md:py-20 bg-gradient-hero text-primary-foreground relative overflow-hidden">
         {/* Floating decorations */}
         <div className="absolute left-[5%] top-[20%] animate-float hidden md:block" style={{ ["--float-rotate" as string]: "-8deg" }}>
           <div className="h-14 w-10 rounded-lg bg-primary-foreground/5 border border-primary-foreground/10 flex items-center justify-center">
