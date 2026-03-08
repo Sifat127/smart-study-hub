@@ -45,6 +45,22 @@ export default function CourseDetail() {
     return data.publicUrl;
   };
 
+  const handleDownload = async (path: string, fileName: string) => {
+    const { data } = await supabase.storage.from("pdfs").createSignedUrl(path, 3600);
+    if (data?.signedUrl) {
+      const response = await fetch(data.signedUrl);
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
