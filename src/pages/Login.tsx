@@ -65,10 +65,8 @@ export default function Login() {
         </div>
         <div className="relative z-10 p-12 max-w-md">
           <div className="flex items-center gap-2 mb-8">
-            <div className="h-10 w-10 rounded-lg bg-gradient-primary flex items-center justify-center">
-              <BookOpen className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <span className="font-display font-bold text-2xl">DIU Slider</span>
+            <img src={logo} alt="DIU StudyBank" className="h-10 w-10 rounded-lg object-contain" />
+            <span className="font-display font-bold text-2xl">DIU StudyBank</span>
           </div>
           <h2 className="font-display text-3xl font-bold mb-4">Welcome Back!</h2>
           <p className="text-primary-foreground/70">
