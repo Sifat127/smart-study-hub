@@ -77,7 +77,11 @@ export default function Footer() {
             <span className="text-primary-foreground/50 uppercase tracking-widest text-[10px]">Web Design & Architecture by</span>
             <br />
             <span className="font-bold text-accent text-sm drop-shadow-[0_0_8px_hsl(var(--accent)/0.6)]">A.S. Sifat Ahmed</span>
-            <br />
+            <div className="flex items-center justify-center gap-3 mt-1">
+              <a href="https://github.com/Sifat127" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/60 hover:text-accent transition-colors"><Github className="h-4 w-4" /></a>
+              <a href="https://www.linkedin.com/in/a-s-sifat-ahmed-90a131315/" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/60 hover:text-accent transition-colors"><Linkedin className="h-4 w-4" /></a>
+              <a href="https://wa.me/8801922829105" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/60 hover:text-accent transition-colors"><MessageCircle className="h-4 w-4" /></a>
+            </div>
             <span className="text-primary-foreground/60">Student of CSE, Daffodil International University</span>
           </div>
         </div>
