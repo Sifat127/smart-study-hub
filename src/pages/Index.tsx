@@ -19,7 +19,7 @@ interface SearchResult {
 const deptIcons: Record<string, React.ElementType> = { Monitor, Zap, Briefcase };
 
 const features = [
-  { icon: Layers, title: "Organized by Department", desc: "Browse materials by CSE, EEE, or BBA departments." },
+  { icon: Layers, title: "Organized by Department", desc: "Browse materials across 15+ departments." },
   { icon: BookOpen, title: "Semester-wise Navigation", desc: "Navigate through all 12 semesters seamlessly." },
   { icon: FileText, title: "Chapter-wise PDFs", desc: "Access course materials chapter by chapter." },
   { icon: Shield, title: "Secure Login", desc: "Role-based access for admins and students." },
@@ -28,8 +28,8 @@ const features = [
 ];
 
 const stats = [
-  { icon: FolderOpen, value: "3+", label: "Departments" },
-  { icon: BookOpen, value: "150+", label: "Courses" },
+  { icon: FolderOpen, value: "15+", label: "Departments" },
+  { icon: BookOpen, value: "330+", label: "Courses" },
   { icon: FileText, value: "500+", label: "PDFs Shared" },
 ];
 
