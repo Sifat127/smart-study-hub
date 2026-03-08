@@ -40,7 +40,23 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex relative">
+      {/* Background animation */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute top-[10%] left-[5%] w-[400px] h-[400px] bg-primary/4 rounded-full blur-[180px]" />
+        <div className="absolute top-[40%] right-[5%] w-[500px] h-[500px] bg-accent/4 rounded-full blur-[200px]" />
+        <div className="absolute bottom-[10%] left-[30%] w-[350px] h-[350px] bg-primary/3 rounded-full blur-[160px]" />
+        <div className="absolute hidden md:flex animate-float opacity-[0.35]" style={{ left: "92%", top: "15%", ["--float-rotate" as string]: "12deg", transform: "rotate(12deg)" }}>
+          <div className="h-14 w-10 rounded-lg bg-muted/60 border border-border/40 backdrop-blur-sm flex items-center justify-center">
+            <FileText className="h-1/2 w-1/2 text-muted-foreground/30" />
+          </div>
+        </div>
+        <div className="absolute hidden md:flex animate-float-delayed opacity-[0.35]" style={{ left: "85%", top: "70%", ["--float-rotate" as string]: "-8deg", transform: "rotate(-8deg)" }}>
+          <div className="h-12 w-9 rounded-lg bg-muted/60 border border-border/40 backdrop-blur-sm flex items-center justify-center">
+            <FileText className="h-1/2 w-1/2 text-muted-foreground/30" />
+          </div>
+        </div>
+      </div>
       {/* Left panel */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-hero text-primary-foreground items-center justify-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
