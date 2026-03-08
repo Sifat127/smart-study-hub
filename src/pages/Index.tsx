@@ -143,7 +143,7 @@ export default function Index() {
               <span className="block text-accent mt-1">Knowledge Hub</span>
             </h1>
 
-            <p className="text-base md:text-lg text-primary-foreground/60 mb-9 max-w-xl mx-auto leading-relaxed">
+            <p className="text-sm md:text-lg text-primary-foreground/60 mb-6 md:mb-9 max-w-xl mx-auto leading-relaxed">
               DIU Slider helps students easily explore, view, and download course materials — organized by department, semester, course, and chapter.
             </p>
 
