@@ -221,7 +221,7 @@ export default function Index() {
                     <stat.icon className="h-4 w-4 md:h-5 md:w-5 text-accent" />
                   </div>
                   <div className="text-left">
-                    <p className="text-lg md:text-2xl font-bold text-primary-foreground">{stat.value}</p>
+                    <p className="text-lg md:text-2xl font-bold text-primary-foreground"><CountUpNumber end={stat.value} suffix="+" duration={2000} /></p>
                     <p className="text-[10px] md:text-xs text-primary-foreground/50 font-medium">{stat.label}</p>
                   </div>
                 </div>
