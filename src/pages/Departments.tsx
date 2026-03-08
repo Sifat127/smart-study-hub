@@ -7,9 +7,14 @@ import { departments } from "@/data/mockData";
 
 const deptIcons: Record<string, React.ElementType> = { Monitor, Zap, Briefcase, Code, Database, Pill, BookText, Scale, Shirt, Building2, Radio, Plane, Apple, HeartPulse, Clapperboard };
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.5 } }),
+const cardVariants = {
+  hidden: { opacity: 0, y: 30, scale: 0.95 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { delay: i * 0.07, duration: 0.5 } as const,
+  }),
 };
 
 export default function Departments() {
@@ -33,22 +38,33 @@ export default function Departments() {
                   custom={i}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={fadeUp}
+                  viewport={{ once: true, margin: "-50px" }}
+                  variants={cardVariants}
+                  whileHover={{ y: -6, transition: { duration: 0.25, ease: "easeOut" } }}
                 >
                   <Link
                     to={`/departments/${dept.id}`}
-                    className="group block bg-card rounded-2xl border border-border p-6 card-shadow hover:card-shadow-hover transition-all duration-300 hover:-translate-y-1 hover:border-accent/30"
+                    className="group relative block bg-card rounded-2xl border border-border p-6 card-shadow transition-all duration-300 hover:border-accent/40 hover:shadow-[0_8px_30px_-8px_hsl(var(--accent)/0.25)] overflow-hidden"
                   >
-                    <div className="h-12 w-12 rounded-xl bg-gradient-primary flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <Icon className="h-6 w-6 text-primary-foreground" />
-                    </div>
-                    <h2 className="font-display text-xl font-bold mb-1">{dept.name}</h2>
-                    <p className="text-muted-foreground text-sm font-medium mb-2">{dept.fullName}</p>
-                    <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{dept.description}</p>
-                    <p className="text-sm text-muted-foreground mb-4">{dept.totalCourses} courses • 12 semesters</p>
-                    <div className="flex items-center text-primary font-semibold">
-                      Explore Department <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    {/* Hover glow overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-accent/0 via-accent/0 to-accent/0 group-hover:from-accent/5 group-hover:via-transparent group-hover:to-primary/5 transition-all duration-500 rounded-2xl" />
+
+                    <div className="relative z-10">
+                      <motion.div
+                        className="h-12 w-12 rounded-xl bg-gradient-primary flex items-center justify-center mb-4"
+                        whileHover={{ scale: 1.15, rotate: 5 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                      >
+                        <Icon className="h-6 w-6 text-primary-foreground" />
+                      </motion.div>
+                      <h2 className="font-display text-xl font-bold mb-1 group-hover:text-accent transition-colors duration-300">{dept.name}</h2>
+                      <p className="text-muted-foreground text-sm font-medium mb-2">{dept.fullName}</p>
+                      <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{dept.description}</p>
+                      <p className="text-sm text-muted-foreground mb-4">{dept.totalCourses} courses • 12 semesters</p>
+                      <div className="flex items-center text-primary font-semibold text-sm group-hover:text-accent transition-colors duration-300">
+                        Explore Department
+                        <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-2 transition-transform duration-300" />
+                      </div>
                     </div>
                   </Link>
                 </motion.div>
