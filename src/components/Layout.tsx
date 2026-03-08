@@ -50,6 +50,8 @@ export default function Layout({ children }: { children: ReactNode }) {
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] object-contain opacity-[0.05] pointer-events-none select-none"
         />
       </div>
+
+      <Navbar />
       <main className="flex-1 relative z-10">{children}</main>
       <Footer />
     </div>
