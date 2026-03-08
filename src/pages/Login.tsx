@@ -70,7 +70,7 @@ export default function Login() {
           </div>
           <h2 className="font-display text-3xl font-bold mb-4">Welcome Back!</h2>
           <p className="text-primary-foreground/70">
-            Access your department course materials, download PDFs, and stay organized with DIU Slider.
+            Access your department course materials, download PDFs, and stay organized with DIU StudyBank.
           </p>
         </div>
       </div>
