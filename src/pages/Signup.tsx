@@ -64,7 +64,7 @@ export default function Signup() {
         </div>
         <div className="relative z-10 p-12 max-w-md">
           <div className="flex items-center gap-2 mb-8">
-            <img src={logo} alt="DIU StudyBank" className="h-10 w-10 rounded-lg object-contain" />
+            <img src={logo} alt="DIU StudyBank" className="h-12 w-12 rounded-lg object-contain" />
             <span className="font-display font-bold text-2xl">DIU StudyBank</span>
           </div>
           <h2 className="font-display text-3xl font-bold mb-4">Join DIU StudyBank</h2>
