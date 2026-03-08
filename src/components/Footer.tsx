@@ -3,9 +3,9 @@ import { BookOpen, Mail, MapPin, Phone } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-gradient-hero text-primary-foreground py-12 mt-auto">
+    <footer className="bg-gradient-hero text-primary-foreground py-8 md:py-12 mt-auto">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
@@ -70,7 +70,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-primary-foreground/10 mt-8 pt-6 text-center text-sm text-primary-foreground/40">
+        <div className="border-t border-primary-foreground/10 mt-6 md:mt-8 pt-4 md:pt-6 text-center text-xs md:text-sm text-primary-foreground/40">
           © {new Date().getFullYear()} DIU Slider. All rights reserved. An academic resource platform.
         </div>
       </div>

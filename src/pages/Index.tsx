@@ -93,7 +93,7 @@ export default function Index() {
   return (
     <Layout>
       {/* Hero */}
-      <section className="bg-gradient-hero text-primary-foreground relative overflow-hidden min-h-[90vh] flex items-center">
+      <section className="bg-gradient-hero text-primary-foreground relative overflow-hidden min-h-[70vh] md:min-h-[90vh] flex items-center">
         {/* Background glows */}
         <div className="absolute inset-0">
           <div className="absolute top-20 left-10 w-[500px] h-[500px] bg-accent/8 rounded-full blur-[180px]" />
@@ -119,7 +119,7 @@ export default function Index() {
           </div>
         ))}
 
-        <div className="container mx-auto px-4 py-20 md:py-28 relative z-10">
+        <div className="container mx-auto px-4 py-12 md:py-28 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -131,30 +131,30 @@ export default function Index() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2, duration: 0.5 }}
-              className="inline-flex items-center gap-2 bg-accent/10 border border-accent/20 rounded-full px-5 py-2 mb-8 text-sm font-medium text-accent"
+              className="inline-flex items-center gap-2 bg-accent/10 border border-accent/20 rounded-full px-4 py-1.5 mb-5 md:mb-8 text-xs md:text-sm font-medium text-accent"
             >
               <Sparkles className="h-4 w-4" />
               Over 10,000+ course materials shared
             </motion.div>
 
             {/* Heading */}
-            <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-extrabold leading-[1.15] mb-5 tracking-tight">
+            <h1 className="font-display text-2xl md:text-4xl lg:text-5xl font-extrabold leading-[1.15] mb-3 md:mb-5 tracking-tight">
               Your Complete Academic{" "}
               <span className="block text-accent mt-1">Knowledge Hub</span>
             </h1>
 
-            <p className="text-base md:text-lg text-primary-foreground/60 mb-9 max-w-xl mx-auto leading-relaxed">
+            <p className="text-sm md:text-lg text-primary-foreground/60 mb-6 md:mb-9 max-w-xl mx-auto leading-relaxed">
               DIU Slider helps students easily explore, view, and download course materials — organized by department, semester, course, and chapter.
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
-              <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-8 h-12 text-base rounded-xl" asChild>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-7 md:mb-10">
+              <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-6 md:px-8 h-10 md:h-12 text-sm md:text-base rounded-xl" asChild>
                 <Link to="/departments">
                   Explore Departments <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button size="lg" variant="ghost" className="text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10 font-semibold h-12 text-base rounded-xl" asChild>
+              <Button size="lg" variant="ghost" className="text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10 font-semibold h-10 md:h-12 text-sm md:text-base rounded-xl" asChild>
                 <Link to="/signup">Get Started Free</Link>
               </Button>
             </div>
@@ -164,7 +164,7 @@ export default function Index() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.5 }}
-              className="max-w-xl mx-auto relative mb-12"
+              className="max-w-xl mx-auto relative mb-8 md:mb-12"
               ref={searchRef}
             >
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-primary-foreground/30 z-10" />
@@ -209,16 +209,16 @@ export default function Index() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.5 }}
-              className="flex flex-wrap items-center justify-center gap-8 md:gap-12"
+              className="flex flex-wrap items-center justify-center gap-5 md:gap-12"
             >
               {stats.map((stat, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-accent/10 flex items-center justify-center">
-                    <stat.icon className="h-5 w-5 text-accent" />
+                <div key={i} className="flex items-center gap-2 md:gap-3">
+                  <div className="h-8 w-8 md:h-10 md:w-10 rounded-lg md:rounded-xl bg-accent/10 flex items-center justify-center">
+                    <stat.icon className="h-4 w-4 md:h-5 md:w-5 text-accent" />
                   </div>
                   <div className="text-left">
-                    <p className="text-xl md:text-2xl font-bold text-primary-foreground">{stat.value}</p>
-                    <p className="text-xs text-primary-foreground/50 font-medium">{stat.label}</p>
+                    <p className="text-lg md:text-2xl font-bold text-primary-foreground">{stat.value}</p>
+                    <p className="text-[10px] md:text-xs text-primary-foreground/50 font-medium">{stat.label}</p>
                   </div>
                 </div>
               ))}
@@ -228,11 +228,11 @@ export default function Index() {
       </section>
 
       {/* Departments */}
-      <section className="py-20">
+      <section className="py-12 md:py-20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="font-display text-3xl md:text-4xl font-bold mb-3">Browse by Department</h2>
-            <p className="text-muted-foreground max-w-lg mx-auto">Choose your department to access semester-wise course materials and chapter PDFs.</p>
+          <div className="text-center mb-8 md:mb-12">
+            <h2 className="font-display text-2xl md:text-4xl font-bold mb-2 md:mb-3">Browse by Department</h2>
+            <p className="text-sm md:text-base text-muted-foreground max-w-lg mx-auto">Choose your department to access semester-wise course materials and chapter PDFs.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {departments.map((dept, i) => {
@@ -248,10 +248,10 @@ export default function Index() {
                 >
                   <Link
                     to={`/departments/${dept.id}`}
-                    className="group block bg-card rounded-2xl border border-border p-7 card-shadow hover:card-shadow-hover transition-all duration-300 hover:-translate-y-1 hover:border-accent/30"
+                    className="group block bg-card rounded-2xl border border-border p-5 md:p-7 card-shadow hover:card-shadow-hover transition-all duration-300 hover:-translate-y-1 hover:border-accent/30"
                   >
-                    <div className="h-16 w-16 rounded-2xl bg-gradient-primary flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-                      <Icon className="h-8 w-8 text-primary-foreground" />
+                    <div className="h-12 w-12 md:h-16 md:w-16 rounded-xl md:rounded-2xl bg-gradient-primary flex items-center justify-center mb-4 md:mb-5 group-hover:scale-110 transition-transform">
+                      <Icon className="h-6 w-6 md:h-8 md:w-8 text-primary-foreground" />
                     </div>
                     <h3 className="font-display text-xl font-bold mb-1">{dept.name}</h3>
                     <p className="text-sm text-muted-foreground mb-1">{dept.fullName}</p>
@@ -268,11 +268,11 @@ export default function Index() {
       </section>
 
       {/* Features */}
-      <section className="py-20 bg-muted/50">
+      <section className="py-12 md:py-20 bg-muted/50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="font-display text-3xl md:text-4xl font-bold mb-3">Why Choose DIU Slider?</h2>
-            <p className="text-muted-foreground max-w-lg mx-auto">Everything you need for organized, accessible academic resources.</p>
+          <div className="text-center mb-8 md:mb-12">
+            <h2 className="font-display text-2xl md:text-4xl font-bold mb-2 md:mb-3">Why Choose DIU Slider?</h2>
+            <p className="text-sm md:text-base text-muted-foreground max-w-lg mx-auto">Everything you need for organized, accessible academic resources.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {features.map((f, i) => (
@@ -283,12 +283,12 @@ export default function Index() {
                 whileInView="visible"
                 viewport={{ once: true }}
                 variants={fadeUp}
-                className="glass rounded-2xl p-6 hover:border-accent/30 transition-all duration-300 hover:card-shadow-hover"
+                className="glass rounded-2xl p-4 md:p-6 hover:border-accent/30 transition-all duration-300 hover:card-shadow-hover"
               >
                 <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
                   <f.icon className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="font-display font-semibold text-lg mb-2">{f.title}</h3>
+                <h3 className="font-display font-semibold text-base md:text-lg mb-1 md:mb-2">{f.title}</h3>
                 <p className="text-sm text-muted-foreground">{f.desc}</p>
               </motion.div>
             ))}
@@ -297,11 +297,11 @@ export default function Index() {
       </section>
 
       {/* Recent Materials */}
-      <section className="py-20">
+      <section className="py-12 md:py-20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="font-display text-3xl md:text-4xl font-bold mb-3">Recently Uploaded</h2>
-            <p className="text-muted-foreground">Stay updated with the latest course materials.</p>
+          <div className="text-center mb-8 md:mb-12">
+            <h2 className="font-display text-2xl md:text-4xl font-bold mb-2 md:mb-3">Recently Uploaded</h2>
+            <p className="text-sm md:text-base text-muted-foreground">Stay updated with the latest course materials.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
             {recentPDFs.map((pdf, i) => (
@@ -312,7 +312,7 @@ export default function Index() {
                 whileInView="visible"
                 viewport={{ once: true }}
                 variants={fadeUp}
-                className="flex items-start gap-4 bg-card rounded-xl border border-border p-4 card-shadow"
+                className="flex items-start gap-3 bg-card rounded-xl border border-border p-3 md:p-4 card-shadow"
               >
                 <div className="h-10 w-10 rounded-lg bg-destructive/10 flex items-center justify-center flex-shrink-0">
                   <FileText className="h-5 w-5 text-destructive" />
@@ -331,7 +331,7 @@ export default function Index() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-gradient-hero text-primary-foreground relative overflow-hidden">
+      <section className="py-12 md:py-20 bg-gradient-hero text-primary-foreground relative overflow-hidden">
         {/* Floating decorations */}
         <div className="absolute left-[5%] top-[20%] animate-float hidden md:block" style={{ ["--float-rotate" as string]: "-8deg" }}>
           <div className="h-14 w-10 rounded-lg bg-primary-foreground/5 border border-primary-foreground/10 flex items-center justify-center">
@@ -345,12 +345,12 @@ export default function Index() {
         </div>
 
         <div className="container mx-auto px-4 text-center relative z-10">
-          <GraduationCap className="h-12 w-12 text-accent mx-auto mb-6" />
-          <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">Ready to Get Started?</h2>
-          <p className="text-primary-foreground/60 mb-8 max-w-lg mx-auto text-lg">
+          <GraduationCap className="h-10 w-10 md:h-12 md:w-12 text-accent mx-auto mb-4 md:mb-6" />
+          <h2 className="font-display text-2xl md:text-4xl font-bold mb-3 md:mb-4">Ready to Get Started?</h2>
+          <p className="text-primary-foreground/60 mb-6 md:mb-8 max-w-lg mx-auto text-sm md:text-lg">
             Join DIU Slider today and access all your course materials in one organized platform.
           </p>
-          <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-8 h-12 text-base rounded-xl" asChild>
+          <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-6 md:px-8 h-10 md:h-12 text-sm md:text-base rounded-xl" asChild>
             <Link to="/signup">Create Free Account <ArrowRight className="ml-2 h-4 w-4" /></Link>
           </Button>
         </div>
