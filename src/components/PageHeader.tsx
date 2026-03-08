@@ -33,7 +33,7 @@ export default function PageHeader({ title, subtitle, badge, badgeIcon, children
             {title}
           </h1>
           {subtitle && (
-            <p className="text-base md:text-lg text-primary-foreground/60 max-w-2xl leading-relaxed">
+            <p className="text-sm md:text-lg text-primary-foreground/60 max-w-2xl leading-relaxed">
               {subtitle}
             </p>
           )}
