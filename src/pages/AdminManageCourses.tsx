@@ -185,9 +185,9 @@ export default function AdminManageCourses() {
               <Select value={form.department} onValueChange={(v) => setForm({ ...form, department: v })}>
                 <SelectTrigger><SelectValue placeholder="Select department" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="CSE">CSE</SelectItem>
-                  <SelectItem value="EEE">EEE</SelectItem>
-                  <SelectItem value="BBA">BBA</SelectItem>
+                  {["CSE","EEE","BBA","SWE","CIS","PHARMACY","ENGLISH","LAW","TEXTILE","ARCH","JMC","THM","NFE","PH","MCT"].map(d => (
+                    <SelectItem key={d} value={d}>{d}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
