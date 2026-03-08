@@ -300,13 +300,21 @@ export default function Index() {
                 whileInView="visible"
                 viewport={{ once: true }}
                 variants={fadeUp}
-                className="glass rounded-2xl p-4 md:p-6 hover:border-accent/30 transition-all duration-300 hover:card-shadow-hover"
+                whileHover={{ y: -6, transition: { duration: 0.25, ease: "easeOut" } }}
+                className="group relative glass rounded-2xl p-4 md:p-6 hover:border-accent/40 hover:shadow-[0_8px_30px_-8px_hsl(var(--accent)/0.25)] transition-all duration-300 overflow-hidden"
               >
-                <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                  <f.icon className="h-6 w-6 text-primary" />
+                <div className="absolute inset-0 bg-gradient-to-br from-accent/0 via-accent/0 to-accent/0 group-hover:from-accent/5 group-hover:via-transparent group-hover:to-primary/5 transition-all duration-500 rounded-2xl" />
+                <div className="relative z-10">
+                  <motion.div
+                    className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4"
+                    whileHover={{ scale: 1.15, rotate: 5 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                  >
+                    <f.icon className="h-6 w-6 text-primary" />
+                  </motion.div>
+                  <h3 className="font-display font-semibold text-base md:text-lg mb-1 md:mb-2 group-hover:text-accent transition-colors duration-300">{f.title}</h3>
+                  <p className="text-sm text-muted-foreground">{f.desc}</p>
                 </div>
-                <h3 className="font-display font-semibold text-base md:text-lg mb-1 md:mb-2">{f.title}</h3>
-                <p className="text-sm text-muted-foreground">{f.desc}</p>
               </motion.div>
             ))}
           </div>
