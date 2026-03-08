@@ -44,7 +44,7 @@ export default function Contact() {
                   </div>
                   <div className="flex items-center gap-3">
                     <Phone className="h-5 w-5 text-primary" />
-                    +880 1234-567890
+                    01922829105
                   </div>
                   <div className="flex items-center gap-3">
                     <MapPin className="h-5 w-5 text-primary" />
