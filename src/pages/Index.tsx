@@ -345,12 +345,12 @@ export default function Index() {
         </div>
 
         <div className="container mx-auto px-4 text-center relative z-10">
-          <GraduationCap className="h-12 w-12 text-accent mx-auto mb-6" />
-          <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">Ready to Get Started?</h2>
-          <p className="text-primary-foreground/60 mb-8 max-w-lg mx-auto text-lg">
+          <GraduationCap className="h-10 w-10 md:h-12 md:w-12 text-accent mx-auto mb-4 md:mb-6" />
+          <h2 className="font-display text-2xl md:text-4xl font-bold mb-3 md:mb-4">Ready to Get Started?</h2>
+          <p className="text-primary-foreground/60 mb-6 md:mb-8 max-w-lg mx-auto text-sm md:text-lg">
             Join DIU Slider today and access all your course materials in one organized platform.
           </p>
-          <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-8 h-12 text-base rounded-xl" asChild>
+          <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-6 md:px-8 h-10 md:h-12 text-sm md:text-base rounded-xl" asChild>
             <Link to="/signup">Create Free Account <ArrowRight className="ml-2 h-4 w-4" /></Link>
           </Button>
         </div>
