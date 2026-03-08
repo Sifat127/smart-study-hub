@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, BookOpen, LogIn, UserPlus, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, X, BookOpen, LogIn, UserPlus, LogOut, LayoutDashboard, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const navLinks = [
   { label: "Home", to: "/" },
