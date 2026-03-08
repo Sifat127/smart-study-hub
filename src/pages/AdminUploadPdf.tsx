@@ -82,7 +82,7 @@ export default function AdminUploadPdf() {
       <header className="sticky top-0 z-50 glass border-b border-border/50">
         <div className="container mx-auto flex items-center justify-between h-16 px-4">
           <Link to="/admin" className="flex items-center gap-2">
-            <img src={logo} alt="DIU StudyBank" className="h-9 w-9 rounded-lg object-contain" />
+            <img src={logo} alt="DIU StudyBank" className="h-11 w-11 rounded-lg object-contain" />
             <span className="font-display font-bold text-xl">Upload PDF</span>
           </Link>
           <Button variant="ghost" size="sm" asChild>

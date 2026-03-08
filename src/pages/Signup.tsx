@@ -78,7 +78,7 @@ export default function Signup() {
       <div className="flex-1 flex items-center justify-center p-6 relative z-10">
         <div className="w-full max-w-md">
           <div className="lg:hidden flex items-center gap-2 mb-8 justify-center">
-            <img src={logo} alt="DIU StudyBank" className="h-9 w-9 rounded-lg object-contain" />
+            <img src={logo} alt="DIU StudyBank" className="h-11 w-11 rounded-lg object-contain" />
             <span className="font-display font-bold text-xl">DIU StudyBank</span>
           </div>
 

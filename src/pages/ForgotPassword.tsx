@@ -36,7 +36,7 @@ export default function ForgotPassword() {
     <div className="min-h-screen flex items-center justify-center p-6 bg-background">
       <div className="w-full max-w-md">
         <div className="flex items-center gap-2 mb-8 justify-center">
-          <img src={logo} alt="DIU StudyBank" className="h-9 w-9 rounded-lg object-contain" />
+          <img src={logo} alt="DIU StudyBank" className="h-11 w-11 rounded-lg object-contain" />
           <span className="font-display font-bold text-xl">DIU StudyBank</span>
         </div>
 

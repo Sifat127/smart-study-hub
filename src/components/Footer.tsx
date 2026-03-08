@@ -10,7 +10,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <img src={logo} alt="DIU StudyBank" className="h-9 w-9 rounded-lg object-contain" />
+              <img src={logo} alt="DIU StudyBank" className="h-11 w-11 rounded-lg object-contain" />
               <span className="font-display font-bold text-lg text-primary-foreground">
                 DIU StudyBank
               </span>
