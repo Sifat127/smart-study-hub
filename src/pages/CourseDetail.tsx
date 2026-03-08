@@ -136,10 +136,8 @@ export default function CourseDetail() {
                     </div>
                     {chapter.pdf_path && (
                       <div className="flex gap-2">
-                        <Button size="sm" className="bg-gradient-primary text-primary-foreground hover:opacity-90" asChild>
-                          <a href={getPublicUrl(chapter.pdf_path)} download={chapter.pdf_name || "file.pdf"}>
-                            <Download className="h-4 w-4 mr-1.5" /> Download PDF
-                          </a>
+                        <Button size="sm" className="bg-gradient-primary text-primary-foreground hover:opacity-90" onClick={() => handleDownload(chapter.pdf_path!, chapter.pdf_name || "file.pdf")}>
+                          <Download className="h-4 w-4 mr-1.5" /> Download PDF
                         </Button>
                         <Button size="sm" variant="outline" asChild>
                           <a href={getPublicUrl(chapter.pdf_path)} target="_blank" rel="noopener noreferrer">
