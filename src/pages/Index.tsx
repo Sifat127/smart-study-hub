@@ -113,12 +113,42 @@ export default function Index() {
               </Button>
             </div>
             {/* Search bar */}
-            <div className="max-w-xl mx-auto relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <div className="max-w-xl mx-auto relative" ref={searchRef}>
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground z-10" />
+              {searching && <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-primary-foreground/50 z-10" />}
               <Input
-                placeholder="Search courses, chapters, or PDFs..."
+                placeholder="Search courses by name or code..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onFocus={() => results.length > 0 && setShowResults(true)}
                 className="pl-12 h-12 bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/40 rounded-xl"
               />
+              <AnimatePresence>
+                {showResults && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    className="absolute top-full mt-2 w-full bg-card border border-border rounded-xl shadow-lg overflow-hidden z-50"
+                  >
+                    {results.length > 0 ? results.map((r) => (
+                      <button
+                        key={r.id}
+                        onClick={() => handleResultClick(r)}
+                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/50 transition-colors text-left"
+                      >
+                        <BookOpen className="h-4 w-4 text-primary flex-shrink-0" />
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">{r.code} — {r.name}</p>
+                          <p className="text-xs text-muted-foreground">{r.department} • Semester {r.semester}</p>
+                        </div>
+                      </button>
+                    )) : (
+                      <div className="px-4 py-3 text-sm text-muted-foreground text-center">কোনো কোর্স পাওয়া যায়নি</div>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </motion.div>
         </div>
