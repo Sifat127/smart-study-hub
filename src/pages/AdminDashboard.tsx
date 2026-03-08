@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BookOpen, Layers, FileText, Users, Upload, Settings, BarChart3, GraduationCap, Loader2 } from "lucide-react";
+import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { departments } from "@/data/mockData";
