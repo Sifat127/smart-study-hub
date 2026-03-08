@@ -148,7 +148,7 @@ export default function Index() {
             </h1>
 
             <p className="text-sm md:text-lg text-primary-foreground/60 mb-6 md:mb-9 max-w-xl mx-auto leading-relaxed">
-              DIU Slider helps students easily explore, view, and download course materials — organized by department, semester, course, and chapter.
+              DIU StudyBank helps students easily explore, view, and download course materials — organized by department, semester, course, and chapter.
             </p>
 
             {/* CTA Buttons */}
