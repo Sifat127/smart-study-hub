@@ -108,7 +108,7 @@ export default function Index() {
                   Explore Departments <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10" asChild>
+              <Button size="lg" variant="outline" className="border-primary-foreground/50 text-primary-foreground bg-primary-foreground/10 hover:bg-primary-foreground/20 font-semibold" asChild>
                 <Link to="/signup">Get Started Free</Link>
               </Button>
             </div>
