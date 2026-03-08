@@ -138,12 +138,12 @@ export default function Index() {
             </motion.div>
 
             {/* Heading */}
-            <h1 className="font-display text-4xl md:text-5xl lg:text-7xl font-extrabold leading-[1.1] mb-6 tracking-tight">
+            <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-extrabold leading-[1.15] mb-5 tracking-tight">
               Your Complete Academic{" "}
               <span className="block text-accent mt-1">Knowledge Hub</span>
             </h1>
 
-            <p className="text-lg md:text-xl text-primary-foreground/60 mb-10 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-base md:text-lg text-primary-foreground/60 mb-9 max-w-xl mx-auto leading-relaxed">
               DIU Slider helps students easily explore, view, and download course materials — organized by department, semester, course, and chapter.
             </p>
 
