@@ -250,8 +250,8 @@ export default function Index() {
                     to={`/departments/${dept.id}`}
                     className="group block bg-card rounded-2xl border border-border p-5 md:p-7 card-shadow hover:card-shadow-hover transition-all duration-300 hover:-translate-y-1 hover:border-accent/30"
                   >
-                    <div className="h-16 w-16 rounded-2xl bg-gradient-primary flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-                      <Icon className="h-8 w-8 text-primary-foreground" />
+                    <div className="h-12 w-12 md:h-16 md:w-16 rounded-xl md:rounded-2xl bg-gradient-primary flex items-center justify-center mb-4 md:mb-5 group-hover:scale-110 transition-transform">
+                      <Icon className="h-6 w-6 md:h-8 md:w-8 text-primary-foreground" />
                     </div>
                     <h3 className="font-display text-xl font-bold mb-1">{dept.name}</h3>
                     <p className="text-sm text-muted-foreground mb-1">{dept.fullName}</p>
