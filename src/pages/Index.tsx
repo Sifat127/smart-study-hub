@@ -312,7 +312,7 @@ export default function Index() {
                 whileInView="visible"
                 viewport={{ once: true }}
                 variants={fadeUp}
-                className="flex items-start gap-4 bg-card rounded-xl border border-border p-4 card-shadow"
+                className="flex items-start gap-3 bg-card rounded-xl border border-border p-3 md:p-4 card-shadow"
               >
                 <div className="h-10 w-10 rounded-lg bg-destructive/10 flex items-center justify-center flex-shrink-0">
                   <FileText className="h-5 w-5 text-destructive" />
