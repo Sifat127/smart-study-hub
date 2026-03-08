@@ -16,11 +16,10 @@ export default function DepartmentDetail() {
 
   useEffect(() => {
     async function fetchCounts() {
-      const deptKey = dept ? dept.name : (deptId || "").toUpperCase();
       const { data } = await supabase
         .from("courses")
         .select("semester")
-        .eq("department", deptKey);
+        .eq("department", (deptId || "").toUpperCase());
 
       if (data) {
         const counts: Record<number, number> = {};
