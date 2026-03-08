@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, Upload, ArrowLeft, FileText, CheckCircle2, Loader2 } from "lucide-react";
+import { Upload, ArrowLeft, FileText, CheckCircle2, Loader2 } from "lucide-react";
+import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
