@@ -288,7 +288,7 @@ export default function Index() {
       <section className="py-12 md:py-20 bg-muted/50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-8 md:mb-12">
-            <h2 className="font-display text-2xl md:text-4xl font-bold mb-2 md:mb-3">Why Choose DIU Slider?</h2>
+            <h2 className="font-display text-2xl md:text-4xl font-bold mb-2 md:mb-3">Why Choose DIU StudyBank?</h2>
             <p className="text-sm md:text-base text-muted-foreground max-w-lg mx-auto">Everything you need for organized, accessible academic resources.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
