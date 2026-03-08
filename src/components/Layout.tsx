@@ -15,12 +15,14 @@ const floatingElements = [
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col relative">
-      {/* Global background effects */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        {/* Ambient glows */}
-        <div className="absolute top-[10%] left-[5%] w-[400px] h-[400px] bg-primary/4 rounded-full blur-[180px]" />
-        <div className="absolute top-[40%] right-[5%] w-[500px] h-[500px] bg-accent/4 rounded-full blur-[200px]" />
-        <div className="absolute bottom-[10%] left-[30%] w-[350px] h-[350px] bg-primary/3 rounded-full blur-[160px]" />
+      {/* Global background effects with mood color shifting */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" style={{ animation: "mood-hue 20s ease-in-out infinite" }}>
+        {/* Animated ambient glows */}
+        <div className="absolute top-[10%] left-[5%] w-[500px] h-[500px] bg-primary/[0.05] rounded-full blur-[200px]" style={{ animation: "mood-shift-1 12s ease-in-out infinite" }} />
+        <div className="absolute top-[40%] right-[5%] w-[600px] h-[600px] bg-accent/[0.05] rounded-full blur-[220px]" style={{ animation: "mood-shift-2 15s ease-in-out infinite" }} />
+        <div className="absolute bottom-[10%] left-[30%] w-[450px] h-[450px] bg-primary/[0.04] rounded-full blur-[180px]" style={{ animation: "mood-shift-3 18s ease-in-out infinite" }} />
+        <div className="absolute top-[60%] right-[30%] w-[400px] h-[400px] bg-accent/[0.03] rounded-full blur-[200px]" style={{ animation: "mood-shift-1 22s ease-in-out infinite reverse" }} />
+        <div className="absolute top-[20%] left-[50%] w-[350px] h-[350px] bg-primary/[0.03] rounded-full blur-[160px]" style={{ animation: "mood-shift-2 25s ease-in-out infinite reverse" }} />
 
         {/* Floating PDF elements */}
         {floatingElements.map((el, i) => (
