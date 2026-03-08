@@ -10,11 +10,9 @@ export default function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="h-9 w-9 rounded-lg bg-gradient-primary flex items-center justify-center">
-                <BookOpen className="h-5 w-5 text-primary-foreground" />
-              </div>
+              <img src={logo} alt="DIU StudyBank" className="h-9 w-9 rounded-lg object-contain" />
               <span className="font-display font-bold text-lg text-primary-foreground">
-                DIU Slider
+                DIU StudyBank
               </span>
             </div>
             <p className="text-sm text-primary-foreground/60">
