@@ -288,7 +288,7 @@ export default function Index() {
                 <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
                   <f.icon className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="font-display font-semibold text-lg mb-2">{f.title}</h3>
+                <h3 className="font-display font-semibold text-base md:text-lg mb-1 md:mb-2">{f.title}</h3>
                 <p className="text-sm text-muted-foreground">{f.desc}</p>
               </motion.div>
             ))}
