@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { BookOpen, Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 export default function Footer() {
   return (
