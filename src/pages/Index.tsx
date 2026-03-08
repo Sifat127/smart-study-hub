@@ -212,13 +212,13 @@ export default function Index() {
               className="flex flex-wrap items-center justify-center gap-5 md:gap-12"
             >
               {stats.map((stat, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-accent/10 flex items-center justify-center">
-                    <stat.icon className="h-5 w-5 text-accent" />
+                <div key={i} className="flex items-center gap-2 md:gap-3">
+                  <div className="h-8 w-8 md:h-10 md:w-10 rounded-lg md:rounded-xl bg-accent/10 flex items-center justify-center">
+                    <stat.icon className="h-4 w-4 md:h-5 md:w-5 text-accent" />
                   </div>
                   <div className="text-left">
-                    <p className="text-xl md:text-2xl font-bold text-primary-foreground">{stat.value}</p>
-                    <p className="text-xs text-primary-foreground/50 font-medium">{stat.label}</p>
+                    <p className="text-lg md:text-2xl font-bold text-primary-foreground">{stat.value}</p>
+                    <p className="text-[10px] md:text-xs text-primary-foreground/50 font-medium">{stat.label}</p>
                   </div>
                 </div>
               ))}
