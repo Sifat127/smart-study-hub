@@ -45,6 +45,22 @@ export default function CourseDetail() {
     return data.publicUrl;
   };
 
+  const handleDownload = async (path: string, fileName: string) => {
+    const { data } = await supabase.storage.from("pdfs").createSignedUrl(path, 3600);
+    if (data?.signedUrl) {
+      const response = await fetch(data.signedUrl);
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
@@ -120,10 +136,8 @@ export default function CourseDetail() {
                     </div>
                     {chapter.pdf_path && (
                       <div className="flex gap-2">
-                        <Button size="sm" className="bg-gradient-primary text-primary-foreground hover:opacity-90" asChild>
-                          <a href={getPublicUrl(chapter.pdf_path)} download={chapter.pdf_name || "file.pdf"}>
-                            <Download className="h-4 w-4 mr-1.5" /> Download PDF
-                          </a>
+                        <Button size="sm" className="bg-gradient-primary text-primary-foreground hover:opacity-90" onClick={() => handleDownload(chapter.pdf_path!, chapter.pdf_name || "file.pdf")}>
+                          <Download className="h-4 w-4 mr-1.5" /> Download PDF
                         </Button>
                         <Button size="sm" variant="outline" asChild>
                           <a href={getPublicUrl(chapter.pdf_path)} target="_blank" rel="noopener noreferrer">
