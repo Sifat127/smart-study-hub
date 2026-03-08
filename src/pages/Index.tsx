@@ -5,6 +5,7 @@ import { Search, BookOpen, Layers, FileText, Shield, Users, Download, Monitor, Z
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Layout from "@/components/Layout";
+import TypewriterText from "@/components/TypewriterText";
 import { departments, recentPDFs } from "@/data/mockData";
 import { supabase } from "@/integrations/supabase/client";
 
