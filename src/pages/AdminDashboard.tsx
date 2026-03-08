@@ -58,16 +58,17 @@ export default function AdminDashboard() {
         <h2 className="font-display text-xl font-semibold mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           {actions.map((a) => (
-            <button
+            <Link
               key={a.label}
-              className="bg-card rounded-xl border border-border p-6 card-shadow hover:card-shadow-hover transition-all duration-300 hover:-translate-y-1 text-left"
+              to={a.to}
+              className="bg-card rounded-xl border border-border p-6 card-shadow hover:card-shadow-hover transition-all duration-300 hover:-translate-y-1 text-left block"
             >
               <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
                 <a.icon className="h-5 w-5 text-primary" />
               </div>
               <h3 className="font-display font-semibold mb-1">{a.label}</h3>
               <p className="text-sm text-muted-foreground">{a.desc}</p>
-            </button>
+            </Link>
           ))}
         </div>
 
