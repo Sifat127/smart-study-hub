@@ -10,10 +10,10 @@ const stats = [
 ];
 
 const actions = [
-  { label: "Upload PDF", icon: Upload, desc: "Add new chapter PDFs" },
-  { label: "Manage Courses", icon: BookOpen, desc: "Edit course details" },
-  { label: "Manage Users", icon: Users, desc: "View registered users" },
-  { label: "Settings", icon: Settings, desc: "Platform configuration" },
+  { label: "Upload PDF", icon: Upload, desc: "Add new chapter PDFs", to: "/admin/upload-pdf" },
+  { label: "Manage Courses", icon: BookOpen, desc: "Edit course details", to: "/admin/manage-courses" },
+  { label: "Manage Users", icon: Users, desc: "View registered users", to: "/admin/manage-users" },
+  { label: "Settings", icon: Settings, desc: "Platform configuration", to: "/admin/settings" },
 ];
 
 export default function AdminDashboard() {
