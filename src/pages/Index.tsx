@@ -93,7 +93,7 @@ export default function Index() {
   return (
     <Layout>
       {/* Hero */}
-      <section className="bg-gradient-hero text-primary-foreground relative overflow-hidden min-h-[90vh] flex items-center">
+      <section className="bg-gradient-hero text-primary-foreground relative overflow-hidden min-h-[70vh] md:min-h-[90vh] flex items-center">
         {/* Background glows */}
         <div className="absolute inset-0">
           <div className="absolute top-20 left-10 w-[500px] h-[500px] bg-accent/8 rounded-full blur-[180px]" />
