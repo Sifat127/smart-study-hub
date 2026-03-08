@@ -1,10 +1,20 @@
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Search, BookOpen, Layers, FileText, Shield, Users, Download, Monitor, Zap, Briefcase, ArrowRight, Clock } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { Search, BookOpen, Layers, FileText, Shield, Users, Download, Monitor, Zap, Briefcase, ArrowRight, Clock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Layout from "@/components/Layout";
 import { departments, recentPDFs } from "@/data/mockData";
+import { supabase } from "@/integrations/supabase/client";
+
+interface SearchResult {
+  id: string;
+  code: string;
+  name: string;
+  department: string;
+  semester: number;
+}
 
 const deptIcons: Record<string, React.ElementType> = { Monitor, Zap, Briefcase };
 
