@@ -69,8 +69,17 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-primary-foreground/10 mt-6 md:mt-8 pt-4 md:pt-6 text-center text-xs md:text-sm text-primary-foreground/40">
-          © {new Date().getFullYear()} DIU StudyBank. All rights reserved. An academic resource platform.
+        <div className="border-t border-primary-foreground/10 mt-6 md:mt-8 pt-4 md:pt-6 text-center space-y-3">
+          <div className="text-xs md:text-sm text-primary-foreground/40">
+            © {new Date().getFullYear()} DIU StudyBank. All rights reserved. An academic resource platform.
+          </div>
+          <div className="text-xs text-primary-foreground/50">
+            <span className="text-primary-foreground/30">Web Design & Architecture by</span>
+            <br />
+            <span className="font-semibold text-primary-foreground/70">A.S. Sifat Ahmed</span>
+            <br />
+            <span className="text-primary-foreground/40">Student of CSE, Daffodil International University</span>
+          </div>
         </div>
       </div>
     </footer>
