@@ -248,7 +248,7 @@ export default function Index() {
                 >
                   <Link
                     to={`/departments/${dept.id}`}
-                    className="group block bg-card rounded-2xl border border-border p-7 card-shadow hover:card-shadow-hover transition-all duration-300 hover:-translate-y-1 hover:border-accent/30"
+                    className="group block bg-card rounded-2xl border border-border p-5 md:p-7 card-shadow hover:card-shadow-hover transition-all duration-300 hover:-translate-y-1 hover:border-accent/30"
                   >
                     <div className="h-16 w-16 rounded-2xl bg-gradient-primary flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
                       <Icon className="h-8 w-8 text-primary-foreground" />
