@@ -1,13 +1,9 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, Layers, FileText, Users, Upload, Settings, BarChart3, GraduationCap } from "lucide-react";
+import { BookOpen, Layers, FileText, Users, Upload, Settings, BarChart3, GraduationCap, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-const stats = [
-  { label: "Departments", value: "3", icon: Layers, color: "bg-primary/10 text-primary" },
-  { label: "Semesters", value: "36", icon: GraduationCap, color: "bg-cyan/10 text-cyan" },
-  { label: "Courses", value: "155", icon: BookOpen, color: "bg-accent/10 text-accent" },
-  { label: "PDFs Uploaded", value: "620", icon: FileText, color: "bg-destructive/10 text-destructive" },
-];
+import { supabase } from "@/integrations/supabase/client";
+import { departments } from "@/data/mockData";
 
 const actions = [
   { label: "Upload PDF", icon: Upload, desc: "Add new chapter PDFs", to: "/admin/upload-pdf" },
@@ -17,9 +13,37 @@ const actions = [
 ];
 
 export default function AdminDashboard() {
+  const [counts, setCounts] = useState({ depts: 0, courses: 0, chapters: 0 });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchStats() {
+      const [coursesRes, chaptersRes] = await Promise.all([
+        supabase.from("courses").select("department"),
+        supabase.from("chapters").select("id"),
+      ]);
+
+      const uniqueDepts = new Set((coursesRes.data || []).map(c => c.department));
+
+      setCounts({
+        depts: uniqueDepts.size,
+        courses: coursesRes.data?.length || 0,
+        chapters: chaptersRes.data?.length || 0,
+      });
+      setLoading(false);
+    }
+    fetchStats();
+  }, []);
+
+  const stats = [
+    { label: "Departments", value: String(counts.depts), icon: Layers, color: "bg-primary/10 text-primary" },
+    { label: "Semesters", value: String(counts.depts * 12), icon: GraduationCap, color: "bg-cyan/10 text-cyan" },
+    { label: "Courses", value: String(counts.courses), icon: BookOpen, color: "bg-accent/10 text-accent" },
+    { label: "PDFs Uploaded", value: String(counts.chapters), icon: FileText, color: "bg-destructive/10 text-destructive" },
+  ];
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Top bar */}
       <header className="sticky top-0 z-50 glass border-b border-border/50">
         <div className="container mx-auto flex items-center justify-between h-16 px-4">
           <Link to="/" className="flex items-center gap-2">
@@ -46,7 +70,11 @@ export default function AdminDashboard() {
                   <s.icon className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="font-display text-2xl font-bold">{s.value}</p>
+                  {loading ? (
+                    <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                  ) : (
+                    <p className="font-display text-2xl font-bold">{s.value}</p>
+                  )}
                   <p className="text-xs text-muted-foreground">{s.label}</p>
                 </div>
               </div>
@@ -70,15 +98,6 @@ export default function AdminDashboard() {
               <p className="text-sm text-muted-foreground">{a.desc}</p>
             </Link>
           ))}
-        </div>
-
-        {/* Placeholder for more admin features */}
-        <div className="mt-8 bg-card rounded-xl border border-border p-8 card-shadow text-center">
-          <BarChart3 className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-          <h3 className="font-display font-semibold text-lg mb-2">Full Admin Features Coming Soon</h3>
-          <p className="text-sm text-muted-foreground max-w-md mx-auto">
-            Connect a backend to enable PDF uploads, user management, course editing, and more.
-          </p>
         </div>
       </div>
     </div>
