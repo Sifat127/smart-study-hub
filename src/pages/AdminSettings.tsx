@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { BookOpen, ArrowLeft, Globe, Bell, Palette, Lock } from "lucide-react";
+import { ArrowLeft, Globe, Bell, Palette, Lock } from "lucide-react";
+import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
