@@ -50,20 +50,42 @@ export default function CourseDetail() {
     return data.publicUrl;
   };
 
-  const handleDownload = async (path: string, fileName: string) => {
-    const { data } = await supabase.storage.from("pdfs").createSignedUrl(path, 3600);
-    if (data?.signedUrl) {
-      const response = await fetch(data.signedUrl);
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+  const requireAuth = (action: () => void) => {
+    if (!user) {
+      toast({
+        title: "Login Required",
+        description: "Please login to download or view PDFs.",
+        variant: "destructive",
+      });
+      navigate("/login");
+      return;
     }
+    action();
+  };
+
+  const handleDownload = async (path: string, fileName: string) => {
+    requireAuth(async () => {
+      const { data } = await supabase.storage.from("pdfs").createSignedUrl(path, 3600);
+      if (data?.signedUrl) {
+        const response = await fetch(data.signedUrl);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }
+    });
+  };
+
+  const handleView = (path: string) => {
+    requireAuth(() => {
+      const url = getPublicUrl(path);
+      window.open(url, "_blank", "noopener,noreferrer");
+    });
   };
 
   if (loading) {
