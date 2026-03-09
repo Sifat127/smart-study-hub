@@ -1,11 +1,13 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, FileText, Download, Eye, Calendar, BookOpen, Loader2 } from "lucide-react";
+import { ArrowLeft, FileText, Download, Eye, Calendar, BookOpen, Loader2, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
 import PageHeader from "@/components/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "@/hooks/use-toast";
 
 interface CourseData {
   id: string;
@@ -24,6 +26,8 @@ interface ChapterData {
 
 export default function CourseDetail() {
   const { deptId, semId, courseId } = useParams();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [course, setCourse] = useState<CourseData | null>(null);
   const [chapters, setChapters] = useState<ChapterData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,20 +50,42 @@ export default function CourseDetail() {
     return data.publicUrl;
   };
 
-  const handleDownload = async (path: string, fileName: string) => {
-    const { data } = await supabase.storage.from("pdfs").createSignedUrl(path, 3600);
-    if (data?.signedUrl) {
-      const response = await fetch(data.signedUrl);
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+  const requireAuth = (action: () => void) => {
+    if (!user) {
+      toast({
+        title: "Login Required",
+        description: "Please login to download or view PDFs.",
+        variant: "destructive",
+      });
+      navigate("/login");
+      return;
     }
+    action();
+  };
+
+  const handleDownload = async (path: string, fileName: string) => {
+    requireAuth(async () => {
+      const { data } = await supabase.storage.from("pdfs").createSignedUrl(path, 3600);
+      if (data?.signedUrl) {
+        const response = await fetch(data.signedUrl);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }
+    });
+  };
+
+  const handleView = (path: string) => {
+    requireAuth(() => {
+      const url = getPublicUrl(path);
+      window.open(url, "_blank", "noopener,noreferrer");
+    });
   };
 
   if (loading) {
@@ -143,12 +169,10 @@ export default function CourseDetail() {
                       {chapter.pdf_path && (
                         <div className="flex gap-2">
                           <Button size="sm" className="bg-gradient-primary text-primary-foreground hover:opacity-90 rounded-xl" onClick={() => handleDownload(chapter.pdf_path!, chapter.pdf_name || "file.pdf")}>
-                            <Download className="h-4 w-4 mr-1.5" /> Download
+                            {user ? <Download className="h-4 w-4 mr-1.5" /> : <Lock className="h-4 w-4 mr-1.5" />} Download
                           </Button>
-                          <Button size="sm" variant="outline" className="rounded-xl" asChild>
-                            <a href={getPublicUrl(chapter.pdf_path)} target="_blank" rel="noopener noreferrer">
-                              <Eye className="h-4 w-4 mr-1.5" /> View
-                            </a>
+                          <Button size="sm" variant="outline" className="rounded-xl" onClick={() => handleView(chapter.pdf_path!)}>
+                            {user ? <Eye className="h-4 w-4 mr-1.5" /> : <Lock className="h-4 w-4 mr-1.5" />} View
                           </Button>
                         </div>
                       )}
