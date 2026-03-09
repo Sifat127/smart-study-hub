@@ -169,12 +169,10 @@ export default function CourseDetail() {
                       {chapter.pdf_path && (
                         <div className="flex gap-2">
                           <Button size="sm" className="bg-gradient-primary text-primary-foreground hover:opacity-90 rounded-xl" onClick={() => handleDownload(chapter.pdf_path!, chapter.pdf_name || "file.pdf")}>
-                            <Download className="h-4 w-4 mr-1.5" /> Download
+                            {user ? <Download className="h-4 w-4 mr-1.5" /> : <Lock className="h-4 w-4 mr-1.5" />} Download
                           </Button>
-                          <Button size="sm" variant="outline" className="rounded-xl" asChild>
-                            <a href={getPublicUrl(chapter.pdf_path)} target="_blank" rel="noopener noreferrer">
-                              <Eye className="h-4 w-4 mr-1.5" /> View
-                            </a>
+                          <Button size="sm" variant="outline" className="rounded-xl" onClick={() => handleView(chapter.pdf_path!)}>
+                            {user ? <Eye className="h-4 w-4 mr-1.5" /> : <Lock className="h-4 w-4 mr-1.5" />} View
                           </Button>
                         </div>
                       )}
