@@ -1,11 +1,13 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, FileText, Download, Eye, Calendar, BookOpen, Loader2 } from "lucide-react";
+import { ArrowLeft, FileText, Download, Eye, Calendar, BookOpen, Loader2, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
 import PageHeader from "@/components/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "@/hooks/use-toast";
 
 interface CourseData {
   id: string;
