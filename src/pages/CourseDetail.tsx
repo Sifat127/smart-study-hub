@@ -26,6 +26,8 @@ interface ChapterData {
 
 export default function CourseDetail() {
   const { deptId, semId, courseId } = useParams();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [course, setCourse] = useState<CourseData | null>(null);
   const [chapters, setChapters] = useState<ChapterData[]>([]);
   const [loading, setLoading] = useState(true);
