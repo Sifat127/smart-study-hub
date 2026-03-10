@@ -36,11 +36,11 @@ const stats = [
 ];
 
 const floatingElements = [
-  { x: "8%", y: "18%", rotate: -12, size: "h-16 w-12", delay: 0, className: "animate-float" },
-  { x: "85%", y: "22%", rotate: 15, size: "h-20 w-14", delay: 0, className: "animate-float-delayed" },
-  { x: "12%", y: "65%", rotate: 8, size: "h-14 w-10", delay: 0, className: "animate-float-slow" },
-  { x: "88%", y: "70%", rotate: -20, size: "h-12 w-9", delay: 0, className: "animate-float" },
-  { x: "50%", y: "85%", rotate: 5, size: "h-10 w-8", delay: 0, className: "animate-float-delayed" },
+  { x: "8%", y: "18%", rotate: -12, size: "h-10 w-7 md:h-16 md:w-12", delay: 0, className: "animate-float" },
+  { x: "85%", y: "22%", rotate: 15, size: "h-12 w-9 md:h-20 md:w-14", delay: 0, className: "animate-float-delayed" },
+  { x: "12%", y: "65%", rotate: 8, size: "h-9 w-7 md:h-14 md:w-10", delay: 0, className: "animate-float-slow" },
+  { x: "88%", y: "70%", rotate: -20, size: "h-8 w-6 md:h-12 md:w-9", delay: 0, className: "animate-float" },
+  { x: "50%", y: "85%", rotate: 5, size: "h-8 w-6 md:h-10 md:w-8", delay: 0, className: "animate-float-delayed" },
 ];
 
 const fadeUp = {
