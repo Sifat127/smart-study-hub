@@ -29,7 +29,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         {floatingElements.map((el, i) => (
           <div
             key={i}
-            className={`absolute ${el.className} hidden md:flex opacity-[0.35]`}
+            className={`absolute ${el.className} flex opacity-[0.25] md:opacity-[0.35]`}
             style={{
               left: el.x,
               top: el.y,
