@@ -36,11 +36,11 @@ const stats = [
 ];
 
 const floatingElements = [
-  { x: "8%", y: "18%", rotate: -12, size: "h-16 w-12", delay: 0, className: "animate-float" },
-  { x: "85%", y: "22%", rotate: 15, size: "h-20 w-14", delay: 0, className: "animate-float-delayed" },
-  { x: "12%", y: "65%", rotate: 8, size: "h-14 w-10", delay: 0, className: "animate-float-slow" },
-  { x: "88%", y: "70%", rotate: -20, size: "h-12 w-9", delay: 0, className: "animate-float" },
-  { x: "50%", y: "85%", rotate: 5, size: "h-10 w-8", delay: 0, className: "animate-float-delayed" },
+  { x: "8%", y: "18%", rotate: -12, size: "h-10 w-7 md:h-16 md:w-12", delay: 0, className: "animate-float" },
+  { x: "85%", y: "22%", rotate: 15, size: "h-12 w-9 md:h-20 md:w-14", delay: 0, className: "animate-float-delayed" },
+  { x: "12%", y: "65%", rotate: 8, size: "h-9 w-7 md:h-14 md:w-10", delay: 0, className: "animate-float-slow" },
+  { x: "88%", y: "70%", rotate: -20, size: "h-8 w-6 md:h-12 md:w-9", delay: 0, className: "animate-float" },
+  { x: "50%", y: "85%", rotate: 5, size: "h-8 w-6 md:h-10 md:w-8", delay: 0, className: "animate-float-delayed" },
 ];
 
 const fadeUp = {
@@ -95,19 +95,19 @@ export default function Index() {
   return (
     <Layout>
       {/* Hero */}
-      <section className="bg-gradient-hero text-primary-foreground relative overflow-hidden min-h-[70vh] md:min-h-[90vh] flex items-center">
+      <section className="bg-gradient-hero text-primary-foreground relative overflow-hidden min-h-[85vh] md:min-h-[90vh] flex items-center">
         {/* Background glows */}
         <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-[500px] h-[500px] bg-accent/8 rounded-full blur-[180px]" />
-          <div className="absolute bottom-20 right-10 w-[600px] h-[600px] bg-primary/8 rounded-full blur-[200px]" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-accent/5 rounded-full blur-[150px]" />
+          <div className="absolute top-20 left-10 w-[200px] h-[200px] md:w-[500px] md:h-[500px] bg-accent/8 rounded-full blur-[100px] md:blur-[180px]" />
+          <div className="absolute bottom-20 right-10 w-[250px] h-[250px] md:w-[600px] md:h-[600px] bg-primary/8 rounded-full blur-[120px] md:blur-[200px]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180px] h-[180px] md:w-[400px] md:h-[400px] bg-accent/5 rounded-full blur-[80px] md:blur-[150px]" />
         </div>
 
         {/* Floating PDF elements */}
         {floatingElements.map((el, i) => (
           <div
             key={i}
-            className={`absolute ${el.className} hidden md:flex`}
+            className={`absolute ${el.className} flex opacity-[0.25] md:opacity-100`}
             style={{
               left: el.x,
               top: el.y,
@@ -121,7 +121,7 @@ export default function Index() {
           </div>
         ))}
 
-        <div className="container mx-auto px-4 py-12 md:py-28 relative z-10">
+        <div className="container mx-auto px-5 py-16 md:py-28 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -140,14 +140,14 @@ export default function Index() {
             </motion.div>
 
             {/* Heading */}
-            <h1 className="font-display text-2xl md:text-4xl lg:text-5xl font-extrabold leading-[1.15] mb-3 md:mb-5 tracking-tight">
+            <h1 className="font-display text-[1.65rem] sm:text-3xl md:text-4xl lg:text-5xl font-extrabold leading-[1.2] mb-4 md:mb-5 tracking-tight">
               Your Complete Academic{" "}
-              <span className="block text-accent mt-1">
+              <span className="block text-accent mt-1.5">
                 <TypewriterText phrases={["Knowledge Hub", "Resource Center", "Study Platform"]} />
               </span>
             </h1>
 
-            <p className="text-sm md:text-lg text-primary-foreground/60 mb-6 md:mb-9 max-w-xl mx-auto leading-relaxed">
+            <p className="text-[13px] sm:text-sm md:text-lg text-primary-foreground/60 mb-7 md:mb-9 max-w-xl mx-auto leading-relaxed px-2">
               DIU StudyBank helps students easily explore, view, and download course materials — organized by department, semester, course, and chapter.
             </p>
 

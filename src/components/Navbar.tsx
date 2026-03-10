@@ -28,10 +28,10 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 glass border-b border-border/50">
-      <div className="container mx-auto flex items-center justify-between h-16 px-4">
+      <div className="container mx-auto flex items-center justify-between h-14 md:h-16 px-4">
         <Link to="/" className="flex items-center gap-2 group">
-          <img src={logo} alt="DIU StudyBank" className="h-11 w-11 rounded-lg object-contain" />
-          <span className="font-display font-bold text-xl text-foreground">
+          <img src={logo} alt="DIU StudyBank" className="h-9 w-9 md:h-11 md:w-11 rounded-lg object-contain" />
+          <span className="font-display font-bold text-lg md:text-xl text-foreground">
             DIU <span className="text-gradient">StudyBank</span>
           </span>
         </Link>
