@@ -19,11 +19,11 @@ export default function Layout({ children }: { children: ReactNode }) {
       {/* Global background effects with mood color shifting */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" style={{ animation: "mood-hue 20s ease-in-out infinite" }}>
         {/* Animated ambient glows */}
-        <div className="absolute top-[10%] left-[5%] w-[500px] h-[500px] bg-primary/[0.05] rounded-full blur-[200px]" style={{ animation: "mood-shift-1 12s ease-in-out infinite" }} />
-        <div className="absolute top-[40%] right-[5%] w-[600px] h-[600px] bg-accent/[0.05] rounded-full blur-[220px]" style={{ animation: "mood-shift-2 15s ease-in-out infinite" }} />
-        <div className="absolute bottom-[10%] left-[30%] w-[450px] h-[450px] bg-primary/[0.04] rounded-full blur-[180px]" style={{ animation: "mood-shift-3 18s ease-in-out infinite" }} />
-        <div className="absolute top-[60%] right-[30%] w-[400px] h-[400px] bg-accent/[0.03] rounded-full blur-[200px]" style={{ animation: "mood-shift-1 22s ease-in-out infinite reverse" }} />
-        <div className="absolute top-[20%] left-[50%] w-[350px] h-[350px] bg-primary/[0.03] rounded-full blur-[160px]" style={{ animation: "mood-shift-2 25s ease-in-out infinite reverse" }} />
+        <div className="absolute top-[10%] left-[5%] w-[250px] h-[250px] md:w-[500px] md:h-[500px] bg-primary/[0.05] rounded-full blur-[120px] md:blur-[200px]" style={{ animation: "mood-shift-1 12s ease-in-out infinite" }} />
+        <div className="absolute top-[40%] right-[5%] w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-accent/[0.05] rounded-full blur-[140px] md:blur-[220px]" style={{ animation: "mood-shift-2 15s ease-in-out infinite" }} />
+        <div className="absolute bottom-[10%] left-[30%] w-[200px] h-[200px] md:w-[450px] md:h-[450px] bg-primary/[0.04] rounded-full blur-[100px] md:blur-[180px]" style={{ animation: "mood-shift-3 18s ease-in-out infinite" }} />
+        <div className="absolute top-[60%] right-[30%] w-[200px] h-[200px] md:w-[400px] md:h-[400px] bg-accent/[0.03] rounded-full blur-[120px] md:blur-[200px]" style={{ animation: "mood-shift-1 22s ease-in-out infinite reverse" }} />
+        <div className="absolute top-[20%] left-[50%] w-[180px] h-[180px] md:w-[350px] md:h-[350px] bg-primary/[0.03] rounded-full blur-[100px] md:blur-[160px]" style={{ animation: "mood-shift-2 25s ease-in-out infinite reverse" }} />
 
         {/* Floating PDF elements */}
         {floatingElements.map((el, i) => (
