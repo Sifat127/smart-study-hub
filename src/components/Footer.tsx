@@ -86,11 +86,13 @@ export default function Footer() {
           </div>
 
           {/* Developer credit */}
-          <div className="flex items-center gap-3">
-            <span className="text-xs">
-              Built by <span className="font-medium text-foreground/80">A.S. Sifat Ahmed</span>
-            </span>
-            <div className="flex items-center gap-1.5">
+          <div className="flex flex-col sm:flex-row items-center gap-3">
+            <div className="flex items-center gap-2 bg-primary/5 border border-primary/10 rounded-full px-4 py-1.5">
+              <span className="text-xs text-muted-foreground">Developed by</span>
+              <span className="text-sm font-semibold text-primary">A.S. Sifat Ahmed</span>
+            </div>
+            <span className="text-[10px] text-muted-foreground/70">Student of CSE, Daffodil International University</span>
+            <div className="flex items-center gap-1">
               {socialLinks.map((link) => (
                 <motion.a
                   key={link.label}
@@ -98,11 +100,11 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={link.label}
-                  whileHover={{ scale: 1.15 }}
+                  whileHover={{ scale: 1.2 }}
                   whileTap={{ scale: 0.9 }}
-                  className="p-1.5 rounded-md text-muted-foreground hover:text-primary transition-colors duration-200"
+                  className="p-2 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
                 >
-                  <link.icon className="h-3.5 w-3.5" />
+                  <link.icon className="h-4 w-4" />
                 </motion.a>
               ))}
             </div>

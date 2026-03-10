@@ -46,6 +46,7 @@ export const departments: Department[] = [
   { id: "nfe", name: "NFE", fullName: "Nutrition & Food Engineering", description: "Food science, nutrition, food processing and quality control.", icon: "Apple", totalCourses: 11 },
   { id: "ph", name: "PH", fullName: "Public Health", description: "Epidemiology, health policy, community health and disease prevention.", icon: "HeartPulse", totalCourses: 11 },
   { id: "mct", name: "MCT", fullName: "Multimedia & Creative Technology", description: "Animation, game design, film production and digital content creation.", icon: "Clapperboard", totalCourses: 13 },
+  { id: "civil", name: "CIVIL", fullName: "Civil Engineering", description: "Structural analysis, construction management, transportation and environmental engineering.", icon: "Building2", totalCourses: 18 },
 ];
 
 const sampleChapters: Chapter[] = [
