@@ -5,12 +5,12 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 
 const floatingElements = [
-  { x: "5%", y: "15%", rotate: -10, size: "h-14 w-10", className: "animate-float" },
-  { x: "90%", y: "10%", rotate: 12, size: "h-16 w-12", className: "animate-float-delayed" },
-  { x: "8%", y: "50%", rotate: 8, size: "h-12 w-9", className: "animate-float-slow" },
-  { x: "92%", y: "45%", rotate: -15, size: "h-10 w-8", className: "animate-float" },
-  { x: "15%", y: "80%", rotate: 5, size: "h-12 w-9", className: "animate-float-delayed" },
-  { x: "85%", y: "75%", rotate: -8, size: "h-14 w-10", className: "animate-float-slow" },
+  { x: "5%", y: "15%", rotate: -10, size: "h-10 w-7 md:h-14 md:w-10", className: "animate-float" },
+  { x: "90%", y: "10%", rotate: 12, size: "h-12 w-9 md:h-16 md:w-12", className: "animate-float-delayed" },
+  { x: "8%", y: "50%", rotate: 8, size: "h-9 w-7 md:h-12 md:w-9", className: "animate-float-slow" },
+  { x: "92%", y: "45%", rotate: -15, size: "h-8 w-6 md:h-10 md:w-8", className: "animate-float" },
+  { x: "15%", y: "80%", rotate: 5, size: "h-9 w-7 md:h-12 md:w-9", className: "animate-float-delayed" },
+  { x: "85%", y: "75%", rotate: -8, size: "h-10 w-7 md:h-14 md:w-10", className: "animate-float-slow" },
 ];
 
 export default function Layout({ children }: { children: ReactNode }) {
