@@ -107,7 +107,7 @@ export default function Index() {
         {floatingElements.map((el, i) => (
           <div
             key={i}
-            className={`absolute ${el.className} hidden md:flex`}
+            className={`absolute ${el.className} flex opacity-[0.25] md:opacity-100`}
             style={{
               left: el.x,
               top: el.y,
