@@ -147,7 +147,7 @@ export default function Index() {
               </span>
             </h1>
 
-            <p className="text-sm md:text-lg text-primary-foreground/60 mb-6 md:mb-9 max-w-xl mx-auto leading-relaxed">
+            <p className="text-[13px] sm:text-sm md:text-lg text-primary-foreground/60 mb-7 md:mb-9 max-w-xl mx-auto leading-relaxed px-2">
               DIU StudyBank helps students easily explore, view, and download course materials — organized by department, semester, course, and chapter.
             </p>
 
