@@ -98,9 +98,9 @@ export default function Index() {
       <section className="bg-gradient-hero text-primary-foreground relative overflow-hidden min-h-[70vh] md:min-h-[90vh] flex items-center">
         {/* Background glows */}
         <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-[500px] h-[500px] bg-accent/8 rounded-full blur-[180px]" />
-          <div className="absolute bottom-20 right-10 w-[600px] h-[600px] bg-primary/8 rounded-full blur-[200px]" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-accent/5 rounded-full blur-[150px]" />
+          <div className="absolute top-20 left-10 w-[200px] h-[200px] md:w-[500px] md:h-[500px] bg-accent/8 rounded-full blur-[100px] md:blur-[180px]" />
+          <div className="absolute bottom-20 right-10 w-[250px] h-[250px] md:w-[600px] md:h-[600px] bg-primary/8 rounded-full blur-[120px] md:blur-[200px]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180px] h-[180px] md:w-[400px] md:h-[400px] bg-accent/5 rounded-full blur-[80px] md:blur-[150px]" />
         </div>
 
         {/* Floating PDF elements */}
