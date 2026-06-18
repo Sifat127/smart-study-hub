@@ -21,6 +21,7 @@ interface CourseOption {
 export default function AdminUploadPdf() {
   const { toast } = useToast();
   const [file, setFile] = useState<File | null>(null);
+  const [notesFile, setNotesFile] = useState<File | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [courseId, setCourseId] = useState("");
