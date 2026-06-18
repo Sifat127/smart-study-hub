@@ -173,6 +173,34 @@ export default function AdminUploadPdf() {
             </div>
           </div>
 
+          <div>
+            <Label htmlFor="notes">Notes File (optional)</Label>
+            <div className="mt-1 border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-accent/50 transition-colors">
+              <input
+                id="notes"
+                type="file"
+                accept=".pdf,.doc,.docx,.txt,.ppt,.pptx"
+                className="hidden"
+                onChange={(e) => setNotesFile(e.target.files?.[0] || null)}
+              />
+              <label htmlFor="notes" className="cursor-pointer">
+                {notesFile ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <FileText className="h-5 w-5 text-accent-foreground" />
+                    <span className="font-medium text-sm">{notesFile.name}</span>
+                  </div>
+                ) : (
+                  <>
+                    <Upload className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
+                    <p className="text-xs text-muted-foreground">Click to attach notes (PDF/DOC/PPT/TXT)</p>
+                  </>
+                )}
+              </label>
+            </div>
+          </div>
+
+
+
           <Button onClick={handleUpload} disabled={uploading} className="w-full">
             {uploading ? <><Loader2 className="h-4 w-4 animate-spin mr-1" /> Uploading...</> : "Upload PDF"}
           </Button>
