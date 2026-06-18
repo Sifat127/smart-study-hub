@@ -1,0 +1,1 @@
+ALTER TABLE public.chapters ADD COLUMN IF NOT EXISTS notes_path text, ADD COLUMN IF NOT EXISTS notes_name text;

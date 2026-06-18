@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, FileText, Download, Eye, Calendar, BookOpen, Loader2 } from "lucide-react";
+import { ArrowLeft, FileText, Download, Eye, Calendar, BookOpen, Loader2, StickyNote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
 import PageHeader from "@/components/PageHeader";
@@ -19,6 +19,8 @@ interface ChapterData {
   description: string | null;
   pdf_name: string | null;
   pdf_path: string | null;
+  notes_name: string | null;
+  notes_path: string | null;
   uploaded_at: string;
 }
 
@@ -32,7 +34,7 @@ export default function CourseDetail() {
     async function fetchData() {
       const [courseRes, chaptersRes] = await Promise.all([
         supabase.from("courses").select("id, code, name").eq("id", courseId!).maybeSingle(),
-        supabase.from("chapters").select("id, title, description, pdf_name, pdf_path, uploaded_at").eq("course_id", courseId!).order("uploaded_at"),
+        supabase.from("chapters").select("id, title, description, pdf_name, pdf_path, notes_name, notes_path, uploaded_at").eq("course_id", courseId!).order("uploaded_at"),
       ]);
       if (courseRes.data) setCourse(courseRes.data);
       if (chaptersRes.data) setChapters(chaptersRes.data);
@@ -140,16 +142,25 @@ export default function CourseDetail() {
                         <Calendar className="h-3.5 w-3.5" />
                         <span>{new Date(chapter.uploaded_at).toLocaleDateString()}</span>
                       </div>
-                      {chapter.pdf_path && (
-                        <div className="flex gap-2">
-                          <Button size="sm" className="bg-gradient-primary text-primary-foreground hover:opacity-90 rounded-xl" onClick={() => handleDownload(chapter.pdf_path!, chapter.pdf_name || "file.pdf")}>
-                            <Download className="h-4 w-4 mr-1.5" /> Download
-                          </Button>
-                          <Button size="sm" variant="outline" className="rounded-xl" asChild>
-                            <a href={getPublicUrl(chapter.pdf_path)} target="_blank" rel="noopener noreferrer">
-                              <Eye className="h-4 w-4 mr-1.5" /> View
-                            </a>
-                          </Button>
+                      {(chapter.pdf_path || chapter.notes_path) && (
+                        <div className="flex flex-wrap gap-2">
+                          {chapter.pdf_path && (
+                            <>
+                              <Button size="sm" className="bg-gradient-primary text-primary-foreground hover:opacity-90 rounded-xl" onClick={() => handleDownload(chapter.pdf_path!, chapter.pdf_name || "file.pdf")}>
+                                <Download className="h-4 w-4 mr-1.5" /> Download PDF
+                              </Button>
+                              <Button size="sm" variant="outline" className="rounded-xl" asChild>
+                                <a href={getPublicUrl(chapter.pdf_path)} target="_blank" rel="noopener noreferrer">
+                                  <Eye className="h-4 w-4 mr-1.5" /> View
+                                </a>
+                              </Button>
+                            </>
+                          )}
+                          {chapter.notes_path && (
+                            <Button size="sm" variant="secondary" className="rounded-xl" onClick={() => handleDownload(chapter.notes_path!, chapter.notes_name || "notes")}>
+                              <StickyNote className="h-4 w-4 mr-1.5" /> Download Notes
+                            </Button>
+                          )}
                         </div>
                       )}
                     </div>

@@ -21,6 +21,7 @@ interface CourseOption {
 export default function AdminUploadPdf() {
   const { toast } = useToast();
   const [file, setFile] = useState<File | null>(null);
+  const [notesFile, setNotesFile] = useState<File | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [courseId, setCourseId] = useState("");
@@ -55,18 +56,31 @@ export default function AdminUploadPdf() {
       const { error: uploadError } = await supabase.storage.from("pdfs").upload(fileName, file);
       if (uploadError) throw uploadError;
 
+      let notesPath: string | null = null;
+      let notesName: string | null = null;
+      if (notesFile) {
+        const nFileName = `notes_${Date.now()}_${notesFile.name}`;
+        const { error: notesUploadError } = await supabase.storage.from("pdfs").upload(nFileName, notesFile);
+        if (notesUploadError) throw notesUploadError;
+        notesPath = nFileName;
+        notesName = notesFile.name;
+      }
+
       const { error: insertError } = await supabase.from("chapters").insert({
         course_id: courseId,
         title,
         description: description || null,
         pdf_name: file.name,
         pdf_path: fileName,
+        notes_name: notesName,
+        notes_path: notesPath,
       });
       if (insertError) throw insertError;
 
       setUploaded(true);
       toast({ title: "PDF সফলভাবে আপলোড হয়েছে!" });
       setFile(null);
+      setNotesFile(null);
       setTitle("");
       setDescription("");
       setCourseId("");
@@ -158,6 +172,34 @@ export default function AdminUploadPdf() {
               </label>
             </div>
           </div>
+
+          <div>
+            <Label htmlFor="notes">Notes File (optional)</Label>
+            <div className="mt-1 border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-accent/50 transition-colors">
+              <input
+                id="notes"
+                type="file"
+                accept=".pdf,.doc,.docx,.txt,.ppt,.pptx"
+                className="hidden"
+                onChange={(e) => setNotesFile(e.target.files?.[0] || null)}
+              />
+              <label htmlFor="notes" className="cursor-pointer">
+                {notesFile ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <FileText className="h-5 w-5 text-accent-foreground" />
+                    <span className="font-medium text-sm">{notesFile.name}</span>
+                  </div>
+                ) : (
+                  <>
+                    <Upload className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
+                    <p className="text-xs text-muted-foreground">Click to attach notes (PDF/DOC/PPT/TXT)</p>
+                  </>
+                )}
+              </label>
+            </div>
+          </div>
+
+
 
           <Button onClick={handleUpload} disabled={uploading} className="w-full">
             {uploading ? <><Loader2 className="h-4 w-4 animate-spin mr-1" /> Uploading...</> : "Upload PDF"}
