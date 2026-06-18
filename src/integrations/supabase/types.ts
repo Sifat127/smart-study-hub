@@ -19,6 +19,8 @@ export type Database = {
           course_id: string
           description: string | null
           id: string
+          notes_name: string | null
+          notes_path: string | null
           pdf_name: string | null
           pdf_path: string | null
           title: string
@@ -28,6 +30,8 @@ export type Database = {
           course_id: string
           description?: string | null
           id?: string
+          notes_name?: string | null
+          notes_path?: string | null
           pdf_name?: string | null
           pdf_path?: string | null
           title: string
@@ -37,6 +41,8 @@ export type Database = {
           course_id?: string
           description?: string | null
           id?: string
+          notes_name?: string | null
+          notes_path?: string | null
           pdf_name?: string | null
           pdf_path?: string | null
           title?: string
