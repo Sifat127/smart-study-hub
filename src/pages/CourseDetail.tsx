@@ -34,7 +34,7 @@ export default function CourseDetail() {
     async function fetchData() {
       const [courseRes, chaptersRes] = await Promise.all([
         supabase.from("courses").select("id, code, name").eq("id", courseId!).maybeSingle(),
-        supabase.from("chapters").select("id, title, description, pdf_name, pdf_path, uploaded_at").eq("course_id", courseId!).order("uploaded_at"),
+        supabase.from("chapters").select("id, title, description, pdf_name, pdf_path, notes_name, notes_path, uploaded_at").eq("course_id", courseId!).order("uploaded_at"),
       ]);
       if (courseRes.data) setCourse(courseRes.data);
       if (chaptersRes.data) setChapters(chaptersRes.data);
