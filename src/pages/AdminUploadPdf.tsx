@@ -56,18 +56,31 @@ export default function AdminUploadPdf() {
       const { error: uploadError } = await supabase.storage.from("pdfs").upload(fileName, file);
       if (uploadError) throw uploadError;
 
+      let notesPath: string | null = null;
+      let notesName: string | null = null;
+      if (notesFile) {
+        const nFileName = `notes_${Date.now()}_${notesFile.name}`;
+        const { error: notesUploadError } = await supabase.storage.from("pdfs").upload(nFileName, notesFile);
+        if (notesUploadError) throw notesUploadError;
+        notesPath = nFileName;
+        notesName = notesFile.name;
+      }
+
       const { error: insertError } = await supabase.from("chapters").insert({
         course_id: courseId,
         title,
         description: description || null,
         pdf_name: file.name,
         pdf_path: fileName,
+        notes_name: notesName,
+        notes_path: notesPath,
       });
       if (insertError) throw insertError;
 
       setUploaded(true);
       toast({ title: "PDF সফলভাবে আপলোড হয়েছে!" });
       setFile(null);
+      setNotesFile(null);
       setTitle("");
       setDescription("");
       setCourseId("");
