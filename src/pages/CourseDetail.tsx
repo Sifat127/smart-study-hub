@@ -19,6 +19,8 @@ interface ChapterData {
   description: string | null;
   pdf_name: string | null;
   pdf_path: string | null;
+  notes_name: string | null;
+  notes_path: string | null;
   uploaded_at: string;
 }
 
