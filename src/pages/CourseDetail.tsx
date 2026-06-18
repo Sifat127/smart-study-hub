@@ -142,16 +142,25 @@ export default function CourseDetail() {
                         <Calendar className="h-3.5 w-3.5" />
                         <span>{new Date(chapter.uploaded_at).toLocaleDateString()}</span>
                       </div>
-                      {chapter.pdf_path && (
-                        <div className="flex gap-2">
-                          <Button size="sm" className="bg-gradient-primary text-primary-foreground hover:opacity-90 rounded-xl" onClick={() => handleDownload(chapter.pdf_path!, chapter.pdf_name || "file.pdf")}>
-                            <Download className="h-4 w-4 mr-1.5" /> Download
-                          </Button>
-                          <Button size="sm" variant="outline" className="rounded-xl" asChild>
-                            <a href={getPublicUrl(chapter.pdf_path)} target="_blank" rel="noopener noreferrer">
-                              <Eye className="h-4 w-4 mr-1.5" /> View
-                            </a>
-                          </Button>
+                      {(chapter.pdf_path || chapter.notes_path) && (
+                        <div className="flex flex-wrap gap-2">
+                          {chapter.pdf_path && (
+                            <>
+                              <Button size="sm" className="bg-gradient-primary text-primary-foreground hover:opacity-90 rounded-xl" onClick={() => handleDownload(chapter.pdf_path!, chapter.pdf_name || "file.pdf")}>
+                                <Download className="h-4 w-4 mr-1.5" /> Download PDF
+                              </Button>
+                              <Button size="sm" variant="outline" className="rounded-xl" asChild>
+                                <a href={getPublicUrl(chapter.pdf_path)} target="_blank" rel="noopener noreferrer">
+                                  <Eye className="h-4 w-4 mr-1.5" /> View
+                                </a>
+                              </Button>
+                            </>
+                          )}
+                          {chapter.notes_path && (
+                            <Button size="sm" variant="secondary" className="rounded-xl" onClick={() => handleDownload(chapter.notes_path!, chapter.notes_name || "notes")}>
+                              <StickyNote className="h-4 w-4 mr-1.5" /> Download Notes
+                            </Button>
+                          )}
                         </div>
                       )}
                     </div>
