@@ -237,8 +237,10 @@ export default function CourseDetail() {
             });
             if (filtered.length === 0 && tabUploads.length === 0) {
               return (
-                <div className="glass rounded-2xl p-12 text-center max-w-2xl mx-auto">
-                  <BookOpen className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
+                <div className="glass-strong rounded-3xl p-12 text-center max-w-2xl mx-auto card-lift">
+                  <div className="inline-flex h-14 w-14 rounded-2xl bg-accent/10 border border-accent/20 items-center justify-center mb-5 shadow-glow">
+                    <BookOpen className="h-7 w-7 text-accent" />
+                  </div>
                   <h3 className="font-display font-semibold text-lg mb-2">{activeTab === "materials" ? "No materials yet" : "No notes yet"}</h3>
                   <p className="text-sm text-muted-foreground">{activeTab === "materials" ? "Academic materials for this course haven't been uploaded yet." : "Notes for this course haven't been uploaded yet."}</p>
                 </div>
@@ -249,19 +251,19 @@ export default function CourseDetail() {
               {filtered.map((chapter, i) => (
                 <motion.div
                   key={chapter.id}
-                  initial={{ opacity: 0, x: -16 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.08 }}
-                  className="glass rounded-2xl p-6 hover:border-accent/30 hover:card-shadow-hover transition-all duration-300"
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.06 }}
+                  className="glass rounded-3xl p-5 md:p-6 card-lift"
                 >
                   <div className="flex items-start gap-4">
-                    <div className={`h-11 w-11 rounded-xl flex items-center justify-center flex-shrink-0 ${activeTab === "materials" ? "bg-destructive/10" : "bg-accent/20"}`}>
+                    <div className={`h-12 w-12 rounded-2xl flex items-center justify-center flex-shrink-0 border ${activeTab === "materials" ? "bg-destructive/10 border-destructive/20 text-destructive" : "bg-accent/15 border-accent/25 text-accent"}`}>
                       {activeTab === "materials"
-                        ? <FileText className="h-5 w-5 text-destructive" />
-                        : <StickyNote className="h-5 w-5 text-accent-foreground" />}
+                        ? <FileText className="h-5 w-5" />
+                        : <StickyNote className="h-5 w-5" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-display font-semibold text-lg mb-1">{chapter.title}</h3>
+                      <h3 className="font-display font-semibold text-lg mb-1 tracking-tight">{chapter.title}</h3>
                       {chapter.description && (
                         <p className="text-sm text-muted-foreground mb-3">{chapter.description}</p>
                       )}
@@ -285,10 +287,10 @@ export default function CourseDetail() {
                       </div>
                       {activeTab === "materials" && (chapter.pdf_url || chapter.pdf_path) && (
                         <div className="flex flex-wrap gap-2">
-                          <Button size="sm" className="bg-gradient-primary text-primary-foreground hover:opacity-90 rounded-xl" onClick={() => handleDownload(chapter.pdf_url, chapter.pdf_path, chapter.pdf_name || "file.pdf")}>
+                          <Button size="sm" className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold" onClick={() => handleDownload(chapter.pdf_url, chapter.pdf_path, chapter.pdf_name || "file.pdf")}>
                             <Download className="h-4 w-4 mr-1.5" /> Download PDF
                           </Button>
-                          <Button size="sm" variant="outline" className="rounded-xl" asChild>
+                          <Button size="sm" variant="outline" className="rounded-xl border-white/10 glass" asChild>
                             <a href={resolveUrl(chapter.pdf_url, chapter.pdf_path)!} target="_blank" rel="noopener noreferrer">
                               <Eye className="h-4 w-4 mr-1.5" /> View
                             </a>
@@ -297,10 +299,10 @@ export default function CourseDetail() {
                       )}
                       {activeTab === "notes" && (chapter.notes_url || chapter.notes_path) && (
                         <div className="flex flex-wrap gap-2">
-                          <Button size="sm" variant="secondary" className="rounded-xl" onClick={() => handleDownload(chapter.notes_url, chapter.notes_path, chapter.notes_name || "notes")}>
+                          <Button size="sm" className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold" onClick={() => handleDownload(chapter.notes_url, chapter.notes_path, chapter.notes_name || "notes")}>
                             <Download className="h-4 w-4 mr-1.5" /> Download Notes
                           </Button>
-                          <Button size="sm" variant="outline" className="rounded-xl" asChild>
+                          <Button size="sm" variant="outline" className="rounded-xl border-white/10 glass" asChild>
                             <a href={resolveUrl(chapter.notes_url, chapter.notes_path)!} target="_blank" rel="noopener noreferrer">
                               <Eye className="h-4 w-4 mr-1.5" /> View Notes
                             </a>
@@ -313,11 +315,11 @@ export default function CourseDetail() {
               ))}
 
               {tabUploads.length > 0 && (
-                <div className="pt-2">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="h-px flex-1 bg-border" />
-                    <span className="text-xs uppercase tracking-wider text-muted-foreground">Student Uploads</span>
-                    <div className="h-px flex-1 bg-border" />
+                <div className="pt-6">
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+                    <span className="text-[10px] uppercase tracking-[0.2em] font-semibold text-muted-foreground glass px-3 py-1 rounded-full">Student Uploads</span>
+                    <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/15 to-transparent" />
                   </div>
                   <div className="flex flex-col sm:flex-row gap-2 mb-4">
                     <div className="relative flex-1">
