@@ -22,6 +22,7 @@ import AdminUploadPdf from "./pages/AdminUploadPdf";
 import AdminManageCourses from "./pages/AdminManageCourses";
 import AdminManageUsers from "./pages/AdminManageUsers";
 import AdminSettings from "./pages/AdminSettings";
+import UploadNotes from "./pages/UploadNotes";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
