@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, FileText, Download, Eye, Calendar, BookOpen, Loader2, StickyNote } from "lucide-react";
@@ -32,7 +32,13 @@ export default function CourseDetail() {
   const [course, setCourse] = useState<CourseData | null>(null);
   const [chapters, setChapters] = useState<ChapterData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"materials" | "notes">("materials");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab: "materials" | "notes" = searchParams.get("tab") === "notes" ? "notes" : "materials";
+  const setActiveTab = (tab: "materials" | "notes") => {
+    const next = new URLSearchParams(searchParams);
+    next.set("tab", tab);
+    setSearchParams(next, { replace: false });
+  };
 
   useEffect(() => {
     async function fetchData() {
