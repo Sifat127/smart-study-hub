@@ -1,7 +1,7 @@
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, FileText, Download, Eye, Calendar, BookOpen, Loader2, StickyNote } from "lucide-react";
+import { ArrowLeft, FileText, Download, Eye, Calendar, BookOpen, Loader2, StickyNote, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
 import PageHeader from "@/components/PageHeader";
@@ -145,11 +145,27 @@ export default function CourseDetail() {
         badge={course.code}
         badgeIcon={<BookOpen className="h-4 w-4" />}
       >
-        <div className="mt-4">
+        <div className="mt-4 flex items-center gap-2 flex-wrap">
           <Button variant="ghost" size="sm" className="text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/10" asChild>
             <Link to={`/departments/${deptId}/semester/${semId}`}>
               <ArrowLeft className="h-4 w-4 mr-1" /> Back to Semester {semId}
             </Link>
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/10"
+            onClick={async () => {
+              const url = window.location.href;
+              try {
+                await navigator.clipboard.writeText(url);
+                toast.success("Link copied", { description: "Share this URL to open the same tab." });
+              } catch {
+                toast.error("Couldn't copy link", { description: url });
+              }
+            }}
+          >
+            <Share2 className="h-4 w-4 mr-1" /> Share
           </Button>
         </div>
       </PageHeader>
