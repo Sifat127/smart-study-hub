@@ -27,11 +27,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchUserData = async (userId: string) => {
     const [profileRes, roleRes] = await Promise.all([
-      supabase.from("profiles").select("full_name, avatar_url").eq("user_id", userId).single(),
-      supabase.from("user_roles").select("role").eq("user_id", userId).single(),
+      supabase.from("profiles").select("full_name, avatar_url").eq("user_id", userId).maybeSingle(),
+      supabase.from("user_roles").select("role").eq("user_id", userId),
     ]);
     if (profileRes.data) setProfile(profileRes.data);
-    if (roleRes.data) setRole(roleRes.data.role as AppRole);
+    if (roleRes.data && roleRes.data.length > 0) {
+      const roles = roleRes.data.map((r) => r.role as AppRole);
+      setRole(roles.includes("admin") ? "admin" : "user");
+    }
   };
 
   useEffect(() => {
