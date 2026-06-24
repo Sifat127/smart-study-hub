@@ -214,14 +214,15 @@ export default function CourseDetail() {
             const tabUploads = studentUploads.filter(u => u.kind === (activeTab === "materials" ? "material" : "notes"));
             const batches = Array.from(new Set(tabUploads.map(u => u.batch))).sort();
             const q = query.trim().toLowerCase();
+            const uq = uploaderQuery.trim().toLowerCase();
             const uploads = tabUploads.filter(u => {
               if (batchFilter !== "all" && u.batch !== batchFilter) return false;
-              if (!q) return true;
-              return (
+              if (uq && !(u.student_name || "").toLowerCase().includes(uq)) return false;
+              if (q && !(
                 u.title.toLowerCase().includes(q) ||
-                u.batch.toLowerCase().includes(q) ||
-                (u.student_name || "").toLowerCase().includes(q)
-              );
+                u.batch.toLowerCase().includes(q)
+              )) return false;
+              return true;
             });
             if (filtered.length === 0 && tabUploads.length === 0) {
               return (
