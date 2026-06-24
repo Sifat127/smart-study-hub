@@ -32,6 +32,7 @@ export default function CourseDetail() {
   const [course, setCourse] = useState<CourseData | null>(null);
   const [chapters, setChapters] = useState<ChapterData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"materials" | "notes">("materials");
 
   useEffect(() => {
     async function fetchData() {
