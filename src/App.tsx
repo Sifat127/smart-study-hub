@@ -52,6 +52,7 @@ const App = () => (
               <Route path="/admin/manage-courses" element={<ProtectedRoute requireAdmin><AdminManageCourses /></ProtectedRoute>} />
               <Route path="/admin/manage-users" element={<ProtectedRoute requireAdmin><AdminManageUsers /></ProtectedRoute>} />
               <Route path="/admin/settings" element={<ProtectedRoute requireAdmin><AdminSettings /></ProtectedRoute>} />
+              <Route path="/upload-notes" element={<ProtectedRoute><UploadNotes /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>
