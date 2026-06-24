@@ -21,8 +21,10 @@ export type Database = {
           id: string
           notes_name: string | null
           notes_path: string | null
+          notes_url: string | null
           pdf_name: string | null
           pdf_path: string | null
+          pdf_url: string | null
           title: string
           uploaded_at: string
         }
@@ -32,8 +34,10 @@ export type Database = {
           id?: string
           notes_name?: string | null
           notes_path?: string | null
+          notes_url?: string | null
           pdf_name?: string | null
           pdf_path?: string | null
+          pdf_url?: string | null
           title: string
           uploaded_at?: string
         }
@@ -43,8 +47,10 @@ export type Database = {
           id?: string
           notes_name?: string | null
           notes_path?: string | null
+          notes_url?: string | null
           pdf_name?: string | null
           pdf_path?: string | null
+          pdf_url?: string | null
           title?: string
           uploaded_at?: string
         }
