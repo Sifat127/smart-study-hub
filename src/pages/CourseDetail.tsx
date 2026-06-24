@@ -391,6 +391,7 @@ export default function CourseDetail() {
                       </motion.div>
                     ))}
                   </div>
+                  )}
                 </div>
               )}
             </div>
