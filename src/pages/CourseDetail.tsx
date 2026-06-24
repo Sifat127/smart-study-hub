@@ -27,10 +27,23 @@ interface ChapterData {
   uploaded_at: string;
 }
 
+interface StudentUpload {
+  id: string;
+  kind: "material" | "notes";
+  batch: string;
+  student_name: string | null;
+  title: string;
+  description: string | null;
+  file_name: string;
+  file_url: string;
+  created_at: string;
+}
+
 export default function CourseDetail() {
   const { deptId, semId, courseId } = useParams();
   const [course, setCourse] = useState<CourseData | null>(null);
   const [chapters, setChapters] = useState<ChapterData[]>([]);
+  const [studentUploads, setStudentUploads] = useState<StudentUpload[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab: "materials" | "notes" = searchParams.get("tab") === "notes" ? "notes" : "materials";
@@ -42,16 +55,19 @@ export default function CourseDetail() {
 
   useEffect(() => {
     async function fetchData() {
-      const [courseRes, chaptersRes] = await Promise.all([
+      const [courseRes, chaptersRes, uploadsRes] = await Promise.all([
         supabase.from("courses").select("id, code, name").eq("id", courseId!).maybeSingle(),
         supabase.from("chapters").select("id, title, description, pdf_name, pdf_path, pdf_url, notes_name, notes_path, notes_url, uploaded_at").eq("course_id", courseId!).order("uploaded_at"),
+        supabase.from("student_uploads").select("id, kind, batch, student_name, title, description, file_name, file_url, created_at").eq("course_id", courseId!).order("created_at", { ascending: false }),
       ]);
       if (courseRes.data) setCourse(courseRes.data);
       if (chaptersRes.data) setChapters(chaptersRes.data);
+      if (uploadsRes.data) setStudentUploads(uploadsRes.data as StudentUpload[]);
       setLoading(false);
     }
     if (courseId) fetchData();
   }, [courseId]);
+
 
   const getPublicUrl = (path: string) => {
     const { data } = supabase.storage.from("pdfs").getPublicUrl(path);
