@@ -44,6 +44,17 @@ export default function AdminUploadPdf() {
     fetchCourses();
   }, []);
 
+  const uploadToCatbox = async (f: File): Promise<string> => {
+    const form = new FormData();
+    form.append("file", f);
+    const { data, error } = await supabase.functions.invoke("upload-to-catbox", {
+      body: form,
+    });
+    if (error) throw new Error(error.message);
+    if (!data?.url) throw new Error(data?.error || "Upload failed");
+    return data.url as string;
+  };
+
   const handleUpload = async () => {
     if (!file || !title || !courseId) {
       toast({ title: "Title, Course এবং PDF ফাইল দিন", variant: "destructive" });
@@ -52,17 +63,12 @@ export default function AdminUploadPdf() {
 
     setUploading(true);
     try {
-      const fileName = `${Date.now()}_${file.name}`;
-      const { error: uploadError } = await supabase.storage.from("pdfs").upload(fileName, file);
-      if (uploadError) throw uploadError;
+      const pdfUrl = await uploadToCatbox(file);
 
-      let notesPath: string | null = null;
+      let notesUrl: string | null = null;
       let notesName: string | null = null;
       if (notesFile) {
-        const nFileName = `notes_${Date.now()}_${notesFile.name}`;
-        const { error: notesUploadError } = await supabase.storage.from("pdfs").upload(nFileName, notesFile);
-        if (notesUploadError) throw notesUploadError;
-        notesPath = nFileName;
+        notesUrl = await uploadToCatbox(notesFile);
         notesName = notesFile.name;
       }
 
@@ -71,9 +77,9 @@ export default function AdminUploadPdf() {
         title,
         description: description || null,
         pdf_name: file.name,
-        pdf_path: fileName,
+        pdf_url: pdfUrl,
         notes_name: notesName,
-        notes_path: notesPath,
+        notes_url: notesUrl,
       });
       if (insertError) throw insertError;
 

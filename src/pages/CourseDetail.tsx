@@ -19,8 +19,10 @@ interface ChapterData {
   description: string | null;
   pdf_name: string | null;
   pdf_path: string | null;
+  pdf_url: string | null;
   notes_name: string | null;
   notes_path: string | null;
+  notes_url: string | null;
   uploaded_at: string;
 }
 
@@ -34,7 +36,7 @@ export default function CourseDetail() {
     async function fetchData() {
       const [courseRes, chaptersRes] = await Promise.all([
         supabase.from("courses").select("id, code, name").eq("id", courseId!).maybeSingle(),
-        supabase.from("chapters").select("id, title, description, pdf_name, pdf_path, notes_name, notes_path, uploaded_at").eq("course_id", courseId!).order("uploaded_at"),
+        supabase.from("chapters").select("id, title, description, pdf_name, pdf_path, pdf_url, notes_name, notes_path, notes_url, uploaded_at").eq("course_id", courseId!).order("uploaded_at"),
       ]);
       if (courseRes.data) setCourse(courseRes.data);
       if (chaptersRes.data) setChapters(chaptersRes.data);
@@ -48,19 +50,35 @@ export default function CourseDetail() {
     return data.publicUrl;
   };
 
-  const handleDownload = async (path: string, fileName: string) => {
-    const { data } = await supabase.storage.from("pdfs").createSignedUrl(path, 3600);
-    if (data?.signedUrl) {
-      const response = await fetch(data.signedUrl);
+  // Prefer external URL (Catbox); fall back to Supabase storage path
+  const resolveUrl = (url: string | null, path: string | null): string | null => {
+    if (url) return url;
+    if (path) return getPublicUrl(path);
+    return null;
+  };
+
+  const handleDownload = async (url: string | null, path: string | null, fileName: string) => {
+    let downloadUrl: string | null = null;
+    if (url) {
+      downloadUrl = url;
+    } else if (path) {
+      const { data } = await supabase.storage.from("pdfs").createSignedUrl(path, 3600);
+      downloadUrl = data?.signedUrl || null;
+    }
+    if (!downloadUrl) return;
+    try {
+      const response = await fetch(downloadUrl);
       const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
+      const objectUrl = URL.createObjectURL(blob);
       const a = document.createElement("a");
-      a.href = url;
+      a.href = objectUrl;
       a.download = fileName;
       document.body.appendChild(a);
       a.click();
-      URL.revokeObjectURL(url);
+      URL.revokeObjectURL(objectUrl);
       document.body.removeChild(a);
+    } catch {
+      window.open(downloadUrl, "_blank", "noopener,noreferrer");
     }
   };
 
@@ -142,15 +160,15 @@ export default function CourseDetail() {
                         <Calendar className="h-3.5 w-3.5" />
                         <span>{new Date(chapter.uploaded_at).toLocaleDateString()}</span>
                       </div>
-                      {(chapter.pdf_path || chapter.notes_path) && (
+                      {(chapter.pdf_url || chapter.pdf_path || chapter.notes_url || chapter.notes_path) && (
                         <div className="flex flex-wrap gap-2">
-                          {chapter.pdf_path && (
+                          {(chapter.pdf_url || chapter.pdf_path) && (
                             <>
-                              <Button size="sm" className="bg-gradient-primary text-primary-foreground hover:opacity-90 rounded-xl" onClick={() => handleDownload(chapter.pdf_path!, chapter.pdf_name || "file.pdf")}>
+                              <Button size="sm" className="bg-gradient-primary text-primary-foreground hover:opacity-90 rounded-xl" onClick={() => handleDownload(chapter.pdf_url, chapter.pdf_path, chapter.pdf_name || "file.pdf")}>
                                 <Download className="h-4 w-4 mr-1.5" /> Download PDF
                               </Button>
                               <Button size="sm" variant="outline" className="rounded-xl" asChild>
-                                <a href={getPublicUrl(chapter.pdf_path)} target="_blank" rel="noopener noreferrer">
+                                <a href={resolveUrl(chapter.pdf_url, chapter.pdf_path)!} target="_blank" rel="noopener noreferrer">
                                   <Eye className="h-4 w-4 mr-1.5" /> View
                                 </a>
                               </Button>
@@ -159,7 +177,7 @@ export default function CourseDetail() {
                         </div>
                       )}
 
-                      {chapter.notes_path && (
+                      {(chapter.notes_url || chapter.notes_path) && (
                         <div className="mt-4 rounded-xl border border-accent/30 bg-accent/5 p-4">
                           <div className="flex items-start gap-3">
                             <div className="h-9 w-9 rounded-lg bg-accent/20 flex items-center justify-center flex-shrink-0">
@@ -169,11 +187,11 @@ export default function CourseDetail() {
                               <h4 className="font-display font-semibold text-sm mb-1">Chapter Notes</h4>
                               <p className="text-xs text-muted-foreground mb-3 truncate">{chapter.notes_name}</p>
                               <div className="flex flex-wrap gap-2">
-                                <Button size="sm" variant="secondary" className="rounded-xl" onClick={() => handleDownload(chapter.notes_path!, chapter.notes_name || "notes")}>
+                                <Button size="sm" variant="secondary" className="rounded-xl" onClick={() => handleDownload(chapter.notes_url, chapter.notes_path, chapter.notes_name || "notes")}>
                                   <Download className="h-4 w-4 mr-1.5" /> Download Notes
                                 </Button>
                                 <Button size="sm" variant="outline" className="rounded-xl" asChild>
-                                  <a href={getPublicUrl(chapter.notes_path)} target="_blank" rel="noopener noreferrer">
+                                  <a href={resolveUrl(chapter.notes_url, chapter.notes_path)!} target="_blank" rel="noopener noreferrer">
                                     <Eye className="h-4 w-4 mr-1.5" /> View Notes
                                   </a>
                                 </Button>
