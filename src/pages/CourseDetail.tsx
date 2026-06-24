@@ -166,16 +166,16 @@ export default function CourseDetail() {
         badge={course.code}
         badgeIcon={<BookOpen className="h-4 w-4" />}
       >
-        <div className="mt-4 flex items-center gap-2 flex-wrap">
-          <Button variant="ghost" size="sm" className="text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/10" asChild>
+        <div className="mt-5 flex items-center justify-center gap-2 flex-wrap">
+          <Button variant="ghost" size="sm" className="text-white/70 hover:text-white hover:bg-white/10 rounded-xl border border-white/10" asChild>
             <Link to={`/departments/${deptId}/semester/${semId}`}>
-              <ArrowLeft className="h-4 w-4 mr-1" /> Back to Semester {semId}
+              <ArrowLeft className="h-4 w-4 mr-1.5" /> Back to Semester {semId}
             </Link>
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            className="text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/10"
+            className="text-white/70 hover:text-white hover:bg-white/10 rounded-xl border border-white/10"
             onClick={async () => {
               const url = window.location.href;
               try {
@@ -186,27 +186,38 @@ export default function CourseDetail() {
               }
             }}
           >
-            <Share2 className="h-4 w-4 mr-1" /> Share
+            <Share2 className="h-4 w-4 mr-1.5" /> Share
           </Button>
         </div>
       </PageHeader>
 
-      <section className="py-16">
+      <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto mb-8 flex justify-center">
-            <div className="inline-flex glass rounded-xl p-1 gap-1">
-              <button
-                onClick={() => setActiveTab("materials")}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${activeTab === "materials" ? "bg-gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
-              >
-                <FileText className="h-4 w-4" /> Academic Materials
-              </button>
-              <button
-                onClick={() => setActiveTab("notes")}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${activeTab === "notes" ? "bg-gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
-              >
-                <StickyNote className="h-4 w-4" /> Notes
-              </button>
+            <div className="relative inline-flex glass-strong rounded-2xl p-1.5 gap-1 shadow-elevated">
+              {(["materials", "notes"] as const).map((tab) => {
+                const isActive = activeTab === tab;
+                const Icon = tab === "materials" ? FileText : StickyNote;
+                const label = tab === "materials" ? "Academic Materials" : "Notes";
+                return (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`relative px-4 md:px-5 py-2 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2 ${
+                      isActive ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {isActive && (
+                      <motion.span
+                        layoutId="tab-pill"
+                        className="absolute inset-0 bg-gradient-primary rounded-xl shadow-glow"
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                    <span className="relative z-10 flex items-center gap-2"><Icon className="h-4 w-4" /> {label}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
           {(() => {
