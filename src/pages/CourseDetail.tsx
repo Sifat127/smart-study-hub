@@ -321,19 +321,19 @@ export default function CourseDetail() {
                     <span className="text-[10px] uppercase tracking-[0.2em] font-semibold text-muted-foreground glass px-3 py-1 rounded-full">Student Uploads</span>
                     <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/15 to-transparent" />
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-2 mb-4">
+                  <div className="glass rounded-2xl p-3 mb-5 flex flex-col sm:flex-row gap-2 sticky top-16 z-30">
                     <div className="relative flex-1">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         placeholder="Search by title or batch..."
-                        className="pl-9 pr-9"
+                        className="pl-9 pr-9 bg-background/40 border-white/10 rounded-xl"
                       />
                       {query && (
                         <button
                           onClick={() => setQuery("")}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-muted text-muted-foreground"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-lg hover:bg-white/10 text-muted-foreground"
                           aria-label="Clear search"
                         >
                           <X className="h-3.5 w-3.5" />
@@ -346,12 +346,12 @@ export default function CourseDetail() {
                         value={uploaderQuery}
                         onChange={(e) => setUploaderQuery(e.target.value)}
                         placeholder="Filter by uploader name..."
-                        className="pl-9 pr-9"
+                        className="pl-9 pr-9 bg-background/40 border-white/10 rounded-xl"
                       />
                       {uploaderQuery && (
                         <button
                           onClick={() => setUploaderQuery("")}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-muted text-muted-foreground"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-lg hover:bg-white/10 text-muted-foreground"
                           aria-label="Clear uploader filter"
                         >
                           <X className="h-3.5 w-3.5" />
@@ -359,8 +359,8 @@ export default function CourseDetail() {
                       )}
                     </div>
                     <Select value={batchFilter} onValueChange={setBatchFilter}>
-                      <SelectTrigger className="sm:w-48"><SelectValue placeholder="All batches" /></SelectTrigger>
-                      <SelectContent>
+                      <SelectTrigger className="sm:w-48 bg-background/40 border-white/10 rounded-xl"><SelectValue placeholder="All batches" /></SelectTrigger>
+                      <SelectContent className="glass-strong rounded-xl border-white/10">
                         <SelectItem value="all">All batches</SelectItem>
                         {batches.map(b => (
                           <SelectItem key={b} value={b}>Batch {b}</SelectItem>
@@ -377,21 +377,21 @@ export default function CourseDetail() {
                     {uploads.map((u, i) => (
                       <motion.div
                         key={u.id}
-                        initial={{ opacity: 0, x: -16 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.06 }}
-                        className="glass rounded-2xl p-6 hover:border-accent/30 hover:card-shadow-hover transition-all duration-300"
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.05 }}
+                        className="glass rounded-3xl p-5 md:p-6 card-lift"
                       >
                         <div className="flex items-start gap-4">
-                          <div className={`h-11 w-11 rounded-xl flex items-center justify-center flex-shrink-0 ${activeTab === "materials" ? "bg-destructive/10" : "bg-accent/20"}`}>
+                          <div className={`h-12 w-12 rounded-2xl flex items-center justify-center flex-shrink-0 border ${activeTab === "materials" ? "bg-destructive/10 border-destructive/20 text-destructive" : "bg-accent/15 border-accent/25 text-accent"}`}>
                             {activeTab === "materials"
-                              ? <FileText className="h-5 w-5 text-destructive" />
-                              : <StickyNote className="h-5 w-5 text-accent-foreground" />}
+                              ? <FileText className="h-5 w-5" />
+                              : <StickyNote className="h-5 w-5" />}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-start gap-2 flex-wrap mb-1">
-                              <h3 className="font-display font-semibold text-lg">{u.title}</h3>
-                              <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">Batch {u.batch}</span>
+                            <div className="flex items-start gap-2 flex-wrap mb-1.5">
+                              <h3 className="font-display font-semibold text-lg tracking-tight">{u.title}</h3>
+                              <span className="text-[10px] uppercase tracking-[0.15em] px-2.5 py-0.5 rounded-full bg-accent/15 text-accent border border-accent/25 font-semibold shadow-[0_0_12px_hsl(var(--accent)/0.25)]">Batch {u.batch}</span>
                             </div>
                             {u.description && (
                               <p className="text-sm text-muted-foreground mb-3">{u.description}</p>
@@ -405,15 +405,15 @@ export default function CourseDetail() {
                               {u.student_name && (
                                 <>
                                   <span>•</span>
-                                  <span>by {u.student_name}</span>
+                                  <span>by <span className="text-foreground/80 font-medium">{u.student_name}</span></span>
                                 </>
                               )}
                             </div>
                             <div className="flex flex-wrap gap-2">
-                              <Button size="sm" className="bg-gradient-primary text-primary-foreground hover:opacity-90 rounded-xl" onClick={() => handleDownload(u.file_url, null, u.file_name)}>
+                              <Button size="sm" className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold" onClick={() => handleDownload(u.file_url, null, u.file_name)}>
                                 <Download className="h-4 w-4 mr-1.5" /> Download
                               </Button>
-                              <Button size="sm" variant="outline" className="rounded-xl" asChild>
+                              <Button size="sm" variant="outline" className="rounded-xl border-white/10 glass" asChild>
                                 <a href={u.file_url} target="_blank" rel="noopener noreferrer">
                                   <Eye className="h-4 w-4 mr-1.5" /> View
                                 </a>
