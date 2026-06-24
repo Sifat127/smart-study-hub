@@ -1,8 +1,10 @@
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, FileText, Download, Eye, Calendar, BookOpen, Loader2, StickyNote, Share2 } from "lucide-react";
+import { ArrowLeft, FileText, Download, Eye, Calendar, BookOpen, Loader2, StickyNote, Share2, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Layout from "@/components/Layout";
 import PageHeader from "@/components/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
@@ -45,6 +47,8 @@ export default function CourseDetail() {
   const [chapters, setChapters] = useState<ChapterData[]>([]);
   const [studentUploads, setStudentUploads] = useState<StudentUpload[]>([]);
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState("");
+  const [batchFilter, setBatchFilter] = useState<string>("all");
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab: "materials" | "notes" = searchParams.get("tab") === "notes" ? "notes" : "materials";
   const setActiveTab = (tab: "materials" | "notes") => {
@@ -206,8 +210,19 @@ export default function CourseDetail() {
           </div>
           {(() => {
             const filtered = chapters.filter(c => activeTab === "materials" ? (c.pdf_url || c.pdf_path) : (c.notes_url || c.notes_path));
-            const uploads = studentUploads.filter(u => u.kind === (activeTab === "materials" ? "material" : "notes"));
-            if (filtered.length === 0 && uploads.length === 0) {
+            const tabUploads = studentUploads.filter(u => u.kind === (activeTab === "materials" ? "material" : "notes"));
+            const batches = Array.from(new Set(tabUploads.map(u => u.batch))).sort();
+            const q = query.trim().toLowerCase();
+            const uploads = tabUploads.filter(u => {
+              if (batchFilter !== "all" && u.batch !== batchFilter) return false;
+              if (!q) return true;
+              return (
+                u.title.toLowerCase().includes(q) ||
+                u.batch.toLowerCase().includes(q) ||
+                (u.student_name || "").toLowerCase().includes(q)
+              );
+            });
+            if (filtered.length === 0 && tabUploads.length === 0) {
               return (
                 <div className="glass rounded-2xl p-12 text-center max-w-2xl mx-auto">
                   <BookOpen className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
@@ -284,13 +299,47 @@ export default function CourseDetail() {
                 </motion.div>
               ))}
 
-              {uploads.length > 0 && (
+              {tabUploads.length > 0 && (
                 <div className="pt-2">
                   <div className="flex items-center gap-2 mb-3">
                     <div className="h-px flex-1 bg-border" />
                     <span className="text-xs uppercase tracking-wider text-muted-foreground">Student Uploads</span>
                     <div className="h-px flex-1 bg-border" />
                   </div>
+                  <div className="flex flex-col sm:flex-row gap-2 mb-4">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        placeholder="Search by title, batch, or uploader..."
+                        className="pl-9 pr-9"
+                      />
+                      {query && (
+                        <button
+                          onClick={() => setQuery("")}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-muted text-muted-foreground"
+                          aria-label="Clear search"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </div>
+                    <Select value={batchFilter} onValueChange={setBatchFilter}>
+                      <SelectTrigger className="sm:w-48"><SelectValue placeholder="All batches" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All batches</SelectItem>
+                        {batches.map(b => (
+                          <SelectItem key={b} value={b}>Batch {b}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {uploads.length === 0 ? (
+                    <div className="glass rounded-2xl p-8 text-center text-sm text-muted-foreground">
+                      No student uploads match your search.
+                    </div>
+                  ) : (
                   <div className="space-y-4">
                     {uploads.map((u, i) => (
                       <motion.div
@@ -342,6 +391,7 @@ export default function CourseDetail() {
                       </motion.div>
                     ))}
                   </div>
+                  )}
                 </div>
               )}
             </div>
