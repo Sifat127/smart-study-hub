@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, FileText, Download, Eye, Calendar, BookOpen, Loader2, StickyNote } from "lucide-react";
