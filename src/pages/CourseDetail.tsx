@@ -299,13 +299,47 @@ export default function CourseDetail() {
                 </motion.div>
               ))}
 
-              {uploads.length > 0 && (
+              {tabUploads.length > 0 && (
                 <div className="pt-2">
                   <div className="flex items-center gap-2 mb-3">
                     <div className="h-px flex-1 bg-border" />
                     <span className="text-xs uppercase tracking-wider text-muted-foreground">Student Uploads</span>
                     <div className="h-px flex-1 bg-border" />
                   </div>
+                  <div className="flex flex-col sm:flex-row gap-2 mb-4">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        placeholder="Search by title, batch, or uploader..."
+                        className="pl-9 pr-9"
+                      />
+                      {query && (
+                        <button
+                          onClick={() => setQuery("")}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-muted text-muted-foreground"
+                          aria-label="Clear search"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </div>
+                    <Select value={batchFilter} onValueChange={setBatchFilter}>
+                      <SelectTrigger className="sm:w-48"><SelectValue placeholder="All batches" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All batches</SelectItem>
+                        {batches.map(b => (
+                          <SelectItem key={b} value={b}>Batch {b}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {uploads.length === 0 ? (
+                    <div className="glass rounded-2xl p-8 text-center text-sm text-muted-foreground">
+                      No student uploads match your search.
+                    </div>
+                  ) : (
                   <div className="space-y-4">
                     {uploads.map((u, i) => (
                       <motion.div
