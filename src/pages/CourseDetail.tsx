@@ -321,45 +321,63 @@ export default function CourseDetail() {
                     <span className="text-[10px] uppercase tracking-[0.2em] font-semibold text-muted-foreground glass px-3 py-1 rounded-full">Student Uploads</span>
                     <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/15 to-transparent" />
                   </div>
-                  <div className="glass rounded-2xl p-3 mb-5 flex flex-col sm:flex-row gap-2 sticky top-16 z-30">
+                  <form
+                    role="search"
+                    aria-label="Filter student uploads"
+                    onSubmit={(e) => e.preventDefault()}
+                    className="glass rounded-2xl p-3 mb-5 flex flex-col sm:flex-row gap-2 sticky top-16 z-30"
+                  >
                     <div className="relative flex-1">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <label htmlFor="uploads-title-search" className="sr-only">Search uploads by title or batch</label>
+                      <Search aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                       <Input
+                        id="uploads-title-search"
+                        type="search"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         placeholder="Search by title or batch..."
+                        aria-label="Search by title or batch"
                         className="pl-9 pr-9 bg-background/40 border-white/10 rounded-xl"
                       />
                       {query && (
                         <button
+                          type="button"
                           onClick={() => setQuery("")}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-lg hover:bg-white/10 text-muted-foreground"
-                          aria-label="Clear search"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-lg hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring text-muted-foreground"
+                          aria-label="Clear title search"
                         >
-                          <X className="h-3.5 w-3.5" />
+                          <X aria-hidden="true" className="h-3.5 w-3.5" />
                         </button>
                       )}
                     </div>
                     <div className="relative flex-1">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <label htmlFor="uploads-uploader-search" className="sr-only">Filter by uploader name</label>
+                      <Search aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                       <Input
+                        id="uploads-uploader-search"
+                        type="search"
                         value={uploaderQuery}
                         onChange={(e) => setUploaderQuery(e.target.value)}
                         placeholder="Filter by uploader name..."
+                        aria-label="Filter by uploader name"
                         className="pl-9 pr-9 bg-background/40 border-white/10 rounded-xl"
                       />
                       {uploaderQuery && (
                         <button
+                          type="button"
                           onClick={() => setUploaderQuery("")}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-lg hover:bg-white/10 text-muted-foreground"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-lg hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring text-muted-foreground"
                           aria-label="Clear uploader filter"
                         >
-                          <X className="h-3.5 w-3.5" />
+                          <X aria-hidden="true" className="h-3.5 w-3.5" />
                         </button>
                       )}
                     </div>
+                    <label htmlFor="uploads-batch-filter" className="sr-only">Filter by batch</label>
                     <Select value={batchFilter} onValueChange={setBatchFilter}>
-                      <SelectTrigger className="sm:w-48 bg-background/40 border-white/10 rounded-xl"><SelectValue placeholder="All batches" /></SelectTrigger>
+                      <SelectTrigger id="uploads-batch-filter" aria-label="Filter by batch" className="sm:w-48 bg-background/40 border-white/10 rounded-xl">
+                        <SelectValue placeholder="All batches" />
+                      </SelectTrigger>
                       <SelectContent className="glass-strong rounded-xl border-white/10">
                         <SelectItem value="all">All batches</SelectItem>
                         {batches.map(b => (
@@ -367,7 +385,22 @@ export default function CourseDetail() {
                         ))}
                       </SelectContent>
                     </Select>
-                  </div>
+                    {(query || uploaderQuery || batchFilter !== "all") && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => { setQuery(""); setUploaderQuery(""); setBatchFilter("all"); }}
+                        className="rounded-xl border-white/10 glass sm:w-auto"
+                        aria-label="Clear all filters"
+                      >
+                        <X aria-hidden="true" className="h-4 w-4 mr-1.5" /> Clear
+                      </Button>
+                    )}
+                  </form>
+                  <p className="sr-only" aria-live="polite" role="status">
+                    {uploads.length} {uploads.length === 1 ? "upload" : "uploads"} shown
+                  </p>
                   {uploads.length === 0 ? (
                     <div className="glass rounded-2xl p-8 text-center text-sm text-muted-foreground">
                       No student uploads match your search.
