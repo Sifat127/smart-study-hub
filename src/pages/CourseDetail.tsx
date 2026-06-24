@@ -58,27 +58,27 @@ export default function CourseDetail() {
   };
 
   const handleDownload = async (url: string | null, path: string | null, fileName: string) => {
-    let downloadUrl: string | null = null;
     if (url) {
-      downloadUrl = url;
-    } else if (path) {
-      const { data } = await supabase.storage.from("pdfs").createSignedUrl(path, 3600);
-      downloadUrl = data?.signedUrl || null;
-    }
-    if (!downloadUrl) return;
-    try {
-      const response = await fetch(downloadUrl);
-      const blob = await response.blob();
-      const objectUrl = URL.createObjectURL(blob);
+      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+      const proxy = `https://${projectId}.supabase.co/functions/v1/download-file?url=${encodeURIComponent(url)}&name=${encodeURIComponent(fileName)}`;
       const a = document.createElement("a");
-      a.href = objectUrl;
+      a.href = proxy;
       a.download = fileName;
       document.body.appendChild(a);
       a.click();
-      URL.revokeObjectURL(objectUrl);
       document.body.removeChild(a);
-    } catch {
-      window.open(downloadUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
+    if (path) {
+      const { data } = await supabase.storage.from("pdfs").createSignedUrl(path, 3600, { download: fileName });
+      if (data?.signedUrl) {
+        const a = document.createElement("a");
+        a.href = data.signedUrl;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
     }
   };
 
