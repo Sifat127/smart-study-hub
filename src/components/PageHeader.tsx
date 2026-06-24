@@ -11,12 +11,17 @@ interface PageHeaderProps {
 
 export default function PageHeader({ title, subtitle, badge, badgeIcon, children }: PageHeaderProps) {
   return (
-    <section className="bg-gradient-hero text-primary-foreground relative overflow-hidden">
+    <section className="relative overflow-hidden">
+      {/* Aurora gradient layer */}
+      <div className="absolute inset-0 bg-gradient-hero opacity-90" />
       <div className="absolute inset-0">
-        <div className="absolute top-10 left-10 w-[300px] h-[300px] bg-accent/6 rounded-full blur-[120px]" />
-        <div className="absolute bottom-10 right-10 w-[400px] h-[400px] bg-primary/6 rounded-full blur-[150px]" />
+        <div className="aurora-orb animate-aurora-1 top-[-20%] left-[10%] w-[40%] h-[60%] bg-[hsl(220_90%_55%/0.25)]" />
+        <div className="aurora-orb animate-aurora-2 bottom-[-30%] right-[5%] w-[45%] h-[70%] bg-[hsl(280_80%_55%/0.22)]" />
+        <div className="aurora-orb animate-aurora-3 top-[10%] right-[30%] w-[30%] h-[40%] bg-[hsl(170_85%_50%/0.18)]" />
       </div>
-      <div className="container mx-auto px-4 py-10 md:py-20 relative z-10">
+      <div className="noise" />
+
+      <div className="container mx-auto px-4 py-12 md:py-20 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -24,16 +29,21 @@ export default function PageHeader({ title, subtitle, badge, badgeIcon, children
           className="max-w-3xl mx-auto text-center"
         >
           {badge && (
-            <div className="inline-flex items-center gap-2 bg-accent/10 border border-accent/20 rounded-full px-4 py-1.5 mb-4 text-sm font-medium text-accent">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.15, duration: 0.4 }}
+              className="inline-flex items-center gap-2 glass-strong rounded-full px-4 py-1.5 mb-5 text-sm font-medium text-accent shadow-glow"
+            >
               {badgeIcon}
               {badge}
-            </div>
+            </motion.div>
           )}
-          <h1 className="font-display text-2xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-2 md:mb-3">
+          <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-extrabold leading-[1.1] mb-3 tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/50">
             {title}
           </h1>
           {subtitle && (
-            <p className="text-sm md:text-lg text-primary-foreground/60 max-w-2xl leading-relaxed">
+            <p className="text-sm md:text-lg text-white/55 max-w-2xl mx-auto leading-relaxed">
               {subtitle}
             </p>
           )}

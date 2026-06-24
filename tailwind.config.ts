@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Inter", "sans-serif"],
-        display: ["Plus Jakarta Sans", "sans-serif"],
+        sans: ["Raleway", "system-ui", "sans-serif"],
+        display: ["Raleway", "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
