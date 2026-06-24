@@ -32,7 +32,13 @@ export default function CourseDetail() {
   const [course, setCourse] = useState<CourseData | null>(null);
   const [chapters, setChapters] = useState<ChapterData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"materials" | "notes">("materials");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab: "materials" | "notes" = searchParams.get("tab") === "notes" ? "notes" : "materials";
+  const setActiveTab = (tab: "materials" | "notes") => {
+    const next = new URLSearchParams(searchParams);
+    next.set("tab", tab);
+    setSearchParams(next, { replace: false });
+  };
 
   useEffect(() => {
     async function fetchData() {
