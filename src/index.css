@@ -105,12 +105,34 @@
 
   html {
     color-scheme: light dark;
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
   }
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Raleway', system-ui, sans-serif;
     font-feature-settings: "ss01", "cv11";
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Sticky-nav-friendly anchors */
+  :target { scroll-margin-top: 5rem; }
+
+  /* Cleaner global focus-visible — keyboard only */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring) / 0.6);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  /* Touch-friendly hit areas on coarse pointers */
+  @media (pointer: coarse) {
+    button, a[role="button"], [data-touch-target] {
+      min-height: 44px;
+    }
   }
 
   h1, h2, h3, h4, h5, h6 {
