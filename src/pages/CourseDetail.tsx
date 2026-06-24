@@ -150,13 +150,34 @@ export default function CourseDetail() {
 
       <section className="py-16">
         <div className="container mx-auto px-4">
-          {chapters.length === 0 ? (
+          <div className="max-w-3xl mx-auto mb-8 flex justify-center">
+            <div className="inline-flex glass rounded-xl p-1 gap-1">
+              <button
+                onClick={() => setActiveTab("materials")}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${activeTab === "materials" ? "bg-gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                <FileText className="h-4 w-4" /> Academic Materials
+              </button>
+              <button
+                onClick={() => setActiveTab("notes")}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${activeTab === "notes" ? "bg-gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                <StickyNote className="h-4 w-4" /> Notes
+              </button>
+            </div>
+          </div>
+          {(() => {
+            const filtered = chapters.filter(c => activeTab === "materials" ? (c.pdf_url || c.pdf_path) : (c.notes_url || c.notes_path));
+            if (filtered.length === 0) {
+              return (
             <div className="glass rounded-2xl p-12 text-center max-w-2xl mx-auto">
               <BookOpen className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-              <h3 className="font-display font-semibold text-lg mb-2">No chapters yet</h3>
-              <p className="text-sm text-muted-foreground">Chapters and PDFs for this course haven't been uploaded yet.</p>
+              <h3 className="font-display font-semibold text-lg mb-2">{activeTab === "materials" ? "No materials yet" : "No notes yet"}</h3>
+              <p className="text-sm text-muted-foreground">{activeTab === "materials" ? "Academic materials for this course haven't been uploaded yet." : "Notes for this course haven't been uploaded yet."}</p>
             </div>
-          ) : (
+              );
+            }
+            return (
             <div className="space-y-4 max-w-3xl mx-auto">
               {chapters.map((chapter, i) => (
                 <motion.div
