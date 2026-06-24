@@ -282,6 +282,10 @@
   100% { background-position: -200% 0; }
 }
 
+@keyframes skeleton-shimmer {
+  100% { transform: translateX(100%); }
+}
+
 @keyframes glow-pulse {
   0%, 100% { box-shadow: 0 0 16px hsl(var(--accent) / 0.3); }
   50% { box-shadow: 0 0 32px hsl(var(--accent) / 0.55), 0 0 64px hsl(var(--accent) / 0.2); }
