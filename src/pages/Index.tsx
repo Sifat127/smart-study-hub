@@ -95,19 +95,21 @@ export default function Index() {
   return (
     <Layout>
       {/* Hero */}
-      <section className="bg-gradient-hero text-primary-foreground relative overflow-hidden min-h-[85vh] md:min-h-[90vh] flex items-center">
-        {/* Background glows */}
+      <section className="relative overflow-hidden min-h-[88vh] md:min-h-[92vh] flex items-center">
+        {/* Aurora layer */}
+        <div className="absolute inset-0 bg-gradient-hero opacity-95" />
         <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-[200px] h-[200px] md:w-[500px] md:h-[500px] bg-accent/8 rounded-full blur-[100px] md:blur-[180px]" />
-          <div className="absolute bottom-20 right-10 w-[250px] h-[250px] md:w-[600px] md:h-[600px] bg-primary/8 rounded-full blur-[120px] md:blur-[200px]" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180px] h-[180px] md:w-[400px] md:h-[400px] bg-accent/5 rounded-full blur-[80px] md:blur-[150px]" />
+          <div className="aurora-orb animate-aurora-1 top-[-15%] left-[-5%] w-[55%] h-[70%] bg-[hsl(220_95%_55%/0.28)]" />
+          <div className="aurora-orb animate-aurora-2 bottom-[-25%] right-[-10%] w-[60%] h-[80%] bg-[hsl(280_85%_60%/0.22)]" />
+          <div className="aurora-orb animate-aurora-3 top-[20%] right-[15%] w-[35%] h-[40%] bg-[hsl(170_90%_50%/0.16)]" />
         </div>
+        <div className="noise" />
 
         {/* Floating PDF elements */}
         {floatingElements.map((el, i) => (
           <div
             key={i}
-            className={`absolute ${el.className} flex opacity-[0.25] md:opacity-100`}
+            className={`absolute ${el.className} flex opacity-30 md:opacity-60`}
             style={{
               left: el.x,
               top: el.y,
@@ -115,13 +117,13 @@ export default function Index() {
               transform: `rotate(${el.rotate}deg)`,
             }}
           >
-            <div className={`${el.size} rounded-lg bg-primary-foreground/5 border border-primary-foreground/10 backdrop-blur-sm flex items-center justify-center`}>
-              <FileText className="h-1/2 w-1/2 text-primary-foreground/20" />
+            <div className={`${el.size} rounded-2xl glass shadow-elevated flex items-center justify-center`}>
+              <FileText className="h-1/2 w-1/2 text-white/30" />
             </div>
           </div>
         ))}
 
-        <div className="container mx-auto px-5 py-16 md:py-28 relative z-10">
+        <div className="container mx-auto px-5 py-16 md:py-24 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -133,32 +135,32 @@ export default function Index() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2, duration: 0.5 }}
-              className="inline-flex items-center gap-2 bg-accent/10 border border-accent/20 rounded-full px-4 py-1.5 mb-5 md:mb-8 text-xs md:text-sm font-medium text-accent"
+              className="inline-flex items-center gap-2 glass-strong rounded-full px-4 py-1.5 mb-6 md:mb-8 text-xs md:text-sm font-medium text-accent shadow-glow"
             >
-              <Sparkles className="h-4 w-4" />
+              <Sparkles className="h-3.5 w-3.5" />
               Over 10,000+ course materials shared
             </motion.div>
 
             {/* Heading */}
-            <h1 className="font-display text-[1.65rem] sm:text-3xl md:text-4xl lg:text-5xl font-extrabold leading-[1.2] mb-4 md:mb-5 tracking-tight">
+            <h1 className="font-display text-[1.85rem] sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.05] mb-4 md:mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/50">
               Your Complete Academic{" "}
-              <span className="block text-accent mt-1.5">
+              <span className="block mt-2 text-gradient">
                 <TypewriterText phrases={["Knowledge Hub", "Resource Center", "Study Platform"]} />
               </span>
             </h1>
 
-            <p className="text-[13px] sm:text-sm md:text-lg text-primary-foreground/60 mb-7 md:mb-9 max-w-xl mx-auto leading-relaxed px-2">
+            <p className="text-sm md:text-lg text-white/55 mb-8 md:mb-10 max-w-xl mx-auto leading-relaxed px-2">
               DIU StudyBank helps students easily explore, view, and download course materials — organized by department, semester, course, and chapter.
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-7 md:mb-10">
-              <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-6 md:px-8 h-10 md:h-12 text-sm md:text-base rounded-xl" asChild>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8 md:mb-10">
+              <Button size="lg" className="bg-gradient-primary text-primary-foreground hover:opacity-95 btn-glow font-semibold px-7 md:px-9 h-11 md:h-12 text-sm md:text-base rounded-2xl" asChild>
                 <Link to="/departments">
                   Explore Departments <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button size="lg" variant="ghost" className="text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10 font-semibold h-10 md:h-12 text-sm md:text-base rounded-xl" asChild>
+              <Button size="lg" variant="ghost" className="text-white/80 hover:text-white hover:bg-white/5 border border-white/10 font-semibold h-11 md:h-12 text-sm md:text-base rounded-2xl" asChild>
                 <Link to="/signup">Get Started Free</Link>
               </Button>
             </div>
@@ -168,33 +170,38 @@ export default function Index() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.5 }}
-              className="max-w-xl mx-auto relative mb-8 md:mb-12"
+              className="max-w-xl mx-auto relative mb-10 md:mb-14"
               ref={searchRef}
             >
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-primary-foreground/30 z-10" />
-              {searching && <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-primary-foreground/50 z-10" />}
-              <Input
-                placeholder="Search courses by name or code..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onFocus={() => results.length > 0 && setShowResults(true)}
-                className="pl-12 h-13 bg-primary-foreground/5 border-primary-foreground/10 text-primary-foreground placeholder:text-primary-foreground/30 rounded-2xl focus-visible:ring-accent/50 text-base"
-              />
+              <div className="relative group">
+                <div className="absolute -inset-px bg-gradient-primary rounded-2xl opacity-30 blur-sm group-focus-within:opacity-60 transition-opacity" />
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40 z-10" />
+                  {searching && <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-white/50 z-10" />}
+                  <Input
+                    placeholder="Search courses by name or code..."
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    onFocus={() => results.length > 0 && setShowResults(true)}
+                    className="pl-12 h-13 bg-background/40 backdrop-blur-xl border-white/10 text-white placeholder:text-white/40 rounded-2xl focus-visible:ring-accent/50 text-base"
+                  />
+                </div>
+              </div>
               <AnimatePresence>
                 {showResults && (
                   <motion.div
                     initial={{ opacity: 0, y: -8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
-                    className="absolute top-full mt-2 w-full bg-card border border-border rounded-xl shadow-lg overflow-hidden z-50"
+                    className="absolute top-full mt-2 w-full glass-strong rounded-2xl shadow-elevated overflow-hidden z-50"
                   >
                     {results.length > 0 ? results.map((r) => (
                       <button
                         key={r.id}
                         onClick={() => handleResultClick(r)}
-                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/50 transition-colors text-left"
+                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors text-left"
                       >
-                        <BookOpen className="h-4 w-4 text-primary flex-shrink-0" />
+                        <BookOpen className="h-4 w-4 text-accent flex-shrink-0" />
                         <div className="min-w-0">
                           <p className="text-sm font-medium text-foreground truncate">{r.code} — {r.name}</p>
                           <p className="text-xs text-muted-foreground">{r.department} • Semester {r.semester}</p>
@@ -208,28 +215,29 @@ export default function Index() {
               </AnimatePresence>
             </motion.div>
 
-            {/* Stats Bar */}
+            {/* Stats Bento */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.5 }}
-              className="flex flex-wrap items-center justify-center gap-5 md:gap-12"
+              className="grid grid-cols-3 gap-3 md:gap-4 max-w-2xl mx-auto"
             >
               {stats.map((stat, i) => (
-                <div key={i} className="flex items-center gap-2 md:gap-3">
-                  <div className="h-8 w-8 md:h-10 md:w-10 rounded-lg md:rounded-xl bg-accent/10 flex items-center justify-center">
-                    <stat.icon className="h-4 w-4 md:h-5 md:w-5 text-accent" />
+                <div key={i} className="glass rounded-2xl p-4 md:p-5 card-lift text-left">
+                  <div className="flex items-center gap-2 md:gap-3 mb-2">
+                    <div className="h-8 w-8 md:h-9 md:w-9 rounded-xl bg-accent/15 border border-accent/20 flex items-center justify-center">
+                      <stat.icon className="h-4 w-4 md:h-4.5 md:w-4.5 text-accent" />
+                    </div>
                   </div>
-                  <div className="text-left">
-                    <p className="text-lg md:text-2xl font-bold text-primary-foreground"><CountUpNumber end={stat.value} suffix="+" duration={2000} /></p>
-                    <p className="text-[10px] md:text-xs text-primary-foreground/50 font-medium">{stat.label}</p>
-                  </div>
+                  <p className="text-xl md:text-3xl font-bold text-foreground tracking-tight"><CountUpNumber end={stat.value} suffix="+" duration={2000} /></p>
+                  <p className="text-[10px] md:text-xs text-muted-foreground font-medium uppercase tracking-wider mt-1">{stat.label}</p>
                 </div>
               ))}
             </motion.div>
           </motion.div>
         </div>
       </section>
+
 
       {/* Departments */}
       <section className="py-12 md:py-20">
