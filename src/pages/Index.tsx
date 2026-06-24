@@ -364,28 +364,28 @@ export default function Index() {
       </section>
 
       {/* CTA */}
-      <section className="py-12 md:py-20 bg-gradient-hero text-primary-foreground relative overflow-hidden">
-        {/* Floating decorations */}
-        <div className="absolute left-[5%] top-[20%] animate-float hidden md:block" style={{ ["--float-rotate" as string]: "-8deg" }}>
-          <div className="h-14 w-10 rounded-lg bg-primary-foreground/5 border border-primary-foreground/10 flex items-center justify-center">
-            <FileText className="h-6 w-4 text-primary-foreground/15" />
+      <section className="py-12 md:py-20 relative overflow-hidden">
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="glass-strong rounded-[2rem] p-8 md:p-14 text-center relative overflow-hidden max-w-4xl mx-auto card-lift">
+            {/* Inner aurora */}
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="aurora-orb top-[-50%] left-[10%] w-[50%] h-[120%] bg-[hsl(220_90%_55%/0.18)]" />
+              <div className="aurora-orb bottom-[-60%] right-[5%] w-[55%] h-[140%] bg-[hsl(280_85%_55%/0.16)]" />
+            </div>
+            <div className="noise" />
+            <div className="relative z-10">
+              <div className="inline-flex h-12 w-12 md:h-14 md:w-14 rounded-2xl bg-accent/15 border border-accent/30 items-center justify-center mx-auto mb-5 shadow-glow">
+                <GraduationCap className="h-6 w-6 md:h-7 md:w-7 text-accent" />
+              </div>
+              <h2 className="font-display text-2xl md:text-4xl font-bold mb-3 md:mb-4 tracking-tight">Ready to Get Started?</h2>
+              <p className="text-muted-foreground mb-7 md:mb-8 max-w-lg mx-auto text-sm md:text-lg">
+                Join DIU StudyBank today and access all your course materials in one organized platform.
+              </p>
+              <Button size="lg" className="bg-gradient-primary text-primary-foreground btn-glow font-semibold px-7 md:px-9 h-11 md:h-12 text-sm md:text-base rounded-2xl" asChild>
+                <Link to="/signup">Create Free Account <ArrowRight className="ml-2 h-4 w-4" /></Link>
+              </Button>
+            </div>
           </div>
-        </div>
-        <div className="absolute right-[8%] bottom-[25%] animate-float-delayed hidden md:block" style={{ ["--float-rotate" as string]: "12deg" }}>
-          <div className="h-12 w-9 rounded-lg bg-primary-foreground/5 border border-primary-foreground/10 flex items-center justify-center">
-            <FileText className="h-5 w-4 text-primary-foreground/15" />
-          </div>
-        </div>
-
-        <div className="container mx-auto px-4 text-center relative z-10">
-          <GraduationCap className="h-10 w-10 md:h-12 md:w-12 text-accent mx-auto mb-4 md:mb-6" />
-          <h2 className="font-display text-2xl md:text-4xl font-bold mb-3 md:mb-4">Ready to Get Started?</h2>
-          <p className="text-primary-foreground/60 mb-6 md:mb-8 max-w-lg mx-auto text-sm md:text-lg">
-            Join DIU StudyBank today and access all your course materials in one organized platform.
-          </p>
-          <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-6 md:px-8 h-10 md:h-12 text-sm md:text-base rounded-xl" asChild>
-            <Link to="/signup">Create Free Account <ArrowRight className="ml-2 h-4 w-4" /></Link>
-          </Button>
         </div>
       </section>
     </Layout>
