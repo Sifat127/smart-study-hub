@@ -210,8 +210,19 @@ export default function CourseDetail() {
           </div>
           {(() => {
             const filtered = chapters.filter(c => activeTab === "materials" ? (c.pdf_url || c.pdf_path) : (c.notes_url || c.notes_path));
-            const uploads = studentUploads.filter(u => u.kind === (activeTab === "materials" ? "material" : "notes"));
-            if (filtered.length === 0 && uploads.length === 0) {
+            const tabUploads = studentUploads.filter(u => u.kind === (activeTab === "materials" ? "material" : "notes"));
+            const batches = Array.from(new Set(tabUploads.map(u => u.batch))).sort();
+            const q = query.trim().toLowerCase();
+            const uploads = tabUploads.filter(u => {
+              if (batchFilter !== "all" && u.batch !== batchFilter) return false;
+              if (!q) return true;
+              return (
+                u.title.toLowerCase().includes(q) ||
+                u.batch.toLowerCase().includes(q) ||
+                (u.student_name || "").toLowerCase().includes(q)
+              );
+            });
+            if (filtered.length === 0 && tabUploads.length === 0) {
               return (
                 <div className="glass rounded-2xl p-12 text-center max-w-2xl mx-auto">
                   <BookOpen className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
