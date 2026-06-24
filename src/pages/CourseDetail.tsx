@@ -48,6 +48,7 @@ export default function CourseDetail() {
   const [studentUploads, setStudentUploads] = useState<StudentUpload[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
+  const [uploaderQuery, setUploaderQuery] = useState("");
   const [batchFilter, setBatchFilter] = useState<string>("all");
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab: "materials" | "notes" = searchParams.get("tab") === "notes" ? "notes" : "materials";
@@ -213,14 +214,15 @@ export default function CourseDetail() {
             const tabUploads = studentUploads.filter(u => u.kind === (activeTab === "materials" ? "material" : "notes"));
             const batches = Array.from(new Set(tabUploads.map(u => u.batch))).sort();
             const q = query.trim().toLowerCase();
+            const uq = uploaderQuery.trim().toLowerCase();
             const uploads = tabUploads.filter(u => {
               if (batchFilter !== "all" && u.batch !== batchFilter) return false;
-              if (!q) return true;
-              return (
+              if (uq && !(u.student_name || "").toLowerCase().includes(uq)) return false;
+              if (q && !(
                 u.title.toLowerCase().includes(q) ||
-                u.batch.toLowerCase().includes(q) ||
-                (u.student_name || "").toLowerCase().includes(q)
-              );
+                u.batch.toLowerCase().includes(q)
+              )) return false;
+              return true;
             });
             if (filtered.length === 0 && tabUploads.length === 0) {
               return (
@@ -312,7 +314,7 @@ export default function CourseDetail() {
                       <Input
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Search by title, batch, or uploader..."
+                        placeholder="Search by title or batch..."
                         className="pl-9 pr-9"
                       />
                       {query && (
@@ -320,6 +322,24 @@ export default function CourseDetail() {
                           onClick={() => setQuery("")}
                           className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-muted text-muted-foreground"
                           aria-label="Clear search"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </div>
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        value={uploaderQuery}
+                        onChange={(e) => setUploaderQuery(e.target.value)}
+                        placeholder="Filter by uploader name..."
+                        className="pl-9 pr-9"
+                      />
+                      {uploaderQuery && (
+                        <button
+                          onClick={() => setUploaderQuery("")}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-muted text-muted-foreground"
+                          aria-label="Clear uploader filter"
                         >
                           <X className="h-3.5 w-3.5" />
                         </button>
