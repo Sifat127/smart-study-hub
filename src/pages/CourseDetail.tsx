@@ -32,6 +32,7 @@ export default function CourseDetail() {
   const [course, setCourse] = useState<CourseData | null>(null);
   const [chapters, setChapters] = useState<ChapterData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"materials" | "notes">("materials");
 
   useEffect(() => {
     async function fetchData() {
@@ -149,15 +150,36 @@ export default function CourseDetail() {
 
       <section className="py-16">
         <div className="container mx-auto px-4">
-          {chapters.length === 0 ? (
+          <div className="max-w-3xl mx-auto mb-8 flex justify-center">
+            <div className="inline-flex glass rounded-xl p-1 gap-1">
+              <button
+                onClick={() => setActiveTab("materials")}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${activeTab === "materials" ? "bg-gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                <FileText className="h-4 w-4" /> Academic Materials
+              </button>
+              <button
+                onClick={() => setActiveTab("notes")}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${activeTab === "notes" ? "bg-gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                <StickyNote className="h-4 w-4" /> Notes
+              </button>
+            </div>
+          </div>
+          {(() => {
+            const filtered = chapters.filter(c => activeTab === "materials" ? (c.pdf_url || c.pdf_path) : (c.notes_url || c.notes_path));
+            if (filtered.length === 0) {
+              return (
             <div className="glass rounded-2xl p-12 text-center max-w-2xl mx-auto">
               <BookOpen className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-              <h3 className="font-display font-semibold text-lg mb-2">No chapters yet</h3>
-              <p className="text-sm text-muted-foreground">Chapters and PDFs for this course haven't been uploaded yet.</p>
+              <h3 className="font-display font-semibold text-lg mb-2">{activeTab === "materials" ? "No materials yet" : "No notes yet"}</h3>
+              <p className="text-sm text-muted-foreground">{activeTab === "materials" ? "Academic materials for this course haven't been uploaded yet." : "Notes for this course haven't been uploaded yet."}</p>
             </div>
-          ) : (
+              );
+            }
+            return (
             <div className="space-y-4 max-w-3xl mx-auto">
-              {chapters.map((chapter, i) => (
+              {filtered.map((chapter, i) => (
                 <motion.div
                   key={chapter.id}
                   initial={{ opacity: 0, x: -16 }}
@@ -166,72 +188,65 @@ export default function CourseDetail() {
                   className="glass rounded-2xl p-6 hover:border-accent/30 hover:card-shadow-hover transition-all duration-300"
                 >
                   <div className="flex items-start gap-4">
-                    <div className="h-11 w-11 rounded-xl bg-destructive/10 flex items-center justify-center flex-shrink-0">
-                      <FileText className="h-5 w-5 text-destructive" />
+                    <div className={`h-11 w-11 rounded-xl flex items-center justify-center flex-shrink-0 ${activeTab === "materials" ? "bg-destructive/10" : "bg-accent/20"}`}>
+                      {activeTab === "materials"
+                        ? <FileText className="h-5 w-5 text-destructive" />
+                        : <StickyNote className="h-5 w-5 text-accent-foreground" />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-display font-semibold text-lg mb-1">{chapter.title}</h3>
                       {chapter.description && (
                         <p className="text-sm text-muted-foreground mb-3">{chapter.description}</p>
                       )}
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-4">
-                        {chapter.pdf_name && (
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-4 flex-wrap">
+                        {activeTab === "materials" && chapter.pdf_name && (
                           <>
                             <FileText className="h-3.5 w-3.5" />
-                            <span>{chapter.pdf_name}</span>
+                            <span className="truncate max-w-full">{chapter.pdf_name}</span>
+                            <span>•</span>
+                          </>
+                        )}
+                        {activeTab === "notes" && chapter.notes_name && (
+                          <>
+                            <StickyNote className="h-3.5 w-3.5" />
+                            <span className="truncate max-w-full">{chapter.notes_name}</span>
                             <span>•</span>
                           </>
                         )}
                         <Calendar className="h-3.5 w-3.5" />
                         <span>{new Date(chapter.uploaded_at).toLocaleDateString()}</span>
                       </div>
-                      {(chapter.pdf_url || chapter.pdf_path || chapter.notes_url || chapter.notes_path) && (
+                      {activeTab === "materials" && (chapter.pdf_url || chapter.pdf_path) && (
                         <div className="flex flex-wrap gap-2">
-                          {(chapter.pdf_url || chapter.pdf_path) && (
-                            <>
-                              <Button size="sm" className="bg-gradient-primary text-primary-foreground hover:opacity-90 rounded-xl" onClick={() => handleDownload(chapter.pdf_url, chapter.pdf_path, chapter.pdf_name || "file.pdf")}>
-                                <Download className="h-4 w-4 mr-1.5" /> Download PDF
-                              </Button>
-                              <Button size="sm" variant="outline" className="rounded-xl" asChild>
-                                <a href={resolveUrl(chapter.pdf_url, chapter.pdf_path)!} target="_blank" rel="noopener noreferrer">
-                                  <Eye className="h-4 w-4 mr-1.5" /> View
-                                </a>
-                              </Button>
-                            </>
-                          )}
+                          <Button size="sm" className="bg-gradient-primary text-primary-foreground hover:opacity-90 rounded-xl" onClick={() => handleDownload(chapter.pdf_url, chapter.pdf_path, chapter.pdf_name || "file.pdf")}>
+                            <Download className="h-4 w-4 mr-1.5" /> Download PDF
+                          </Button>
+                          <Button size="sm" variant="outline" className="rounded-xl" asChild>
+                            <a href={resolveUrl(chapter.pdf_url, chapter.pdf_path)!} target="_blank" rel="noopener noreferrer">
+                              <Eye className="h-4 w-4 mr-1.5" /> View
+                            </a>
+                          </Button>
                         </div>
                       )}
-
-                      {(chapter.notes_url || chapter.notes_path) && (
-                        <div className="mt-4 rounded-xl border border-accent/30 bg-accent/5 p-4">
-                          <div className="flex items-start gap-3">
-                            <div className="h-9 w-9 rounded-lg bg-accent/20 flex items-center justify-center flex-shrink-0">
-                              <StickyNote className="h-4 w-4 text-accent-foreground" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h4 className="font-display font-semibold text-sm mb-1">Chapter Notes</h4>
-                              <p className="text-xs text-muted-foreground mb-3 truncate">{chapter.notes_name}</p>
-                              <div className="flex flex-wrap gap-2">
-                                <Button size="sm" variant="secondary" className="rounded-xl" onClick={() => handleDownload(chapter.notes_url, chapter.notes_path, chapter.notes_name || "notes")}>
-                                  <Download className="h-4 w-4 mr-1.5" /> Download Notes
-                                </Button>
-                                <Button size="sm" variant="outline" className="rounded-xl" asChild>
-                                  <a href={resolveUrl(chapter.notes_url, chapter.notes_path)!} target="_blank" rel="noopener noreferrer">
-                                    <Eye className="h-4 w-4 mr-1.5" /> View Notes
-                                  </a>
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
+                      {activeTab === "notes" && (chapter.notes_url || chapter.notes_path) && (
+                        <div className="flex flex-wrap gap-2">
+                          <Button size="sm" variant="secondary" className="rounded-xl" onClick={() => handleDownload(chapter.notes_url, chapter.notes_path, chapter.notes_name || "notes")}>
+                            <Download className="h-4 w-4 mr-1.5" /> Download Notes
+                          </Button>
+                          <Button size="sm" variant="outline" className="rounded-xl" asChild>
+                            <a href={resolveUrl(chapter.notes_url, chapter.notes_path)!} target="_blank" rel="noopener noreferrer">
+                              <Eye className="h-4 w-4 mr-1.5" /> View Notes
+                            </a>
+                          </Button>
                         </div>
                       )}
-
                     </div>
                   </div>
                 </motion.div>
               ))}
             </div>
-          )}
+            );
+          })()}
         </div>
       </section>
     </Layout>
