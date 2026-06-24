@@ -47,6 +47,8 @@ export default function CourseDetail() {
   const [chapters, setChapters] = useState<ChapterData[]>([]);
   const [studentUploads, setStudentUploads] = useState<StudentUpload[]>([]);
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState("");
+  const [batchFilter, setBatchFilter] = useState<string>("all");
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab: "materials" | "notes" = searchParams.get("tab") === "notes" ? "notes" : "materials";
   const setActiveTab = (tab: "materials" | "notes") => {
