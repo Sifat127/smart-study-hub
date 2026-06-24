@@ -261,7 +261,7 @@ export default function Index() {
                 >
                   <Link
                     to={`/departments/${dept.id}`}
-                    className="group relative block bg-card rounded-2xl border border-border p-5 md:p-7 card-shadow transition-all duration-300 hover:border-accent/40 hover:shadow-[0_8px_30px_-8px_hsl(var(--accent)/0.25)] overflow-hidden"
+                    className="group relative block glass rounded-3xl p-5 md:p-7 card-lift overflow-hidden"
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-accent/0 via-accent/0 to-accent/0 group-hover:from-accent/5 group-hover:via-transparent group-hover:to-primary/5 transition-all duration-500 rounded-2xl" />
                     <div className="relative z-10">
@@ -285,7 +285,7 @@ export default function Index() {
             })}
           </div>
           <div className="text-center mt-8">
-            <Button variant="outline" size="lg" className="rounded-xl" asChild>
+            <Button variant="outline" size="lg" className="rounded-2xl border-white/10 glass" asChild>
               <Link to="/departments">View All Departments <ArrowRight className="ml-2 h-4 w-4" /></Link>
             </Button>
           </div>
@@ -293,7 +293,7 @@ export default function Index() {
       </section>
 
       {/* Features */}
-      <section className="py-12 md:py-20 bg-muted/50">
+      <section className="py-12 md:py-20 relative">
         <div className="container mx-auto px-4">
           <div className="text-center mb-8 md:mb-12">
             <h2 className="font-display text-2xl md:text-4xl font-bold mb-2 md:mb-3">Why Choose DIU StudyBank?</h2>
@@ -309,16 +309,16 @@ export default function Index() {
                 viewport={{ once: true }}
                 variants={fadeUp}
                 whileHover={{ y: -6, transition: { duration: 0.25, ease: "easeOut" } }}
-                className="group relative glass rounded-2xl p-4 md:p-6 hover:border-accent/40 hover:shadow-[0_8px_30px_-8px_hsl(var(--accent)/0.25)] transition-all duration-300 overflow-hidden"
+                className="group relative glass rounded-3xl p-5 md:p-6 card-lift overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-accent/0 via-accent/0 to-accent/0 group-hover:from-accent/5 group-hover:via-transparent group-hover:to-primary/5 transition-all duration-500 rounded-2xl" />
                 <div className="relative z-10">
                   <motion.div
-                    className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4"
+                    className="h-12 w-12 rounded-2xl bg-accent/15 border border-accent/20 flex items-center justify-center mb-4 shadow-glow"
                     whileHover={{ scale: 1.15, rotate: 5 }}
                     transition={{ type: "spring", stiffness: 300, damping: 15 }}
                   >
-                    <f.icon className="h-6 w-6 text-primary" />
+                    <f.icon className="h-6 w-6 text-accent" />
                   </motion.div>
                   <h3 className="font-display font-semibold text-base md:text-lg mb-1 md:mb-2 group-hover:text-accent transition-colors duration-300">{f.title}</h3>
                   <p className="text-sm text-muted-foreground">{f.desc}</p>
@@ -345,9 +345,9 @@ export default function Index() {
                 whileInView="visible"
                 viewport={{ once: true }}
                 variants={fadeUp}
-                className="flex items-start gap-3 bg-card rounded-xl border border-border p-3 md:p-4 card-shadow"
+                className="flex items-start gap-3 glass rounded-2xl p-3 md:p-4 card-lift"
               >
-                <div className="h-10 w-10 rounded-lg bg-destructive/10 flex items-center justify-center flex-shrink-0">
+                <div className="h-10 w-10 rounded-xl bg-destructive/15 border border-destructive/20 flex items-center justify-center flex-shrink-0">
                   <FileText className="h-5 w-5 text-destructive" />
                 </div>
                 <div className="min-w-0">
