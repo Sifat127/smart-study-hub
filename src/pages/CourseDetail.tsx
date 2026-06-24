@@ -156,13 +156,33 @@ export default function CourseDetail() {
                               </Button>
                             </>
                           )}
-                          {chapter.notes_path && (
-                            <Button size="sm" variant="secondary" className="rounded-xl" onClick={() => handleDownload(chapter.notes_path!, chapter.notes_name || "notes")}>
-                              <StickyNote className="h-4 w-4 mr-1.5" /> Download Notes
-                            </Button>
-                          )}
                         </div>
                       )}
+
+                      {chapter.notes_path && (
+                        <div className="mt-4 rounded-xl border border-accent/30 bg-accent/5 p-4">
+                          <div className="flex items-start gap-3">
+                            <div className="h-9 w-9 rounded-lg bg-accent/20 flex items-center justify-center flex-shrink-0">
+                              <StickyNote className="h-4 w-4 text-accent-foreground" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-display font-semibold text-sm mb-1">Chapter Notes</h4>
+                              <p className="text-xs text-muted-foreground mb-3 truncate">{chapter.notes_name}</p>
+                              <div className="flex flex-wrap gap-2">
+                                <Button size="sm" variant="secondary" className="rounded-xl" onClick={() => handleDownload(chapter.notes_path!, chapter.notes_name || "notes")}>
+                                  <Download className="h-4 w-4 mr-1.5" /> Download Notes
+                                </Button>
+                                <Button size="sm" variant="outline" className="rounded-xl" asChild>
+                                  <a href={getPublicUrl(chapter.notes_path)} target="_blank" rel="noopener noreferrer">
+                                    <Eye className="h-4 w-4 mr-1.5" /> View Notes
+                                  </a>
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
                     </div>
                   </div>
                 </motion.div>
