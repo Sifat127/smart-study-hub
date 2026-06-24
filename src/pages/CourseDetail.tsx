@@ -322,83 +322,125 @@ export default function CourseDetail() {
                     <span className="text-[10px] uppercase tracking-[0.2em] font-semibold text-muted-foreground glass px-3 py-1 rounded-full">Student Uploads</span>
                     <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/15 to-transparent" />
                   </div>
-                  <form
-                    role="search"
-                    aria-label="Filter student uploads"
-                    onSubmit={(e) => e.preventDefault()}
-                    className="glass rounded-2xl p-3 mb-5 flex flex-col sm:flex-row gap-2 sticky top-16 z-30"
-                  >
-                    <div className="relative flex-1">
-                      <label htmlFor="uploads-title-search" className="sr-only">Search uploads by title or batch</label>
-                      <Search aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                      <Input
-                        id="uploads-title-search"
-                        type="search"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Search by title or batch..."
-                        aria-label="Search by title or batch"
-                        className="pl-9 pr-9 bg-background/40 border-white/10 rounded-xl"
-                      />
-                      {query && (
-                        <button
-                          type="button"
-                          onClick={() => setQuery("")}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-lg hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring text-muted-foreground"
-                          aria-label="Clear title search"
-                        >
-                          <X aria-hidden="true" className="h-3.5 w-3.5" />
-                        </button>
-                      )}
-                    </div>
-                    <div className="relative flex-1">
-                      <label htmlFor="uploads-uploader-search" className="sr-only">Filter by uploader name</label>
-                      <Search aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                      <Input
-                        id="uploads-uploader-search"
-                        type="search"
-                        value={uploaderQuery}
-                        onChange={(e) => setUploaderQuery(e.target.value)}
-                        placeholder="Filter by uploader name..."
-                        aria-label="Filter by uploader name"
-                        className="pl-9 pr-9 bg-background/40 border-white/10 rounded-xl"
-                      />
-                      {uploaderQuery && (
-                        <button
-                          type="button"
-                          onClick={() => setUploaderQuery("")}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-lg hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring text-muted-foreground"
-                          aria-label="Clear uploader filter"
-                        >
-                          <X aria-hidden="true" className="h-3.5 w-3.5" />
-                        </button>
-                      )}
-                    </div>
-                    <label htmlFor="uploads-batch-filter" className="sr-only">Filter by batch</label>
-                    <Select value={batchFilter} onValueChange={setBatchFilter}>
-                      <SelectTrigger id="uploads-batch-filter" aria-label="Filter by batch" className="sm:w-48 bg-background/40 border-white/10 rounded-xl">
-                        <SelectValue placeholder="All batches" />
-                      </SelectTrigger>
-                      <SelectContent className="glass-strong rounded-xl border-white/10">
-                        <SelectItem value="all">All batches</SelectItem>
-                        {batches.map(b => (
-                          <SelectItem key={b} value={b}>Batch {b}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {(query || uploaderQuery || batchFilter !== "all") && (
-                      <Button
+                  {(() => {
+                    const activeCount = (query ? 1 : 0) + (uploaderQuery ? 1 : 0) + (batchFilter !== "all" ? 1 : 0);
+                    const hasActive = activeCount > 0;
+                    return (
+                  <div className="sticky top-16 z-30 mb-5">
+                    <div className="sm:hidden flex items-center gap-2 mb-2">
+                      <button
                         type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => { setQuery(""); setUploaderQuery(""); setBatchFilter("all"); }}
-                        className="rounded-xl border-white/10 glass sm:w-auto"
-                        aria-label="Clear all filters"
+                        onClick={() => setFiltersOpen(o => !o)}
+                        aria-expanded={filtersOpen}
+                        aria-controls="uploads-filter-panel"
+                        className="flex-1 glass rounded-2xl px-4 min-h-11 flex items-center justify-between gap-2 text-sm font-semibold active:scale-[0.98] transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       >
-                        <X aria-hidden="true" className="h-4 w-4 mr-1.5" /> Clear
-                      </Button>
-                    )}
-                  </form>
+                        <span className="flex items-center gap-2">
+                          <SlidersHorizontal aria-hidden="true" className="h-4 w-4 text-accent" />
+                          Filters
+                          {hasActive && (
+                            <span className="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-accent text-accent-foreground text-[10px] font-bold" aria-label={`${activeCount} active`}>
+                              {activeCount}
+                            </span>
+                          )}
+                        </span>
+                        <ChevronDown aria-hidden="true" className={`h-4 w-4 transition-transform ${filtersOpen ? "rotate-180" : ""}`} />
+                      </button>
+                      {hasActive && (
+                        <button
+                          type="button"
+                          onClick={() => { setQuery(""); setUploaderQuery(""); setBatchFilter("all"); }}
+                          aria-label="Clear all filters"
+                          className="glass rounded-2xl px-3 min-h-11 text-sm font-semibold text-muted-foreground hover:text-foreground active:scale-[0.98] transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        >
+                          Clear
+                        </button>
+                      )}
+                    </div>
+                    <form
+                      id="uploads-filter-panel"
+                      role="search"
+                      aria-label="Filter student uploads"
+                      onSubmit={(e) => e.preventDefault()}
+                      className={`glass rounded-2xl p-3 flex-col sm:flex-row gap-2 ${filtersOpen ? "flex" : "hidden"} sm:flex`}
+                    >
+                      <div className="relative flex-1">
+                        <label htmlFor="uploads-title-search" className="sr-only">Search uploads by title or batch</label>
+                        <Search aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                        <Input
+                          id="uploads-title-search"
+                          type="search"
+                          value={query}
+                          onChange={(e) => setQuery(e.target.value)}
+                          placeholder="Search by title or batch..."
+                          aria-label="Search by title or batch"
+                          className={`pl-9 pr-10 min-h-11 bg-background/40 rounded-xl ${query ? "border-accent/60 ring-1 ring-accent/30" : "border-white/10"}`}
+                        />
+                        {query && (
+                          <button
+                            type="button"
+                            onClick={() => setQuery("")}
+                            className="absolute right-1.5 top-1/2 -translate-y-1/2 h-8 w-8 inline-flex items-center justify-center rounded-lg hover:bg-white/10 active:scale-95 transition-transform text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            aria-label="Clear title search"
+                          >
+                            <X aria-hidden="true" className="h-4 w-4" />
+                          </button>
+                        )}
+                      </div>
+                      <div className="relative flex-1">
+                        <label htmlFor="uploads-uploader-search" className="sr-only">Filter by uploader name</label>
+                        <Search aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                        <Input
+                          id="uploads-uploader-search"
+                          type="search"
+                          value={uploaderQuery}
+                          onChange={(e) => setUploaderQuery(e.target.value)}
+                          placeholder="Filter by uploader name..."
+                          aria-label="Filter by uploader name"
+                          className={`pl-9 pr-10 min-h-11 bg-background/40 rounded-xl ${uploaderQuery ? "border-accent/60 ring-1 ring-accent/30" : "border-white/10"}`}
+                        />
+                        {uploaderQuery && (
+                          <button
+                            type="button"
+                            onClick={() => setUploaderQuery("")}
+                            className="absolute right-1.5 top-1/2 -translate-y-1/2 h-8 w-8 inline-flex items-center justify-center rounded-lg hover:bg-white/10 active:scale-95 transition-transform text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            aria-label="Clear uploader filter"
+                          >
+                            <X aria-hidden="true" className="h-4 w-4" />
+                          </button>
+                        )}
+                      </div>
+                      <label htmlFor="uploads-batch-filter" className="sr-only">Filter by batch</label>
+                      <Select value={batchFilter} onValueChange={setBatchFilter}>
+                        <SelectTrigger
+                          id="uploads-batch-filter"
+                          aria-label="Filter by batch"
+                          className={`sm:w-48 min-h-11 bg-background/40 rounded-xl ${batchFilter !== "all" ? "border-accent/60 ring-1 ring-accent/30" : "border-white/10"}`}
+                        >
+                          <SelectValue placeholder="All batches" />
+                        </SelectTrigger>
+                        <SelectContent className="glass-strong rounded-xl border-white/10">
+                          <SelectItem value="all">All batches</SelectItem>
+                          {batches.map(b => (
+                            <SelectItem key={b} value={b}>Batch {b}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {hasActive && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => { setQuery(""); setUploaderQuery(""); setBatchFilter("all"); }}
+                          className="hidden sm:inline-flex rounded-xl border-white/10 glass min-h-11"
+                          aria-label="Clear all filters"
+                        >
+                          <X aria-hidden="true" className="h-4 w-4 mr-1.5" /> Clear
+                        </Button>
+                      )}
+                    </form>
+                  </div>
+                    );
+                  })()}
                   <p className="sr-only" aria-live="polite" role="status">
                     {uploads.length} {uploads.length === 1 ? "upload" : "uploads"} shown
                   </p>
