@@ -27,10 +27,23 @@ interface ChapterData {
   uploaded_at: string;
 }
 
+interface StudentUpload {
+  id: string;
+  kind: "material" | "notes";
+  batch: string;
+  student_name: string | null;
+  title: string;
+  description: string | null;
+  file_name: string;
+  file_url: string;
+  created_at: string;
+}
+
 export default function CourseDetail() {
   const { deptId, semId, courseId } = useParams();
   const [course, setCourse] = useState<CourseData | null>(null);
   const [chapters, setChapters] = useState<ChapterData[]>([]);
+  const [studentUploads, setStudentUploads] = useState<StudentUpload[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab: "materials" | "notes" = searchParams.get("tab") === "notes" ? "notes" : "materials";
@@ -42,16 +55,19 @@ export default function CourseDetail() {
 
   useEffect(() => {
     async function fetchData() {
-      const [courseRes, chaptersRes] = await Promise.all([
+      const [courseRes, chaptersRes, uploadsRes] = await Promise.all([
         supabase.from("courses").select("id, code, name").eq("id", courseId!).maybeSingle(),
         supabase.from("chapters").select("id, title, description, pdf_name, pdf_path, pdf_url, notes_name, notes_path, notes_url, uploaded_at").eq("course_id", courseId!).order("uploaded_at"),
+        supabase.from("student_uploads").select("id, kind, batch, student_name, title, description, file_name, file_url, created_at").eq("course_id", courseId!).order("created_at", { ascending: false }),
       ]);
       if (courseRes.data) setCourse(courseRes.data);
       if (chaptersRes.data) setChapters(chaptersRes.data);
+      if (uploadsRes.data) setStudentUploads(uploadsRes.data as StudentUpload[]);
       setLoading(false);
     }
     if (courseId) fetchData();
   }, [courseId]);
+
 
   const getPublicUrl = (path: string) => {
     const { data } = supabase.storage.from("pdfs").getPublicUrl(path);
@@ -190,13 +206,14 @@ export default function CourseDetail() {
           </div>
           {(() => {
             const filtered = chapters.filter(c => activeTab === "materials" ? (c.pdf_url || c.pdf_path) : (c.notes_url || c.notes_path));
-            if (filtered.length === 0) {
+            const uploads = studentUploads.filter(u => u.kind === (activeTab === "materials" ? "material" : "notes"));
+            if (filtered.length === 0 && uploads.length === 0) {
               return (
-            <div className="glass rounded-2xl p-12 text-center max-w-2xl mx-auto">
-              <BookOpen className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-              <h3 className="font-display font-semibold text-lg mb-2">{activeTab === "materials" ? "No materials yet" : "No notes yet"}</h3>
-              <p className="text-sm text-muted-foreground">{activeTab === "materials" ? "Academic materials for this course haven't been uploaded yet." : "Notes for this course haven't been uploaded yet."}</p>
-            </div>
+                <div className="glass rounded-2xl p-12 text-center max-w-2xl mx-auto">
+                  <BookOpen className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
+                  <h3 className="font-display font-semibold text-lg mb-2">{activeTab === "materials" ? "No materials yet" : "No notes yet"}</h3>
+                  <p className="text-sm text-muted-foreground">{activeTab === "materials" ? "Academic materials for this course haven't been uploaded yet." : "Notes for this course haven't been uploaded yet."}</p>
+                </div>
               );
             }
             return (
@@ -266,6 +283,67 @@ export default function CourseDetail() {
                   </div>
                 </motion.div>
               ))}
+
+              {uploads.length > 0 && (
+                <div className="pt-2">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="h-px flex-1 bg-border" />
+                    <span className="text-xs uppercase tracking-wider text-muted-foreground">Student Uploads</span>
+                    <div className="h-px flex-1 bg-border" />
+                  </div>
+                  <div className="space-y-4">
+                    {uploads.map((u, i) => (
+                      <motion.div
+                        key={u.id}
+                        initial={{ opacity: 0, x: -16 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.06 }}
+                        className="glass rounded-2xl p-6 hover:border-accent/30 hover:card-shadow-hover transition-all duration-300"
+                      >
+                        <div className="flex items-start gap-4">
+                          <div className={`h-11 w-11 rounded-xl flex items-center justify-center flex-shrink-0 ${activeTab === "materials" ? "bg-destructive/10" : "bg-accent/20"}`}>
+                            {activeTab === "materials"
+                              ? <FileText className="h-5 w-5 text-destructive" />
+                              : <StickyNote className="h-5 w-5 text-accent-foreground" />}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start gap-2 flex-wrap mb-1">
+                              <h3 className="font-display font-semibold text-lg">{u.title}</h3>
+                              <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">Batch {u.batch}</span>
+                            </div>
+                            {u.description && (
+                              <p className="text-sm text-muted-foreground mb-3">{u.description}</p>
+                            )}
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-4 flex-wrap">
+                              <FileText className="h-3.5 w-3.5" />
+                              <span className="truncate max-w-full">{u.file_name}</span>
+                              <span>•</span>
+                              <Calendar className="h-3.5 w-3.5" />
+                              <span>{new Date(u.created_at).toLocaleDateString()}</span>
+                              {u.student_name && (
+                                <>
+                                  <span>•</span>
+                                  <span>by {u.student_name}</span>
+                                </>
+                              )}
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              <Button size="sm" className="bg-gradient-primary text-primary-foreground hover:opacity-90 rounded-xl" onClick={() => handleDownload(u.file_url, null, u.file_name)}>
+                                <Download className="h-4 w-4 mr-1.5" /> Download
+                              </Button>
+                              <Button size="sm" variant="outline" className="rounded-xl" asChild>
+                                <a href={u.file_url} target="_blank" rel="noopener noreferrer">
+                                  <Eye className="h-4 w-4 mr-1.5" /> View
+                                </a>
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             );
           })()}

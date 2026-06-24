@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, Layers, FileText, Users, Upload, Settings, BarChart3, GraduationCap, Loader2 } from "lucide-react";
+import { BookOpen, Layers, FileText, Users, Upload, Settings, GraduationCap, Loader2, StickyNote } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { departments } from "@/data/mockData";
 
 const actions = [
   { label: "Upload PDF", icon: Upload, desc: "Add new chapter PDFs", to: "/admin/upload-pdf" },
+  { label: "Upload Student Notes", icon: StickyNote, desc: "Submit student notes & materials", to: "/upload-notes" },
   { label: "Manage Courses", icon: BookOpen, desc: "Edit course details", to: "/admin/manage-courses" },
   { label: "Manage Users", icon: Users, desc: "View registered users", to: "/admin/manage-users" },
   { label: "Settings", icon: Settings, desc: "Platform configuration", to: "/admin/settings" },
@@ -83,7 +83,7 @@ export default function AdminDashboard() {
 
         {/* Quick Actions */}
         <h2 className="font-display text-xl font-semibold mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
           {actions.map((a) => (
             <Link
               key={a.label}

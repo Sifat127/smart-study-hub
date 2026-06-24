@@ -148,6 +148,56 @@ export type Database = {
         }
         Relationships: []
       }
+      student_uploads: {
+        Row: {
+          batch: string
+          course_id: string
+          created_at: string
+          description: string | null
+          file_name: string
+          file_url: string
+          id: string
+          kind: string
+          student_name: string | null
+          title: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          batch: string
+          course_id: string
+          created_at?: string
+          description?: string | null
+          file_name: string
+          file_url: string
+          id?: string
+          kind: string
+          student_name?: string | null
+          title: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          batch?: string
+          course_id?: string
+          created_at?: string
+          description?: string | null
+          file_name?: string
+          file_url?: string
+          id?: string
+          kind?: string
+          student_name?: string | null
+          title?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_uploads_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
