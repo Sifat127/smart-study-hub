@@ -192,17 +192,19 @@ export default function UploadNotes() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <Label>Section</Label>
-              <Select value={kind} onValueChange={(v) => setKind(v as "material" | "notes")}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="material">Academic Materials</SelectItem>
-                  <SelectItem value="notes">Notes</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <div className={`grid grid-cols-1 ${isAdmin ? "sm:grid-cols-2" : ""} gap-4`}>
+            {isAdmin && (
+              <div>
+                <Label>Section</Label>
+                <Select value={kind} onValueChange={(v) => setKind(v as "material" | "notes")}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="material">Academic Materials</SelectItem>
+                    <SelectItem value="notes">Notes</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             <div>
               <Label htmlFor="batch">Batch (e.g. 67_I)</Label>
               <Input
@@ -214,6 +216,12 @@ export default function UploadNotes() {
               />
             </div>
           </div>
+
+          {!isAdmin && (
+            <p className="text-xs text-muted-foreground -mt-2">
+              You're uploading to the <span className="text-accent font-medium">Student Notes</span> section. Only admins can publish academic materials.
+            </p>
+          )}
 
           <div>
             <Label htmlFor="student-name">Your name (shown with upload)</Label>
