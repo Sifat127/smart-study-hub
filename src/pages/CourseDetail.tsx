@@ -316,36 +316,69 @@ export default function CourseDetail() {
                       </div>
                       {activeTab === "materials" && (chapter.pdf_url || chapter.pdf_path) && (
                         <div className="flex flex-wrap gap-2">
-                          <Button
-                            size="sm"
-                            className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold"
-                            disabled={downloadingId === `pdf-${chapter.id}`}
-                            onClick={() => handleDownload(resolveUrl(chapter.pdf_url, chapter.pdf_path)!, chapter.pdf_name ?? `${chapter.title}.pdf`, `pdf-${chapter.id}`)}
-                          >
-                            {downloadingId === `pdf-${chapter.id}` ? (
-                              <><Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> Downloading...</>
-                            ) : (
-                              <><Download className="h-4 w-4 mr-1.5" /> Download PDF</>
-                            )}
-                          </Button>
+                          {!user ? (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              aria-disabled="true"
+                              title="Sign in to download this PDF"
+                              className="rounded-xl font-semibold border-white/15 bg-white/5 text-muted-foreground cursor-not-allowed hover:bg-white/5 hover:text-muted-foreground"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                navigate("/login", { state: { from: location.pathname + location.search } });
+                              }}
+                            >
+                              <Lock className="h-4 w-4 mr-1.5" /> Sign in to download
+                            </Button>
+                          ) : (
+                            <Button
+                              size="sm"
+                              className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold"
+                              disabled={downloadingId === `pdf-${chapter.id}`}
+                              onClick={() => handleDownload(resolveUrl(chapter.pdf_url, chapter.pdf_path)!, chapter.pdf_name ?? `${chapter.title}.pdf`, `pdf-${chapter.id}`)}
+                            >
+                              {downloadingId === `pdf-${chapter.id}` ? (
+                                <><Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> Downloading...</>
+                              ) : (
+                                <><Download className="h-4 w-4 mr-1.5" /> Download PDF</>
+                              )}
+                            </Button>
+                          )}
                         </div>
                       )}
                       {activeTab === "notes" && (chapter.notes_url || chapter.notes_path) && (
                         <div className="flex flex-wrap gap-2">
-                          <Button
-                            size="sm"
-                            className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold"
-                            disabled={downloadingId === `notes-${chapter.id}`}
-                            onClick={() => handleDownload(resolveUrl(chapter.notes_url, chapter.notes_path)!, chapter.notes_name ?? `${chapter.title}-notes.pdf`, `notes-${chapter.id}`)}
-                          >
-                            {downloadingId === `notes-${chapter.id}` ? (
-                              <><Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> Downloading...</>
-                            ) : (
-                              <><Download className="h-4 w-4 mr-1.5" /> Download Notes</>
-                            )}
-                          </Button>
+                          {!user ? (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              aria-disabled="true"
+                              title="Sign in to download these notes"
+                              className="rounded-xl font-semibold border-white/15 bg-white/5 text-muted-foreground cursor-not-allowed hover:bg-white/5 hover:text-muted-foreground"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                navigate("/login", { state: { from: location.pathname + location.search } });
+                              }}
+                            >
+                              <Lock className="h-4 w-4 mr-1.5" /> Sign in to download
+                            </Button>
+                          ) : (
+                            <Button
+                              size="sm"
+                              className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold"
+                              disabled={downloadingId === `notes-${chapter.id}`}
+                              onClick={() => handleDownload(resolveUrl(chapter.notes_url, chapter.notes_path)!, chapter.notes_name ?? `${chapter.title}-notes.pdf`, `notes-${chapter.id}`)}
+                            >
+                              {downloadingId === `notes-${chapter.id}` ? (
+                                <><Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> Downloading...</>
+                              ) : (
+                                <><Download className="h-4 w-4 mr-1.5" /> Download Notes</>
+                              )}
+                            </Button>
+                          )}
                         </div>
                       )}
+
                     </div>
                   </div>
                 </motion.div>
