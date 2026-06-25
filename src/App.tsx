@@ -25,6 +25,7 @@ import AdminManageUsers from "./pages/AdminManageUsers";
 import AdminSettings from "./pages/AdminSettings";
 import UploadNotes from "./pages/UploadNotes";
 import Profile from "./pages/Profile";
+import CompleteProfile from "./pages/CompleteProfile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -57,6 +58,7 @@ const App = () => (
               <Route path="/admin/settings" element={<ProtectedRoute requireAdmin><AdminSettings /></ProtectedRoute>} />
               <Route path="/upload-notes" element={<ProtectedRoute><UploadNotes /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/complete-profile" element={<CompleteProfile />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>

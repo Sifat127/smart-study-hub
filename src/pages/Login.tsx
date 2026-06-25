@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import GoogleAuthButton from "@/components/GoogleAuthButton";
 
 export default function Login() {
   const [showPass, setShowPass] = useState(false);
@@ -91,6 +92,15 @@ export default function Login() {
 
           <h1 className="font-display text-2xl font-bold mb-1">Log In</h1>
           <p className="text-muted-foreground mb-8">Enter your credentials to continue</p>
+
+          <div className="space-y-4 mb-4">
+            <GoogleAuthButton />
+            <div className="flex items-center gap-3">
+              <div className="h-px flex-1 bg-border" />
+              <span className="text-xs text-muted-foreground uppercase tracking-wider">or continue with email</span>
+              <div className="h-px flex-1 bg-border" />
+            </div>
+          </div>
 
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-2">
