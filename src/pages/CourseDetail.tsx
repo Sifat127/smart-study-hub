@@ -1,7 +1,7 @@
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, FileText, Eye, Calendar, BookOpen, Loader2, StickyNote, Share2, Search, X, SlidersHorizontal, ChevronDown } from "lucide-react";
+import { ArrowLeft, FileText, Eye, Calendar, BookOpen, Loader2, StickyNote, Share2, Search, X, SlidersHorizontal, ChevronDown, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -241,8 +241,8 @@ export default function CourseDetail() {
                       {activeTab === "materials" && (chapter.pdf_url || chapter.pdf_path) && (
                         <div className="flex flex-wrap gap-2">
                           <Button size="sm" className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold" asChild>
-                            <a href={resolveUrl(chapter.pdf_url, chapter.pdf_path)!} target="_blank" rel="noopener noreferrer">
-                              <Eye className="h-4 w-4 mr-1.5" /> View PDF
+                            <a href={resolveUrl(chapter.pdf_url, chapter.pdf_path)!} download={chapter.pdf_name ?? true} target="_blank" rel="noopener noreferrer">
+                              <Download className="h-4 w-4 mr-1.5" /> Download PDF
                             </a>
                           </Button>
                         </div>
@@ -250,8 +250,8 @@ export default function CourseDetail() {
                       {activeTab === "notes" && (chapter.notes_url || chapter.notes_path) && (
                         <div className="flex flex-wrap gap-2">
                           <Button size="sm" className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold" asChild>
-                            <a href={resolveUrl(chapter.notes_url, chapter.notes_path)!} target="_blank" rel="noopener noreferrer">
-                              <Eye className="h-4 w-4 mr-1.5" /> View Notes
+                            <a href={resolveUrl(chapter.notes_url, chapter.notes_path)!} download={chapter.notes_name ?? true} target="_blank" rel="noopener noreferrer">
+                              <Download className="h-4 w-4 mr-1.5" /> Download Notes
                             </a>
                           </Button>
                         </div>
