@@ -45,6 +45,9 @@ interface StudentUpload {
 
 export default function CourseDetail() {
   const { deptId, semId, courseId } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuth();
   const [course, setCourse] = useState<CourseData | null>(null);
   const [chapters, setChapters] = useState<ChapterData[]>([]);
   const [studentUploads, setStudentUploads] = useState<StudentUpload[]>([]);
@@ -55,8 +58,20 @@ export default function CourseDetail() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
+  const requireAuth = (action: string): boolean => {
+    if (user) return true;
+    toast.error("Sign in required", {
+      description: `Please sign in or create an account to ${action}.`,
+      action: { label: "Sign in", onClick: () => navigate("/login", { state: { from: location.pathname + location.search } }) },
+    });
+    navigate("/login", { state: { from: location.pathname + location.search } });
+    return false;
+  };
+
   const handleDownload = async (url: string, fileName: string, key: string) => {
+    if (!requireAuth("download this file")) return;
     if (downloadingId) return;
+
     setDownloadingId(key);
     const toastId = toast.loading(`Preparing ${fileName}...`);
     try {
