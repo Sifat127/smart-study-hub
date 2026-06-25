@@ -1,14 +1,16 @@
-import { useParams, Link, useSearchParams } from "react-router-dom";
+import { useParams, Link, useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, FileText, Eye, Calendar, BookOpen, Loader2, StickyNote, Share2, Search, X, SlidersHorizontal, ChevronDown, Download } from "lucide-react";
+import { ArrowLeft, FileText, Eye, Calendar, BookOpen, Loader2, StickyNote, Share2, Search, X, SlidersHorizontal, ChevronDown, Download, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Layout from "@/components/Layout";
 import PageHeader from "@/components/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+
 
 interface CourseData {
   id: string;
@@ -43,6 +45,9 @@ interface StudentUpload {
 
 export default function CourseDetail() {
   const { deptId, semId, courseId } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuth();
   const [course, setCourse] = useState<CourseData | null>(null);
   const [chapters, setChapters] = useState<ChapterData[]>([]);
   const [studentUploads, setStudentUploads] = useState<StudentUpload[]>([]);
@@ -53,8 +58,20 @@ export default function CourseDetail() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
+  const requireAuth = (action: string): boolean => {
+    if (user) return true;
+    toast.error("Sign in required", {
+      description: `Please sign in or create an account to ${action}.`,
+      action: { label: "Sign in", onClick: () => navigate("/login", { state: { from: location.pathname + location.search } }) },
+    });
+    navigate("/login", { state: { from: location.pathname + location.search } });
+    return false;
+  };
+
   const handleDownload = async (url: string, fileName: string, key: string) => {
+    if (!requireAuth("download this file")) return;
     if (downloadingId) return;
+
     setDownloadingId(key);
     const toastId = toast.loading(`Preparing ${fileName}...`);
     try {
@@ -95,18 +112,27 @@ export default function CourseDetail() {
 
   useEffect(() => {
     async function fetchData() {
-      const [courseRes, chaptersRes, uploadsRes] = await Promise.all([
-        supabase.from("courses").select("id, code, name").eq("id", courseId!).maybeSingle(),
-        supabase.from("chapters").select("id, title, description, pdf_name, pdf_path, pdf_url, notes_name, notes_path, notes_url, uploaded_at").eq("course_id", courseId!).order("uploaded_at"),
-        supabase.from("student_uploads").select("id, kind, batch, student_name, title, description, file_name, file_url, created_at").eq("course_id", courseId!).order("created_at", { ascending: false }),
-      ]);
-      if (courseRes.data) setCourse(courseRes.data);
-      if (chaptersRes.data) setChapters(chaptersRes.data);
-      if (uploadsRes.data) setStudentUploads(uploadsRes.data as StudentUpload[]);
+      const baseRequests: Promise<any>[] = [
+        Promise.resolve(supabase.from("courses").select("id, code, name").eq("id", courseId!).maybeSingle()),
+        Promise.resolve(supabase.from("chapters").select("id, title, description, pdf_name, pdf_path, pdf_url, notes_name, notes_path, notes_url, uploaded_at").eq("course_id", courseId!).order("uploaded_at")),
+      ];
+      // Student uploads are gated by RLS — only fetch when signed in to avoid 401 noise.
+      if (user) {
+        baseRequests.push(
+          Promise.resolve(supabase.from("student_uploads").select("id, kind, batch, student_name, title, description, file_name, file_url, created_at").eq("course_id", courseId!).order("created_at", { ascending: false }))
+        );
+      }
+      const [courseRes, chaptersRes, uploadsRes] = await Promise.all(baseRequests);
+
+      if (courseRes?.data) setCourse(courseRes.data);
+      if (chaptersRes?.data) setChapters(chaptersRes.data);
+      if (uploadsRes?.data) setStudentUploads(uploadsRes.data as StudentUpload[]);
+      else if (!user) setStudentUploads([]);
       setLoading(false);
     }
     if (courseId) fetchData();
-  }, [courseId]);
+  }, [courseId, user]);
+
 
 
   const getPublicUrl = (path: string) => {
@@ -180,6 +206,22 @@ export default function CourseDetail() {
 
       <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
+          {!user && (
+            <div className="max-w-3xl mx-auto mb-6 glass rounded-2xl px-4 py-3 flex items-center gap-3 border border-accent/20">
+              <Lock className="h-4 w-4 text-accent flex-shrink-0" />
+              <p className="text-sm text-muted-foreground flex-1">
+                You can browse chapter titles and file names freely. <span className="text-foreground/90 font-medium">Sign in</span> to download PDFs or notes.
+              </p>
+              <Button
+                size="sm"
+                className="bg-gradient-primary text-primary-foreground rounded-xl font-semibold"
+                onClick={() => navigate("/login", { state: { from: location.pathname + location.search } })}
+              >
+                Sign in
+              </Button>
+            </div>
+          )}
+
           <div className="max-w-3xl mx-auto mb-8 flex justify-center">
             <div className="relative inline-flex glass-strong rounded-2xl p-1.5 gap-1 shadow-elevated">
               {(["materials", "notes"] as const).map((tab) => {
