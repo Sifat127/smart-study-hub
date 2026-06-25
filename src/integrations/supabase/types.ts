@@ -289,6 +289,7 @@ export type Database = {
       }
     }
     Functions: {
+      _test_profile_audit_log_scenarios: { Args: never; Returns: Json }
       admin_list_users: {
         Args: never
         Returns: {
