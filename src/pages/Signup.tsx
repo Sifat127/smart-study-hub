@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Mail, Lock, Eye, EyeOff, User, Loader2, FileText } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, User, Loader2, FileText, IdCard } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,9 +8,12 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
+const ROLL_REGEX = /^[A-Za-z0-9-]{3,20}$/;
+
 export default function Signup() {
   const [showPass, setShowPass] = useState(false);
   const [fullName, setFullName] = useState("");
+  const [rollNumber, setRollNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -20,8 +23,17 @@ export default function Signup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName.trim() || !email.trim() || !password) {
+    if (!fullName.trim() || !rollNumber.trim() || !email.trim() || !password) {
       toast({ title: "Please fill in all fields", variant: "destructive" });
+      return;
+    }
+    const normalizedRoll = rollNumber.trim();
+    if (!ROLL_REGEX.test(normalizedRoll)) {
+      toast({
+        title: "Invalid roll number",
+        description: "Use 3–20 characters: letters, numbers or dashes only.",
+        variant: "destructive",
+      });
       return;
     }
     const normalizedEmail = email.trim().toLowerCase();
@@ -38,13 +50,16 @@ export default function Signup() {
       return;
     }
     setSubmitting(true);
-    const { error } = await signUp(normalizedEmail, password, fullName.trim());
+    const { error } = await signUp(normalizedEmail, password, fullName.trim(), normalizedRoll);
     setSubmitting(false);
     if (error) {
       toast({ title: "Sign up failed", description: error, variant: "destructive" });
     } else {
-      toast({ title: "Account created!", description: "Please check your email to confirm your account." });
-      navigate("/login");
+      toast({
+        title: "Check your DIU email",
+        description: "We sent a 6-digit verification code to confirm your account.",
+      });
+      navigate(`/verify-email?email=${encodeURIComponent(normalizedEmail)}`);
     }
   };
 
