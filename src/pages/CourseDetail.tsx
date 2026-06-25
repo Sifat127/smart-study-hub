@@ -288,22 +288,16 @@ export default function CourseDetail() {
                       </div>
                       {activeTab === "materials" && (chapter.pdf_url || chapter.pdf_path) && (
                         <div className="flex flex-wrap gap-2">
-                          <Button size="sm" className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold" onClick={() => handleDownload(chapter.pdf_url, chapter.pdf_path, chapter.pdf_name || "file.pdf")}>
-                            <Download className="h-4 w-4 mr-1.5" /> Download PDF
-                          </Button>
-                          <Button size="sm" variant="outline" className="rounded-xl border-white/10 glass" asChild>
+                          <Button size="sm" className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold" asChild>
                             <a href={resolveUrl(chapter.pdf_url, chapter.pdf_path)!} target="_blank" rel="noopener noreferrer">
-                              <Eye className="h-4 w-4 mr-1.5" /> View
+                              <Eye className="h-4 w-4 mr-1.5" /> View PDF
                             </a>
                           </Button>
                         </div>
                       )}
                       {activeTab === "notes" && (chapter.notes_url || chapter.notes_path) && (
                         <div className="flex flex-wrap gap-2">
-                          <Button size="sm" className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold" onClick={() => handleDownload(chapter.notes_url, chapter.notes_path, chapter.notes_name || "notes")}>
-                            <Download className="h-4 w-4 mr-1.5" /> Download Notes
-                          </Button>
-                          <Button size="sm" variant="outline" className="rounded-xl border-white/10 glass" asChild>
+                          <Button size="sm" className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold" asChild>
                             <a href={resolveUrl(chapter.notes_url, chapter.notes_path)!} target="_blank" rel="noopener noreferrer">
                               <Eye className="h-4 w-4 mr-1.5" /> View Notes
                             </a>
