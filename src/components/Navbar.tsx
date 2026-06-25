@@ -27,7 +27,8 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur-2xl bg-background/60 border-b border-white/[0.06]">
+    <nav className="sticky top-0 z-50 backdrop-blur-2xl bg-background/80 border-b border-border dark:bg-background/60 dark:border-white/[0.06]">
+
       {/* Aurora top edge glow */}
       <div className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
 
