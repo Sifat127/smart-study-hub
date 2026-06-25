@@ -48,6 +48,15 @@ interface UserRow {
 
 const UNASSIGNED = "Unassigned";
 
+interface AuditEntry {
+  id: string;
+  field_name: string;
+  old_value: string | null;
+  new_value: string | null;
+  changed_at: string;
+  changed_by: string | null;
+}
+
 export default function AdminManageUsers() {
   const { toast } = useToast();
   const { user: currentUser } = useAuth();
@@ -57,6 +66,7 @@ export default function AdminManageUsers() {
   const [departmentFilter, setDepartmentFilter] = useState<string>("all");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [selected, setSelected] = useState<UserRow | null>(null);
+  
   const [form, setForm] = useState({
     full_name: "",
     roll_number: "",
