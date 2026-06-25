@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      chapter_downloads: {
+        Row: {
+          chapter_id: string
+          downloaded_at: string
+          file_name: string | null
+          id: string
+          kind: string
+          user_id: string
+        }
+        Insert: {
+          chapter_id: string
+          downloaded_at?: string
+          file_name?: string | null
+          id?: string
+          kind: string
+          user_id: string
+        }
+        Update: {
+          chapter_id?: string
+          downloaded_at?: string
+          file_name?: string | null
+          id?: string
+          kind?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapter_downloads_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chapters: {
         Row: {
           course_id: string

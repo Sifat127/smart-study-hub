@@ -93,6 +93,19 @@ export default function CourseDetail() {
       a.remove();
       setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
       toast.success("Download started", { id: toastId, description: fileName });
+
+      // Log download history (best-effort; ignore errors so download UX isn't impacted)
+      const dash = key.indexOf("-");
+      const kind = key.slice(0, dash) as "pdf" | "notes";
+      const chapterId = key.slice(dash + 1);
+      if (user && (kind === "pdf" || kind === "notes")) {
+        void supabase.from("chapter_downloads").insert({
+          user_id: user.id,
+          chapter_id: chapterId,
+          kind,
+          file_name: fileName,
+        });
+      }
     } catch (err) {
       toast.error("Download failed", {
         id: toastId,
