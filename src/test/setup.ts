@@ -13,3 +13,11 @@ Object.defineProperty(window, "matchMedia", {
     dispatchEvent: () => {},
   }),
 });
+
+class ResizeObserverPolyfill {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+// @ts-expect-error jsdom does not implement ResizeObserver
+globalThis.ResizeObserver = globalThis.ResizeObserver || ResizeObserverPolyfill;
