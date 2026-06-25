@@ -206,6 +206,22 @@ export default function CourseDetail() {
 
       <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
+          {!user && (
+            <div className="max-w-3xl mx-auto mb-6 glass rounded-2xl px-4 py-3 flex items-center gap-3 border border-accent/20">
+              <Lock className="h-4 w-4 text-accent flex-shrink-0" />
+              <p className="text-sm text-muted-foreground flex-1">
+                You can browse chapter titles and file names freely. <span className="text-foreground/90 font-medium">Sign in</span> to download PDFs or notes.
+              </p>
+              <Button
+                size="sm"
+                className="bg-gradient-primary text-primary-foreground rounded-xl font-semibold"
+                onClick={() => navigate("/login", { state: { from: location.pathname + location.search } })}
+              >
+                Sign in
+              </Button>
+            </div>
+          )}
+
           <div className="max-w-3xl mx-auto mb-8 flex justify-center">
             <div className="relative inline-flex glass-strong rounded-2xl p-1.5 gap-1 shadow-elevated">
               {(["materials", "notes"] as const).map((tab) => {
