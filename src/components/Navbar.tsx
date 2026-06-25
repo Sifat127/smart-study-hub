@@ -140,11 +140,9 @@ export default function Navbar() {
               <div className="flex gap-2 mt-3 pt-3 border-t border-white/[0.06]">
                 {user ? (
                   <>
-                    {isAdmin && (
-                      <Button variant="outline" size="sm" className="flex-1 rounded-xl border-white/10" asChild>
-                        <Link to="/admin" onClick={() => setMobileOpen(false)}>Dashboard</Link>
-                      </Button>
-                    )}
+                    <Button variant="outline" size="sm" className="flex-1 rounded-xl border-white/10" asChild>
+                      <Link to={isAdmin ? "/admin" : "/dashboard"} onClick={() => setMobileOpen(false)}>Dashboard</Link>
+                    </Button>
                     <Button variant="outline" size="sm" className="flex-1 rounded-xl border-white/10" asChild>
                       <Link to="/profile" onClick={() => setMobileOpen(false)}>Profile</Link>
                     </Button>
