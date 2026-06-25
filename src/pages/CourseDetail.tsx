@@ -255,7 +255,7 @@ export default function CourseDetail() {
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.06 }}
-                  className="glass rounded-3xl p-5 md:p-6 card-lift"
+                  className="glass rounded-3xl p-5 md:p-6 card-lift scroll-mt-32 md:scroll-mt-36"
                 >
                   <div className="flex items-start gap-4">
                     <div className={`h-12 w-12 rounded-2xl flex items-center justify-center flex-shrink-0 border ${activeTab === "materials" ? "bg-destructive/10 border-destructive/20 text-destructive" : "bg-accent/15 border-accent/25 text-accent"}`}>
@@ -326,7 +326,7 @@ export default function CourseDetail() {
                     const activeCount = (query ? 1 : 0) + (uploaderQuery ? 1 : 0) + (batchFilter !== "all" ? 1 : 0);
                     const hasActive = activeCount > 0;
                     return (
-                  <div className="sticky top-16 z-30 mb-5">
+                  <div className="sticky top-14 md:top-16 z-30 -mx-1 px-1 py-2 mb-5 bg-background/70 backdrop-blur-md supports-[backdrop-filter]:bg-background/50 rounded-2xl">
                     <div className="sm:hidden flex items-center gap-2 mb-2">
                       <button
                         type="button"
