@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Monitor, Zap, Briefcase, Code, Database, Pill,
   BookText, Scale, Shirt, Building2, Radio, Plane, Apple, HeartPulse,
   Clapperboard, ArrowRight, Search, StickyNote, BookOpen, GraduationCap,
-  Upload, User as UserIcon, FileText, Clock,
+  Upload, User as UserIcon, FileText, Clock, Download, History,
 } from "lucide-react";
 import Layout from "@/components/Layout";
 import PageHeader from "@/components/PageHeader";
