@@ -72,9 +72,13 @@ export default function Navbar() {
 
           {user ? (
             <>
-              {isAdmin && (
+              {isAdmin ? (
                 <Button variant="ghost" size="sm" className="rounded-xl" asChild>
                   <Link to="/admin"><LayoutDashboard className="h-4 w-4 mr-1.5" /> Dashboard</Link>
+                </Button>
+              ) : (
+                <Button variant="ghost" size="sm" className="rounded-xl" asChild>
+                  <Link to="/dashboard"><LayoutDashboard className="h-4 w-4 mr-1.5" /> Dashboard</Link>
                 </Button>
               )}
               <Button variant="ghost" size="sm" className="rounded-xl" asChild>
