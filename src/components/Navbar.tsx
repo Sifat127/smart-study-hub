@@ -27,7 +27,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur-2xl bg-background/80 border-b border-border dark:bg-background/60 dark:border-border dark:border-white/[0.06]">
+    <nav className="sticky top-0 z-50 backdrop-blur-2xl bg-background/80 border-b border-border dark:bg-background/60 dark:border-white/[0.06]">
 
       {/* Aurora top edge glow */}
       <div className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
@@ -57,7 +57,7 @@ export default function Navbar() {
                 {active && (
                   <motion.span
                     layoutId="nav-pill"
-                    className="absolute inset-0 bg-accent/10 border border-accent/30 dark:bg-white/[0.06] dark:border-border dark:border-white/10 rounded-xl shadow-[0_0_20px_-4px_hsl(var(--accent)/0.4)]"
+                    className="absolute inset-0 bg-accent/10 border border-accent/30 dark:bg-white/[0.06] dark:border-white/10 rounded-xl shadow-[0_0_20px_-4px_hsl(var(--accent)/0.4)]"
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
@@ -139,7 +139,7 @@ export default function Navbar() {
                   onClick={() => setMobileOpen(false)}
                   className={`px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
                     location.pathname === link.to
-                      ? "bg-white/5 text-foreground border border-border dark:border-white/10"
+                      ? "bg-accent/10 text-foreground border border-accent/30 dark:bg-white/5 dark:border-white/10"
                       : "text-muted-foreground hover:text-foreground hover:bg-accent/10 dark:hover:bg-white/5"
                   }`}
                 >
