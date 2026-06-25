@@ -24,12 +24,21 @@ export default function Signup() {
       toast({ title: "Please fill in all fields", variant: "destructive" });
       return;
     }
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!/^[^\s@]+@diu\.edu\.bd$/i.test(normalizedEmail)) {
+      toast({
+        title: "DIU email required",
+        description: "Only @diu.edu.bd email addresses can register.",
+        variant: "destructive",
+      });
+      return;
+    }
     if (password.length < 6) {
       toast({ title: "Password must be at least 6 characters", variant: "destructive" });
       return;
     }
     setSubmitting(true);
-    const { error } = await signUp(email.trim(), password, fullName.trim());
+    const { error } = await signUp(normalizedEmail, password, fullName.trim());
     setSubmitting(false);
     if (error) {
       toast({ title: "Sign up failed", description: error, variant: "destructive" });
@@ -97,8 +106,9 @@ export default function Signup() {
               <Label htmlFor="email">Email</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input id="email" type="email" placeholder="you@example.com" className="pl-10" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Input id="email" type="email" placeholder="you@diu.edu.bd" pattern="^[^\s@]+@diu\.edu\.bd$" title="Only @diu.edu.bd email addresses are allowed" className="pl-10" value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
+              <p className="text-xs text-muted-foreground">Only <span className="font-semibold text-foreground">@diu.edu.bd</span> emails are allowed.</p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
