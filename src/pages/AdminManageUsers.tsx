@@ -457,6 +457,35 @@ export default function AdminManageUsers() {
                     Save changes
                   </Button>
                 </div>
+
+                <div className="pt-4 border-t border-border/50">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="font-display font-semibold text-sm">Admin edit history</h3>
+                    {loadingAudit && <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />}
+                  </div>
+                  {!loadingAudit && auditLog.length === 0 ? (
+                    <p className="text-xs text-muted-foreground">No admin edits recorded yet.</p>
+                  ) : (
+                    <ul className="space-y-2 max-h-64 overflow-y-auto pr-1">
+                      {auditLog.map((entry) => (
+                        <li key={entry.id} className="text-xs rounded-md bg-muted/40 border border-border/50 p-2">
+                          <div className="flex justify-between gap-2 mb-1">
+                            <span className="font-medium text-foreground">{entry.field_name.replace(/_/g, " ")}</span>
+                            <span className="text-muted-foreground whitespace-nowrap">{new Date(entry.changed_at).toLocaleString()}</span>
+                          </div>
+                          <div className="text-muted-foreground break-words">
+                            <span className="line-through opacity-70">{entry.old_value || "—"}</span>
+                            <span className="mx-1.5">→</span>
+                            <span className="text-foreground">{entry.new_value || "—"}</span>
+                          </div>
+                          <div className="text-[10px] text-muted-foreground mt-1">
+                            by {entry.changed_by ? (auditorNames[entry.changed_by] ?? "Admin") : "Admin"}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </div>
             </>
           )}
