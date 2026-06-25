@@ -38,11 +38,33 @@ export default function VerifyEmail() {
     }, 1000);
   };
 
+  const finishVerified = async (message = "Your account is active. Please log in.") => {
+    await supabase.auth.signOut();
+    toast({ title: "Email verified", description: message });
+    navigate("/login");
+  };
+
   useEffect(() => {
     // Start an initial cooldown so the user doesn't spam resend right after signup.
     startCooldown(30);
+
+    // If the user already verified (e.g. clicked the link in the email), don't
+    // make them type a code that's already been consumed — send them to login.
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user?.email_confirmed_at) {
+        finishVerified("Your email is already verified. Please log in.");
+      }
+    });
+
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session?.user?.email_confirmed_at) {
+        finishVerified();
+      }
+    });
+
     return () => {
       if (intervalRef.current) window.clearInterval(intervalRef.current);
+      sub.subscription.unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -74,12 +96,7 @@ export default function VerifyEmail() {
       return;
     }
     // Sign the user out so they explicitly log in once verified.
-    await supabase.auth.signOut();
-    toast({
-      title: "Email verified",
-      description: "Your account is active. Please log in.",
-    });
-    navigate("/login");
+    await finishVerified();
   };
 
   const handleResend = async () => {
@@ -125,8 +142,9 @@ export default function VerifyEmail() {
 
         <h1 className="font-display text-2xl font-bold text-center mb-2">Verify your email</h1>
         <p className="text-sm text-muted-foreground text-center mb-6">
-          Enter the 6-digit code we sent to{" "}
-          <span className="font-semibold text-foreground break-all">{email || "your DIU email"}</span>.
+          Click the verification link we sent to{" "}
+          <span className="font-semibold text-foreground break-all">{email || "your DIU email"}</span>
+          , or enter the 6-digit code from that email below.
         </p>
 
         <form className="space-y-5" onSubmit={handleVerify}>
