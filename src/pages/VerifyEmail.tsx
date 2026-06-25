@@ -96,12 +96,7 @@ export default function VerifyEmail() {
       return;
     }
     // Sign the user out so they explicitly log in once verified.
-    await supabase.auth.signOut();
-    toast({
-      title: "Email verified",
-      description: "Your account is active. Please log in.",
-    });
-    navigate("/login");
+    await finishVerified();
   };
 
   const handleResend = async () => {
