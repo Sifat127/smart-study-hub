@@ -1,7 +1,7 @@
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, FileText, Download, Eye, Calendar, BookOpen, Loader2, StickyNote, Share2, Search, X, SlidersHorizontal, ChevronDown } from "lucide-react";
+import { ArrowLeft, FileText, Eye, Calendar, BookOpen, Loader2, StickyNote, Share2, Search, X, SlidersHorizontal, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -87,54 +87,6 @@ export default function CourseDetail() {
     return null;
   };
 
-  const triggerSave = (href: string, fileName: string) => {
-    const a = document.createElement("a");
-    a.href = href;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  };
-
-  const handleDownload = async (url: string | null, path: string | null, fileName: string) => {
-    const loadingId = toast.loading(`Preparing ${fileName}...`);
-    try {
-      if (url) {
-        const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-        const proxy = `https://${projectId}.supabase.co/functions/v1/download-file?url=${encodeURIComponent(url)}&name=${encodeURIComponent(fileName)}`;
-
-        // Fetch via proxy so we can detect failures and show a clear toast.
-        const res = await fetch(proxy);
-        if (!res.ok) {
-          let detail = `HTTP ${res.status}`;
-          try {
-            const body = await res.json();
-            if (body?.error) detail = body.error;
-          } catch { /* ignore */ }
-          throw new Error(detail);
-        }
-        const blob = await res.blob();
-        const objectUrl = URL.createObjectURL(blob);
-        triggerSave(objectUrl, fileName);
-        setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
-      } else if (path) {
-        const { data, error } = await supabase.storage
-          .from("pdfs")
-          .createSignedUrl(path, 3600, { download: fileName });
-        if (error || !data?.signedUrl) throw new Error(error?.message || "Could not create signed URL");
-        triggerSave(data.signedUrl, fileName);
-      } else {
-        throw new Error("No file available");
-      }
-      toast.success(`Downloading ${fileName}`, { id: loadingId });
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Unknown error";
-      toast.error("Download failed", {
-        id: loadingId,
-        description: `Couldn't download ${fileName}. ${message}. Try the View button or check your connection.`,
-      });
-    }
-  };
 
   if (loading) {
     return (
@@ -288,22 +240,16 @@ export default function CourseDetail() {
                       </div>
                       {activeTab === "materials" && (chapter.pdf_url || chapter.pdf_path) && (
                         <div className="flex flex-wrap gap-2">
-                          <Button size="sm" className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold" onClick={() => handleDownload(chapter.pdf_url, chapter.pdf_path, chapter.pdf_name || "file.pdf")}>
-                            <Download className="h-4 w-4 mr-1.5" /> Download PDF
-                          </Button>
-                          <Button size="sm" variant="outline" className="rounded-xl border-white/10 glass" asChild>
+                          <Button size="sm" className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold" asChild>
                             <a href={resolveUrl(chapter.pdf_url, chapter.pdf_path)!} target="_blank" rel="noopener noreferrer">
-                              <Eye className="h-4 w-4 mr-1.5" /> View
+                              <Eye className="h-4 w-4 mr-1.5" /> View PDF
                             </a>
                           </Button>
                         </div>
                       )}
                       {activeTab === "notes" && (chapter.notes_url || chapter.notes_path) && (
                         <div className="flex flex-wrap gap-2">
-                          <Button size="sm" className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold" onClick={() => handleDownload(chapter.notes_url, chapter.notes_path, chapter.notes_name || "notes")}>
-                            <Download className="h-4 w-4 mr-1.5" /> Download Notes
-                          </Button>
-                          <Button size="sm" variant="outline" className="rounded-xl border-white/10 glass" asChild>
+                          <Button size="sm" className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold" asChild>
                             <a href={resolveUrl(chapter.notes_url, chapter.notes_path)!} target="_blank" rel="noopener noreferrer">
                               <Eye className="h-4 w-4 mr-1.5" /> View Notes
                             </a>
@@ -486,10 +432,7 @@ export default function CourseDetail() {
                               )}
                             </div>
                             <div className="flex flex-wrap gap-2">
-                              <Button size="sm" className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold" onClick={() => handleDownload(u.file_url, null, u.file_name)}>
-                                <Download className="h-4 w-4 mr-1.5" /> Download
-                              </Button>
-                              <Button size="sm" variant="outline" className="rounded-xl border-white/10 glass" asChild>
+                              <Button size="sm" className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold" asChild>
                                 <a href={u.file_url} target="_blank" rel="noopener noreferrer">
                                   <Eye className="h-4 w-4 mr-1.5" /> View
                                 </a>

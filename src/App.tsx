@@ -24,6 +24,7 @@ import AdminManageCourses from "./pages/AdminManageCourses";
 import AdminManageUsers from "./pages/AdminManageUsers";
 import AdminSettings from "./pages/AdminSettings";
 import UploadNotes from "./pages/UploadNotes";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -55,6 +56,7 @@ const App = () => (
               <Route path="/admin/manage-users" element={<ProtectedRoute requireAdmin><AdminManageUsers /></ProtectedRoute>} />
               <Route path="/admin/settings" element={<ProtectedRoute requireAdmin><AdminSettings /></ProtectedRoute>} />
               <Route path="/upload-notes" element={<ProtectedRoute><UploadNotes /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>

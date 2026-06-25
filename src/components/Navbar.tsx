@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, LogIn, UserPlus, LogOut, LayoutDashboard, Sun, Moon } from "lucide-react";
+import { Menu, X, LogIn, UserPlus, LogOut, LayoutDashboard, Sun, Moon, User as UserIcon } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -81,7 +81,12 @@ export default function Navbar() {
                   <Link to="/admin"><LayoutDashboard className="h-4 w-4 mr-1.5" /> Dashboard</Link>
                 </Button>
               )}
-              <span className="text-sm text-muted-foreground px-2 max-w-[160px] truncate">{profile?.full_name || user.email}</span>
+              <Button variant="ghost" size="sm" className="rounded-xl" asChild>
+                <Link to="/profile">
+                  <UserIcon className="h-4 w-4 mr-1.5" />
+                  <span className="max-w-[140px] truncate">{profile?.full_name || user.email}</span>
+                </Link>
+              </Button>
               <Button variant="outline" size="sm" className="rounded-xl border-white/10" onClick={handleSignOut}>
                 <LogOut className="h-4 w-4 mr-1.5" /> Logout
               </Button>
@@ -147,6 +152,9 @@ export default function Navbar() {
                         <Link to="/admin" onClick={() => setMobileOpen(false)}>Dashboard</Link>
                       </Button>
                     )}
+                    <Button variant="outline" size="sm" className="flex-1 rounded-xl border-white/10" asChild>
+                      <Link to="/profile" onClick={() => setMobileOpen(false)}>Profile</Link>
+                    </Button>
                     <Button size="sm" variant="outline" className="flex-1 rounded-xl border-white/10" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
                       Logout
                     </Button>

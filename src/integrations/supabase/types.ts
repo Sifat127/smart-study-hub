@@ -124,28 +124,43 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          batch: string | null
+          bio: string | null
           created_at: string
+          department: string | null
           full_name: string | null
           id: string
+          phone_number: string | null
           roll_number: string | null
+          room_number: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           avatar_url?: string | null
+          batch?: string | null
+          bio?: string | null
           created_at?: string
+          department?: string | null
           full_name?: string | null
           id?: string
+          phone_number?: string | null
           roll_number?: string | null
+          room_number?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           avatar_url?: string | null
+          batch?: string | null
+          bio?: string | null
           created_at?: string
+          department?: string | null
           full_name?: string | null
           id?: string
+          phone_number?: string | null
           roll_number?: string | null
+          room_number?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -221,9 +236,44 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      profiles_public: {
+        Row: {
+          avatar_url: string | null
+          full_name: string | null
+          roll_number: string | null
+          user_id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          full_name?: string | null
+          roll_number?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          full_name?: string | null
+          roll_number?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      admin_list_users: {
+        Args: never
+        Returns: {
+          batch: string
+          created_at: string
+          department: string
+          email: string
+          full_name: string
+          phone_number: string
+          role: Database["public"]["Enums"]["app_role"]
+          roll_number: string
+          room_number: string
+          user_id: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

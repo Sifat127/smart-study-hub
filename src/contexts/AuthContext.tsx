@@ -7,7 +7,16 @@ type AppRole = "admin" | "user";
 interface AuthContextType {
   session: Session | null;
   user: User | null;
-  profile: { full_name: string | null; avatar_url: string | null; roll_number: string | null } | null;
+  profile: {
+    full_name: string | null;
+    avatar_url: string | null;
+    roll_number: string | null;
+    phone_number: string | null;
+    room_number: string | null;
+    department: string | null;
+    batch: string | null;
+    bio: string | null;
+  } | null;
   role: AppRole;
   isAdmin: boolean;
   loading: boolean;
@@ -27,7 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchUserData = async (userId: string) => {
     const [profileRes, roleRes] = await Promise.all([
-      supabase.from("profiles").select("full_name, avatar_url, roll_number").eq("user_id", userId).maybeSingle(),
+      supabase.from("profiles").select("full_name, avatar_url, roll_number, phone_number, room_number, department, batch, bio").eq("user_id", userId).maybeSingle(),
       supabase.from("user_roles").select("role").eq("user_id", userId),
     ]);
     if (profileRes.data) setProfile(profileRes.data);
