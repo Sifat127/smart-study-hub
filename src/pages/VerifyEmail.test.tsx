@@ -155,10 +155,10 @@ describe("VerifyEmail page", () => {
   it("resends a fresh code and shows a success toast", async () => {
     resendMock.mockResolvedValueOnce({ error: null });
     vi.useFakeTimers();
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     renderPage();
     await vi.advanceTimersByTimeAsync(31_000);
     vi.useRealTimers();
+    const user = userEvent.setup();
 
     const btn = await screen.findByRole("button", { name: /resend code/i });
     await user.click(btn);
@@ -174,10 +174,10 @@ describe("VerifyEmail page", () => {
   it("shows a destructive toast when resend fails", async () => {
     resendMock.mockResolvedValueOnce({ error: { message: "rate limit exceeded" } });
     vi.useFakeTimers();
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     renderPage();
     await vi.advanceTimersByTimeAsync(31_000);
     vi.useRealTimers();
+    const user = userEvent.setup();
 
     const btn = await screen.findByRole("button", { name: /resend code/i });
     await user.click(btn);
