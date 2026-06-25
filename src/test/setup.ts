@@ -19,5 +19,6 @@ class ResizeObserverPolyfill {
   unobserve() {}
   disconnect() {}
 }
-// @ts-expect-error jsdom does not implement ResizeObserver
-globalThis.ResizeObserver = globalThis.ResizeObserver || ResizeObserverPolyfill;
+(globalThis as unknown as { ResizeObserver: typeof ResizeObserverPolyfill }).ResizeObserver =
+  (globalThis as unknown as { ResizeObserver?: typeof ResizeObserverPolyfill }).ResizeObserver ||
+  ResizeObserverPolyfill;
