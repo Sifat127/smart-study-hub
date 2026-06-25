@@ -217,6 +217,64 @@ export default function UserDashboard() {
             </div>
           )}
 
+          {/* Download history */}
+          <div className="mt-12">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-display text-xl md:text-2xl font-bold flex items-center gap-2">
+                <History className="h-5 w-5 text-accent" /> Recent Downloads
+              </h2>
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/departments"><BookOpen className="h-4 w-4 mr-1.5" /> Browse</Link>
+              </Button>
+            </div>
+            <div className="bg-card rounded-2xl border border-border card-shadow overflow-hidden">
+              {loadingDownloads ? (
+                <div className="p-6 text-sm text-muted-foreground">Loading…</div>
+              ) : downloads.length === 0 ? (
+                <div className="p-8 text-center">
+                  <Download className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
+                  <p className="text-sm text-muted-foreground mb-4">No downloads yet — open a chapter and grab its PDF or notes.</p>
+                  <Button asChild size="sm" variant="outline">
+                    <Link to="/departments"><BookOpen className="h-4 w-4 mr-1.5" /> Browse departments</Link>
+                  </Button>
+                </div>
+              ) : (
+                <ul className="divide-y divide-border">
+                  {downloads.map(d => {
+                    const ch = d.chapters;
+                    const c = ch?.courses;
+                    const href = ch && c
+                      ? `/departments/${c.department.toLowerCase()}/semester/${c.semester}/course/${ch.course_id}?tab=${d.kind === "pdf" ? "materials" : "notes"}`
+                      : "/departments";
+                    return (
+                      <li key={d.id}>
+                        <Link to={href} className="flex items-center gap-3 p-4 hover:bg-accent/5 transition-colors">
+                          <div className="h-9 w-9 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                            <Download className="h-4 w-4 text-primary" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium truncate">
+                              {d.file_name || ch?.title || "Chapter file"}
+                            </p>
+                            <p className="text-xs text-muted-foreground truncate">
+                              {ch?.title || "Chapter"}
+                              {c ? ` · ${c.code} · Sem ${c.semester}` : ""}
+                              {" · "}
+                              {new Date(d.downloaded_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}
+                            </p>
+                          </div>
+                          <span className="text-[10px] uppercase tracking-wide px-2 py-1 rounded-md bg-primary/10 text-primary border border-primary/20">
+                            {d.kind === "pdf" ? "PDF" : "Notes"}
+                          </span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+          </div>
+
           {/* Recent uploads */}
           <div className="mt-12">
             <div className="flex items-center justify-between mb-4">
