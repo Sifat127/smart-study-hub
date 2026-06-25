@@ -106,7 +106,7 @@ export default function Signup() {
               <Label htmlFor="email">Email</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input id="email" type="email" placeholder="you@diu.edu.bd" pattern="^[^\s@]+@diu\.edu\.bd$" title="Only @diu.edu.bd email addresses are allowed" className="pl-10" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Input id="email" type="email" placeholder="you@diu.edu.bd" title="Only @diu.edu.bd email addresses are allowed" className="pl-10" value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
               <p className="text-xs text-muted-foreground">Only <span className="font-semibold text-foreground">@diu.edu.bd</span> emails are allowed.</p>
             </div>
