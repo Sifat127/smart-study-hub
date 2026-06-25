@@ -16,6 +16,12 @@ import Layout from "@/components/Layout";
 
 const profileSchema = z.object({
   full_name: z.string().trim().min(1, "Name is required").max(80),
+  roll_number: z
+    .string()
+    .trim()
+    .min(3, "Roll number must be 3-20 characters")
+    .max(20, "Roll number must be 3-20 characters")
+    .regex(/^[A-Za-z0-9-]+$/, "Roll number may only contain letters, numbers or dashes"),
   phone_number: z
     .string()
     .trim()
@@ -37,6 +43,7 @@ export default function Profile() {
 
   const [form, setForm] = useState({
     full_name: "",
+    roll_number: "",
     phone_number: "",
     section: "",
     department: "",
@@ -60,6 +67,7 @@ export default function Profile() {
     if (!profile) return;
     setForm({
       full_name: profile.full_name ?? "",
+      roll_number: profile.roll_number ?? "",
       phone_number: profile.phone_number ?? "",
       section: profile.section ?? "",
       department: profile.department ?? "",
@@ -100,6 +108,7 @@ export default function Profile() {
       .from("profiles")
       .update({
         full_name: parsed.data.full_name,
+        roll_number: parsed.data.roll_number,
         phone_number: parsed.data.phone_number || null,
         section: parsed.data.section || null,
         department: parsed.data.department || null,
@@ -227,8 +236,8 @@ export default function Profile() {
             <div className="min-w-0">
               <div className="font-display text-lg font-semibold truncate">{form.full_name || "Your name"}</div>
               <div className="text-sm text-muted-foreground truncate">{user.email}</div>
-              {profile?.roll_number && (
-                <div className="text-xs text-muted-foreground mt-0.5">Roll: {profile.roll_number}</div>
+              {form.roll_number && (
+                <div className="text-xs text-muted-foreground mt-0.5">Roll: {form.roll_number}</div>
               )}
             </div>
           </div>
@@ -238,6 +247,10 @@ export default function Profile() {
               <div className="space-y-1.5">
                 <Label htmlFor="full_name">Full name</Label>
                 <Input id="full_name" value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} required maxLength={80} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="roll_number">Roll number</Label>
+                <Input id="roll_number" value={form.roll_number} onChange={(e) => setForm({ ...form, roll_number: e.target.value })} placeholder="e.g. 252-15-590" maxLength={20} required />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="phone_number">Phone number</Label>
