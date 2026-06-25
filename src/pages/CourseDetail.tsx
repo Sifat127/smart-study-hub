@@ -58,7 +58,13 @@ export default function CourseDetail() {
     setDownloadingId(key);
     const toastId = toast.loading(`Preparing ${fileName}...`);
     try {
-      const res = await fetch(url);
+      // Catbox URLs don't send CORS headers, so proxy them through our edge function.
+      const isCatbox = url.startsWith("https://files.catbox.moe/");
+      const fetchUrl = isCatbox
+        ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/download-file?url=${encodeURIComponent(url)}&name=${encodeURIComponent(fileName)}`
+        : url;
+
+      const res = await fetch(fetchUrl);
       if (!res.ok) throw new Error(`Request failed (${res.status})`);
       const blob = await res.blob();
       const objectUrl = URL.createObjectURL(blob);
