@@ -218,6 +218,9 @@ export default function UserDashboard() {
             </div>
           )}
 
+          {/* Filter Chapters */}
+          <FilterChaptersSection />
+
           {/* Download history */}
           <div className="mt-12">
             <div className="flex items-center justify-between mb-4">
