@@ -19,15 +19,15 @@ export default function Layout({ children }: { children: ReactNode }) {
       {/* Aurora ambient background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         {/* Aurora orbs — drift slowly */}
-        <div className="aurora-orb animate-aurora-1 top-[-15%] left-[-10%] w-[55%] h-[55%] bg-[hsl(179_75%_45%/0.14)] dark:bg-[hsl(220_95%_55%/0.22)]" />
-        <div className="aurora-orb animate-aurora-2 bottom-[-15%] right-[-12%] w-[55%] h-[55%] bg-[hsl(35_75%_60%/0.16)] dark:bg-[hsl(280_85%_55%/0.2)]" />
-        <div className="aurora-orb animate-aurora-3 top-[30%] right-[10%] w-[35%] h-[35%] bg-[hsl(165_65%_45%/0.10)] dark:bg-[hsl(170_85%_45%/0.16)]" />
-        <div className="aurora-orb animate-aurora-1 top-[55%] left-[20%] w-[40%] h-[40%] bg-[hsl(40_70%_70%/0.12)] dark:bg-[hsl(200_85%_50%/0.14)]" />
+        <div className="aurora-orb animate-aurora-1 top-[-15%] left-[-10%] w-[55%] h-[55%] bg-[hsl(220_95%_55%/0.22)]" />
+        <div className="aurora-orb animate-aurora-2 bottom-[-15%] right-[-12%] w-[55%] h-[55%] bg-[hsl(280_85%_55%/0.2)]" />
+        <div className="aurora-orb animate-aurora-3 top-[30%] right-[10%] w-[35%] h-[35%] bg-[hsl(170_85%_45%/0.16)]" />
+        <div className="aurora-orb animate-aurora-1 top-[55%] left-[20%] w-[40%] h-[40%] bg-[hsl(200_85%_50%/0.14)]" />
 
 
         {/* Subtle grid overlay */}
         <div
-          className="absolute inset-0 opacity-[0.025] dark:opacity-[0.04]"
+          className="absolute inset-0 opacity-[0.04]"
           style={{
             backgroundImage:
               "linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)",
@@ -59,7 +59,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <img
           src={logo}
           alt=""
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] object-contain opacity-[0.025] dark:opacity-[0.04] pointer-events-none select-none"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] object-contain opacity-[0.04] pointer-events-none select-none"
         />
       </div>
 

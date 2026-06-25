@@ -4,34 +4,34 @@
 
 @layer base {
   :root {
-    /* Light theme — warm cream & akashi (editorial & warm) */
-    --background: 40 33% 97%;
-    --foreground: 0 0% 10%;
+    /* Dark aurora StudyBank design */
+    --background: 222 50% 4%;
+    --foreground: 210 30% 96%;
 
-    --card: 40 50% 99%;
-    --card-foreground: 0 0% 10%;
+    --card: 222 40% 8%;
+    --card-foreground: 210 30% 96%;
 
-    --popover: 40 50% 99%;
-    --popover-foreground: 0 0% 10%;
+    --popover: 222 40% 8%;
+    --popover-foreground: 210 30% 96%;
 
-    --primary: 179 80% 27%;
-    --primary-foreground: 40 33% 97%;
+    --primary: 184 90% 50%;
+    --primary-foreground: 222 50% 6%;
 
-    --secondary: 40 30% 91%;
-    --secondary-foreground: 0 0% 14%;
+    --secondary: 222 30% 14%;
+    --secondary-foreground: 210 30% 92%;
 
-    --muted: 40 28% 93%;
-    --muted-foreground: 30 8% 32%;
+    --muted: 222 30% 12%;
+    --muted-foreground: 215 15% 65%;
 
-    --accent: 179 80% 27%;
-    --accent-foreground: 40 33% 97%;
+    --accent: 184 90% 50%;
+    --accent-foreground: 222 50% 6%;
 
-    --destructive: 8 65% 47%;
-    --destructive-foreground: 40 33% 97%;
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 35 20% 82%;
-    --input: 35 20% 82%;
-    --ring: 179 80% 35%;
+    --border: 222 30% 18%;
+    --input: 222 30% 18%;
+    --ring: 184 90% 50%;
 
     --radius: 1.25rem;
 
@@ -44,21 +44,20 @@
     --sidebar-border: 222 30% 18%;
     --sidebar-ring: 184 80% 50%;
 
-    /* Gradient & shadow tokens — warm editorial */
-    --gradient-primary: linear-gradient(135deg, hsl(179 80% 27%), hsl(165 70% 35%));
-    --gradient-aurora: linear-gradient(135deg, hsl(179 75% 45% / 0.5), hsl(35 75% 60% / 0.45), hsl(165 65% 45% / 0.5));
-    /* Hero stays dark for editorial contrast in light mode */
-    --gradient-hero: radial-gradient(120% 100% at 50% 0%, hsl(222 40% 12%) 0%, hsl(222 50% 6%) 60%, hsl(222 55% 3%) 100%);
-    --gradient-card-hover: linear-gradient(135deg, hsl(179 80% 27% / 0.06), hsl(35 70% 55% / 0.08));
+    /* Gradient & shadow tokens — dark aurora */
+    --gradient-primary: linear-gradient(135deg, hsl(184 90% 50%), hsl(214 90% 58%));
+    --gradient-aurora: linear-gradient(135deg, hsl(220 95% 55% / 0.55), hsl(280 85% 60% / 0.45), hsl(170 90% 50% / 0.5));
+    --gradient-hero: radial-gradient(120% 100% at 50% 0%, hsl(222 45% 10%) 0%, hsl(222 50% 5%) 55%, hsl(222 55% 3%) 100%);
+    --gradient-card-hover: linear-gradient(135deg, hsl(184 90% 50% / 0.08), hsl(220 90% 55% / 0.08));
 
-    --shadow-card: 0 1px 2px hsl(35 20% 20% / 0.05), 0 8px 24px -10px hsl(35 25% 20% / 0.10);
-    --shadow-card-hover: 0 4px 16px -4px hsl(179 80% 27% / 0.2), 0 20px 48px -12px hsl(35 25% 20% / 0.14);
-    --shadow-elevated: 0 12px 40px -10px hsl(35 25% 20% / 0.18);
-    --shadow-glow: 0 0 28px hsl(179 80% 35% / 0.32);
+    --shadow-card: 0 1px 3px hsl(0 0% 0% / 0.4), 0 8px 24px -8px hsl(0 0% 0% / 0.5);
+    --shadow-card-hover: 0 4px 24px -4px hsl(184 90% 50% / 0.25), 0 16px 48px -12px hsl(220 80% 55% / 0.2);
+    --shadow-elevated: 0 16px 48px -12px hsl(0 0% 0% / 0.55);
+    --shadow-glow: 0 0 32px hsl(184 90% 50% / 0.4);
 
     --navy: 222 50% 6%;
     --navy-light: 222 40% 14%;
-    --cyan: 179 80% 27%;
+    --cyan: 184 90% 50%;
 
     --cyan-light: 184 60% 88%;
   }
@@ -106,7 +105,7 @@
   }
 
   html {
-    color-scheme: light dark;
+    color-scheme: dark;
     scroll-behavior: smooth;
     -webkit-tap-highlight-color: transparent;
   }
