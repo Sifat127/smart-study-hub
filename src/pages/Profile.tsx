@@ -16,6 +16,12 @@ import Layout from "@/components/Layout";
 
 const profileSchema = z.object({
   full_name: z.string().trim().min(1, "Name is required").max(80),
+  roll_number: z
+    .string()
+    .trim()
+    .min(3, "Roll number must be 3-20 characters")
+    .max(20, "Roll number must be 3-20 characters")
+    .regex(/^[A-Za-z0-9-]+$/, "Roll number may only contain letters, numbers or dashes"),
   phone_number: z
     .string()
     .trim()
@@ -37,6 +43,7 @@ export default function Profile() {
 
   const [form, setForm] = useState({
     full_name: "",
+    roll_number: "",
     phone_number: "",
     section: "",
     department: "",
@@ -60,6 +67,7 @@ export default function Profile() {
     if (!profile) return;
     setForm({
       full_name: profile.full_name ?? "",
+      roll_number: profile.roll_number ?? "",
       phone_number: profile.phone_number ?? "",
       section: profile.section ?? "",
       department: profile.department ?? "",
