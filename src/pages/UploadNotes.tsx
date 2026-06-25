@@ -95,12 +95,14 @@ export default function UploadNotes() {
       toast({ title: "You must be logged in", variant: "destructive" });
       return;
     }
+    // Hard guard: only admins may upload academic materials.
+    const safeKind: "material" | "notes" = isAdmin ? kind : "notes";
     setUploading(true);
     try {
       const fileUrl = await uploadToCatbox(file);
       const { error } = await supabase.from("student_uploads").insert({
         course_id: courseId,
-        kind,
+        kind: safeKind,
         batch: batch.trim(),
         student_name: studentName.trim() || null,
         title: title.trim(),
