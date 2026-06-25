@@ -22,3 +22,7 @@ class ResizeObserverPolyfill {
 (globalThis as unknown as { ResizeObserver: typeof ResizeObserverPolyfill }).ResizeObserver =
   (globalThis as unknown as { ResizeObserver?: typeof ResizeObserverPolyfill }).ResizeObserver ||
   ResizeObserverPolyfill;
+
+if (typeof document !== "undefined" && typeof document.elementFromPoint !== "function") {
+  (document as unknown as { elementFromPoint: () => null }).elementFromPoint = () => null;
+}
