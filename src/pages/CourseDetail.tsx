@@ -480,10 +480,7 @@ export default function CourseDetail() {
                               )}
                             </div>
                             <div className="flex flex-wrap gap-2">
-                              <Button size="sm" className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold" onClick={() => handleDownload(u.file_url, null, u.file_name)}>
-                                <Download className="h-4 w-4 mr-1.5" /> Download
-                              </Button>
-                              <Button size="sm" variant="outline" className="rounded-xl border-white/10 glass" asChild>
+                              <Button size="sm" className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold" asChild>
                                 <a href={u.file_url} target="_blank" rel="noopener noreferrer">
                                   <Eye className="h-4 w-4 mr-1.5" /> View
                                 </a>
