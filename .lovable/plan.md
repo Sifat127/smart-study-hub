@@ -1,33 +1,43 @@
-# Architecture Diagram
+## Add Google Sign-In (Option A — DIU-only + post-signup roll number)
 
-Create a single Mermaid diagram (`/mnt/documents/Architecture_Diagram.mmd`) that visualizes how the DIU StudyBank stack fits together, then embed it as a `lov-artifact` so it renders inline in chat.
+Going with Option A since it preserves the existing `@diu.edu.bd`-only policy and the roll-number requirement.
 
-## What the diagram will show
+### Steps
 
-Four grouped layers with directional arrows for real runtime flows:
+1. **Enable managed Google OAuth** via the Lovable Cloud social auth configuration. This also installs `@lovable.dev/cloud-auth-js` and generates `src/integrations/lovable/`. Email/password stays enabled.
 
-1. **Client (Browser)** — React 18 + Vite SPA, React Router, TanStack Query, shadcn/ui, `@supabase/supabase-js` client
-2. **Lovable Cloud — Supabase** — Auth, PostgREST + RLS, Postgres (`courses`, `chapters`, `student_uploads`, `profiles`, `user_roles`), Storage buckets (`pdfs`, `avatars`), `has_role()`
-3. **Edge Functions (Deno)** — `upload-to-catbox` (admin-only), `download-file` (public CORS proxy), `send-contact-email`, reads `CATBOX_USERHASH`
-4. **External** — Catbox upload API + `files.catbox.moe` CDN
+2. **DB migration — relax `handle_new_user` for OAuth users**
+   - Still reject any email not matching `^[^@\s]+@diu\.edu\.bd$` (applies to Google too via `hd: "diu.edu.bd"` + server-side check).
+   - If `raw_user_meta_data.roll_number` is missing (Google path), insert the profile row with `roll_number = NULL` instead of raising.
+   - Keep the format check and unique-violation handling for when a roll number IS provided.
+   - Still insert default `user` role.
 
-## Arrows / flows to include
+3. **Add `GoogleAuthButton` component** (`src/components/GoogleAuthButton.tsx`)
+   - Calls `lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin, extraParams: { hd: "diu.edu.bd", prompt: "select_account" } })`.
+   - Handles `result.error` with a destructive toast, returns on `result.redirected`.
+   - Google "G" logo + "Continue with Google" label, full-width, matches existing button styling.
 
-- Browser → Auth (sign in / session)
-- Browser → PostgREST (anon reads catalog; authenticated reads `student_uploads`)
-- Admin Browser → `upload-to-catbox` → Catbox API → URL stored on `chapters.pdf_url`
-- Signed-in Browser → `download-file` proxy → `files.catbox.moe` → bytes streamed back
-- Browser → `send-contact-email`
+4. **Login + Signup pages**
+   - Add `<GoogleAuthButton />` above the email field on both `src/pages/Login.tsx` and `src/pages/Signup.tsx`.
+   - Add an "or continue with email" divider between the Google button and the existing form.
 
-## Technical details
+5. **Post-OAuth roll-number gate**
+   - New route `/complete-profile` (`src/pages/CompleteProfile.tsx`) — protected, single field (roll number, same regex as signup), submits an `update` to `profiles` for `auth.uid()`.
+   - In `AuthContext.fetchUserData`, after the profile loads, expose a `needsProfileCompletion` boolean (true when `profile.roll_number` is null).
+   - New wrapper `RequireCompleteProfile` used inside `ProtectedRoute` (and on `/`) that redirects to `/complete-profile` when `needsProfileCompletion` is true; `/complete-profile` itself is exempt.
 
-- File: `/mnt/documents/Architecture_Diagram.mmd`
-- `graph LR` with `subgraph` per layer
-- No emojis, no custom colors (theme handles light/dark)
-- Embed in reply via:
-  `<lov-artifact url="/__l5e/documents/Architecture_Diagram.mmd" mime_type="text/vnd.mermaid"></lov-artifact>`
-- No app code changes
+6. **Safety net for non-DIU Google accounts**
+   - If a user somehow gets through with a non-DIU email (e.g. `hd` bypassed), the DB trigger still rejects them and the OAuth callback surfaces the error — `GoogleAuthButton` shows a toast: "Only @diu.edu.bd Google accounts are allowed."
 
-## Deliverable
+### Technical notes
 
-One chat reply with a short intro, the embedded diagram artifact, and a brief legend covering the four layers and the admin-upload / signed-in-download flows.
+- No edits to `src/integrations/supabase/client.ts` or `src/integrations/lovable/*` — both auto-generated.
+- Migration runs via the Supabase migration tool; `handle_new_user` is replaced with `CREATE OR REPLACE FUNCTION`.
+- No new secrets — managed Google credentials are used.
+- Existing email/password flow, verification, and admin gating are untouched.
+
+### Files
+
+- new: `src/components/GoogleAuthButton.tsx`, `src/pages/CompleteProfile.tsx`, `src/components/RequireCompleteProfile.tsx`
+- edit: `src/pages/Login.tsx`, `src/pages/Signup.tsx`, `src/contexts/AuthContext.tsx`, `src/App.tsx`
+- migration: replace `public.handle_new_user`
