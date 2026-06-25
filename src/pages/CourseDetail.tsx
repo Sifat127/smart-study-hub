@@ -87,54 +87,6 @@ export default function CourseDetail() {
     return null;
   };
 
-  const triggerSave = (href: string, fileName: string) => {
-    const a = document.createElement("a");
-    a.href = href;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  };
-
-  const handleDownload = async (url: string | null, path: string | null, fileName: string) => {
-    const loadingId = toast.loading(`Preparing ${fileName}...`);
-    try {
-      if (url) {
-        const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-        const proxy = `https://${projectId}.supabase.co/functions/v1/download-file?url=${encodeURIComponent(url)}&name=${encodeURIComponent(fileName)}`;
-
-        // Fetch via proxy so we can detect failures and show a clear toast.
-        const res = await fetch(proxy);
-        if (!res.ok) {
-          let detail = `HTTP ${res.status}`;
-          try {
-            const body = await res.json();
-            if (body?.error) detail = body.error;
-          } catch { /* ignore */ }
-          throw new Error(detail);
-        }
-        const blob = await res.blob();
-        const objectUrl = URL.createObjectURL(blob);
-        triggerSave(objectUrl, fileName);
-        setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
-      } else if (path) {
-        const { data, error } = await supabase.storage
-          .from("pdfs")
-          .createSignedUrl(path, 3600, { download: fileName });
-        if (error || !data?.signedUrl) throw new Error(error?.message || "Could not create signed URL");
-        triggerSave(data.signedUrl, fileName);
-      } else {
-        throw new Error("No file available");
-      }
-      toast.success(`Downloading ${fileName}`, { id: loadingId });
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Unknown error";
-      toast.error("Download failed", {
-        id: loadingId,
-        description: `Couldn't download ${fileName}. ${message}. Try the View button or check your connection.`,
-      });
-    }
-  };
 
   if (loading) {
     return (
