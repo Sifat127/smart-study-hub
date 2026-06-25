@@ -112,17 +112,18 @@ export default function CourseDetail() {
 
   useEffect(() => {
     async function fetchData() {
-      const baseRequests: Promise<unknown>[] = [
-        supabase.from("courses").select("id, code, name").eq("id", courseId!).maybeSingle(),
-        supabase.from("chapters").select("id, title, description, pdf_name, pdf_path, pdf_url, notes_name, notes_path, notes_url, uploaded_at").eq("course_id", courseId!).order("uploaded_at"),
+      const baseRequests: Promise<any>[] = [
+        Promise.resolve(supabase.from("courses").select("id, code, name").eq("id", courseId!).maybeSingle()),
+        Promise.resolve(supabase.from("chapters").select("id, title, description, pdf_name, pdf_path, pdf_url, notes_name, notes_path, notes_url, uploaded_at").eq("course_id", courseId!).order("uploaded_at")),
       ];
       // Student uploads are gated by RLS — only fetch when signed in to avoid 401 noise.
       if (user) {
         baseRequests.push(
-          supabase.from("student_uploads").select("id, kind, batch, student_name, title, description, file_name, file_url, created_at").eq("course_id", courseId!).order("created_at", { ascending: false })
+          Promise.resolve(supabase.from("student_uploads").select("id, kind, batch, student_name, title, description, file_name, file_url, created_at").eq("course_id", courseId!).order("created_at", { ascending: false }))
         );
       }
-      const [courseRes, chaptersRes, uploadsRes] = (await Promise.all(baseRequests)) as [any, any, any?];
+      const [courseRes, chaptersRes, uploadsRes] = await Promise.all(baseRequests);
+
       if (courseRes?.data) setCourse(courseRes.data);
       if (chaptersRes?.data) setChapters(chaptersRes.data);
       if (uploadsRes?.data) setStudentUploads(uploadsRes.data as StudentUpload[]);
