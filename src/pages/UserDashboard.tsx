@@ -6,6 +6,7 @@ import {
   BookText, Scale, Shirt, Building2, Radio, Plane, Apple, HeartPulse,
   Clapperboard, ArrowRight, Search, StickyNote, BookOpen, GraduationCap,
   Upload, User as UserIcon, FileText, Clock, Download, History,
+  Filter, CalendarDays, X,
 } from "lucide-react";
 import Layout from "@/components/Layout";
 import PageHeader from "@/components/PageHeader";

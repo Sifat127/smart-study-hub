@@ -1,43 +1,33 @@
-## Add Google Sign-In (Option A — DIU-only + post-signup roll number)
+## Add a "Filter Chapters" section to the User Dashboard
 
-Going with Option A since it preserves the existing `@diu.edu.bd`-only policy and the roll-number requirement.
+Add a standalone filter + results section on `/dashboard` (between the Departments grid and Recent Downloads) styled like the screenshot.
 
-### Steps
+### Filter bar (one card)
 
-1. **Enable managed Google OAuth** via the Lovable Cloud social auth configuration. This also installs `@lovable.dev/cloud-auth-js` and generates `src/integrations/lovable/`. Email/password stays enabled.
+- Header row: funnel icon + "Filter Chapters" on the left; on the right, pill chips for each active filter (icon-tinted, one per Department / Course / Semester / Chapter) plus an "X Clear all N" button. Chips appear only when filters are active.
+- Dropdowns row — 4 selects in a responsive grid (1 col mobile / 2 sm / 4 lg), each with a colored leading icon:
+  1. **Department** (blue, GraduationCap) — from `mockData.departments`. Default "All departments".
+  2. **Course** (green, BookOpen) — from `courses` table filtered by selected department. Disabled until department picked.
+  3. **Semester** (purple, CalendarDays) — 1–12. Default "All semesters".
+  4. **Chapter** (amber, FileText) — from `chapters` filtered by selected course. Disabled until course picked.
+- Changing a parent filter clears its dependent children.
 
-2. **DB migration — relax `handle_new_user` for OAuth users**
-   - Still reject any email not matching `^[^@\s]+@diu\.edu\.bd$` (applies to Google too via `hd: "diu.edu.bd"` + server-side check).
-   - If `raw_user_meta_data.roll_number` is missing (Google path), insert the profile row with `roll_number = NULL` instead of raising.
-   - Keep the format check and unique-violation handling for when a roll number IS provided.
-   - Still insert default `user` role.
+### Results list
 
-3. **Add `GoogleAuthButton` component** (`src/components/GoogleAuthButton.tsx`)
-   - Calls `lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin, extraParams: { hd: "diu.edu.bd", prompt: "select_account" } })`.
-   - Handles `result.error` with a destructive toast, returns on `result.redirected`.
-   - Google "G" logo + "Continue with Google" label, full-width, matches existing button styling.
+Cards stacked vertically for each matching chapter:
+- Chapter title (bold)
+- Tag chips: department code (blue), course code (amber), semester (purple)
+- Meta row: clock + uploaded date, file badges showing PDF / Notes availability
+- Whole card links to `/departments/:dept/semester/:sem/course/:courseId?tab=materials`
 
-4. **Login + Signup pages**
-   - Add `<GoogleAuthButton />` above the email field on both `src/pages/Login.tsx` and `src/pages/Signup.tsx`.
-   - Add an "or continue with email" divider between the Google button and the existing form.
+States: loading skeletons; empty-with-filters "No chapters match these filters."; empty-no-filters shows latest ~10 chapters so the section isn't blank.
 
-5. **Post-OAuth roll-number gate**
-   - New route `/complete-profile` (`src/pages/CompleteProfile.tsx`) — protected, single field (roll number, same regex as signup), submits an `update` to `profiles` for `auth.uid()`.
-   - In `AuthContext.fetchUserData`, after the profile loads, expose a `needsProfileCompletion` boolean (true when `profile.roll_number` is null).
-   - New wrapper `RequireCompleteProfile` used inside `ProtectedRoute` (and on `/`) that redirects to `/complete-profile` when `needsProfileCompletion` is true; `/complete-profile` itself is exempt.
+### Data
 
-6. **Safety net for non-DIU Google accounts**
-   - If a user somehow gets through with a non-DIU email (e.g. `hd` bypassed), the DB trigger still rejects them and the OAuth callback surfaces the error — `GoogleAuthButton` shows a toast: "Only @diu.edu.bd Google accounts are allowed."
-
-### Technical notes
-
-- No edits to `src/integrations/supabase/client.ts` or `src/integrations/lovable/*` — both auto-generated.
-- Migration runs via the Supabase migration tool; `handle_new_user` is replaced with `CREATE OR REPLACE FUNCTION`.
-- No new secrets — managed Google credentials are used.
-- Existing email/password flow, verification, and admin gating are untouched.
+Single Supabase query on `chapters` joined to `courses(id, code, name, department, semester)`, filtered server-side by the active dropdowns, ordered by `uploaded_at desc`, limit 30. Re-runs whenever a filter changes.
 
 ### Files
 
-- new: `src/components/GoogleAuthButton.tsx`, `src/pages/CompleteProfile.tsx`, `src/components/RequireCompleteProfile.tsx`
-- edit: `src/pages/Login.tsx`, `src/pages/Signup.tsx`, `src/contexts/AuthContext.tsx`, `src/App.tsx`
-- migration: replace `public.handle_new_user`
+- **Edit** `src/pages/UserDashboard.tsx` — add a `FilterChaptersSection` component in the same file and render it between the Departments grid and Recent Downloads.
+
+No DB, routing, or backend changes. Uses existing RLS on `chapters` and `courses` (authenticated reads already allowed).
