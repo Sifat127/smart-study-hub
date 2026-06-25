@@ -57,10 +57,11 @@ export default function Navbar() {
                 {active && (
                   <motion.span
                     layoutId="nav-pill"
-                    className="absolute inset-0 bg-white/5 dark:bg-white/[0.06] border border-white/10 rounded-xl shadow-[0_0_20px_-4px_hsl(var(--accent)/0.4)]"
+                    className="absolute inset-0 bg-accent/10 border border-accent/30 dark:bg-white/[0.06] dark:border-white/10 rounded-xl shadow-[0_0_20px_-4px_hsl(var(--accent)/0.4)]"
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
+
                 <span className="relative z-10">{link.label}</span>
               </Link>
             );
