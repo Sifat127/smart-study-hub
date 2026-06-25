@@ -108,6 +108,7 @@ export default function Profile() {
       .from("profiles")
       .update({
         full_name: parsed.data.full_name,
+        roll_number: parsed.data.roll_number,
         phone_number: parsed.data.phone_number || null,
         section: parsed.data.section || null,
         department: parsed.data.department || null,
