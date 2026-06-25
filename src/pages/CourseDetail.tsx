@@ -51,6 +51,34 @@ export default function CourseDetail() {
   const [uploaderQuery, setUploaderQuery] = useState("");
   const [batchFilter, setBatchFilter] = useState<string>("all");
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+
+  const handleDownload = async (url: string, fileName: string, key: string) => {
+    if (downloadingId) return;
+    setDownloadingId(key);
+    const toastId = toast.loading(`Preparing ${fileName}...`);
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Request failed (${res.status})`);
+      const blob = await res.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = objectUrl;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      toast.success("Download started", { id: toastId, description: fileName });
+    } catch (err) {
+      toast.error("Download failed", {
+        id: toastId,
+        description: err instanceof Error ? err.message : "Please try again.",
+      });
+    } finally {
+      setDownloadingId(null);
+    }
+  };
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab: "materials" | "notes" = searchParams.get("tab") === "notes" ? "notes" : "materials";
   const setActiveTab = (tab: "materials" | "notes") => {
