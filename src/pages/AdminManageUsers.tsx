@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, ArrowLeft, Shield, User, Loader2, Mail, Phone, Home, GraduationCap } from "lucide-react";
+import { BookOpen, ArrowLeft, Shield, User, Loader2, Mail, Phone, Layers, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +16,7 @@ interface UserRow {
   full_name: string | null;
   roll_number: string | null;
   phone_number: string | null;
-  room_number: string | null;
+  section: string | null;
   department: string | null;
   batch: string | null;
   role: string;
@@ -70,7 +70,7 @@ export default function AdminManageUsers() {
   const q = search.trim().toLowerCase();
   const filtered = users.filter((u) =>
     !q ||
-    [u.full_name, u.email, u.roll_number, u.phone_number, u.room_number, u.department, u.batch]
+    [u.full_name, u.email, u.roll_number, u.phone_number, u.section, u.department, u.batch]
       .some((v) => v && v.toLowerCase().includes(q))
   );
 
@@ -93,7 +93,7 @@ export default function AdminManageUsers() {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
           <Input
-            placeholder="Search by name, email, roll, room, department..."
+            placeholder="Search by name, email, roll, section, department..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="max-w-md"
@@ -113,7 +113,7 @@ export default function AdminManageUsers() {
                   <th className="text-left p-4 font-display font-semibold">Email</th>
                   <th className="text-left p-4 font-display font-semibold hidden md:table-cell">Roll</th>
                   <th className="text-left p-4 font-display font-semibold hidden lg:table-cell">Phone</th>
-                  <th className="text-left p-4 font-display font-semibold hidden lg:table-cell">Room</th>
+                  <th className="text-left p-4 font-display font-semibold hidden lg:table-cell">Section</th>
                   <th className="text-left p-4 font-display font-semibold hidden md:table-cell">Department</th>
                   <th className="text-left p-4 font-display font-semibold hidden md:table-cell">Batch</th>
                   <th className="text-left p-4 font-display font-semibold">Role</th>
@@ -147,7 +147,7 @@ export default function AdminManageUsers() {
                       <td className="p-4 text-muted-foreground truncate max-w-[220px]">{u.email || "—"}</td>
                       <td className="p-4 text-muted-foreground hidden md:table-cell">{u.roll_number || "—"}</td>
                       <td className="p-4 text-muted-foreground hidden lg:table-cell">{u.phone_number || "—"}</td>
-                      <td className="p-4 text-muted-foreground hidden lg:table-cell">{u.room_number || "—"}</td>
+                      <td className="p-4 text-muted-foreground hidden lg:table-cell">{u.section || "—"}</td>
                       <td className="p-4 text-muted-foreground hidden md:table-cell truncate max-w-[160px]">{u.department || "—"}</td>
                       <td className="p-4 text-muted-foreground hidden md:table-cell">{u.batch || "—"}</td>
                       <td className="p-4">
@@ -195,7 +195,7 @@ export default function AdminManageUsers() {
                 <DetailRow icon={<Mail className="h-4 w-4" />} label="Email" value={selected.email} />
                 <DetailRow icon={<GraduationCap className="h-4 w-4" />} label="Roll number" value={selected.roll_number} />
                 <DetailRow icon={<Phone className="h-4 w-4" />} label="Phone" value={selected.phone_number} />
-                <DetailRow icon={<Home className="h-4 w-4" />} label="Room" value={selected.room_number} />
+                <DetailRow icon={<Layers className="h-4 w-4" />} label="Section" value={selected.section} />
                 <DetailRow icon={<BookOpen className="h-4 w-4" />} label="Department" value={selected.department} />
                 <DetailRow icon={<GraduationCap className="h-4 w-4" />} label="Batch" value={selected.batch} />
                 <DetailRow icon={<Shield className="h-4 w-4" />} label="Role" value={selected.role} />
