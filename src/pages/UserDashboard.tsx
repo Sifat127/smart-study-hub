@@ -30,6 +30,20 @@ interface RecentUpload {
   courses?: { code: string; name: string; department: string; semester: number } | null;
 }
 
+interface RecentDownload {
+  id: string;
+  kind: "pdf" | "notes";
+  file_name: string | null;
+  downloaded_at: string;
+  chapter_id: string;
+  chapters?: {
+    id: string;
+    title: string;
+    course_id: string;
+    courses?: { code: string; name: string; department: string; semester: number } | null;
+  } | null;
+}
+
 export default function UserDashboard() {
   const { user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -38,6 +52,8 @@ export default function UserDashboard() {
   const [semester, setSemester] = useState<string>("all");
   const [recent, setRecent] = useState<RecentUpload[]>([]);
   const [loadingRecent, setLoadingRecent] = useState(true);
+  const [downloads, setDownloads] = useState<RecentDownload[]>([]);
+  const [loadingDownloads, setLoadingDownloads] = useState(true);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/login?redirect=/dashboard");
@@ -47,16 +63,25 @@ export default function UserDashboard() {
     if (!user) return;
     let active = true;
     (async () => {
-      const { data } = await supabase
-        .from("student_uploads")
-        .select("id, title, kind, created_at, course_id, courses(code, name, department, semester)")
-        .eq("uploaded_by", user.id)
-        .order("created_at", { ascending: false })
-        .limit(5);
-      if (active) {
-        setRecent((data as any) ?? []);
-        setLoadingRecent(false);
-      }
+      const [uploadsRes, downloadsRes] = await Promise.all([
+        supabase
+          .from("student_uploads")
+          .select("id, title, kind, created_at, course_id, courses(code, name, department, semester)")
+          .eq("uploaded_by", user.id)
+          .order("created_at", { ascending: false })
+          .limit(5),
+        supabase
+          .from("chapter_downloads")
+          .select("id, kind, file_name, downloaded_at, chapter_id, chapters(id, title, course_id, courses(code, name, department, semester))")
+          .eq("user_id", user.id)
+          .order("downloaded_at", { ascending: false })
+          .limit(8),
+      ]);
+      if (!active) return;
+      setRecent((uploadsRes.data as any) ?? []);
+      setLoadingRecent(false);
+      setDownloads((downloadsRes.data as any) ?? []);
+      setLoadingDownloads(false);
     })();
     return () => { active = false; };
   }, [user]);
