@@ -548,23 +548,49 @@ export default function AdminManageUsers() {
                   {!loadingAudit && auditLog.length === 0 ? (
                     <p className="text-xs text-muted-foreground">No admin edits recorded yet.</p>
                   ) : (
-                    <ul className="space-y-2 max-h-64 overflow-y-auto pr-1">
-                      {auditLog.map((entry) => (
-                        <li key={entry.id} className="text-xs rounded-md bg-muted/40 border border-border/50 p-2">
-                          <div className="flex justify-between gap-2 mb-1">
-                            <span className="font-medium text-foreground">{entry.field_name.replace(/_/g, " ")}</span>
-                            <span className="text-muted-foreground whitespace-nowrap">{new Date(entry.changed_at).toLocaleString()}</span>
-                          </div>
-                          <div className="text-muted-foreground break-words">
-                            <span className="line-through opacity-70">{entry.old_value || "—"}</span>
-                            <span className="mx-1.5">→</span>
-                            <span className="text-foreground">{entry.new_value || "—"}</span>
-                          </div>
-                          <div className="text-[10px] text-muted-foreground mt-1">
-                            by {entry.changed_by ? (auditorNames[entry.changed_by] ?? "Admin") : "Admin"}
-                          </div>
-                        </li>
-                      ))}
+                    <ul className="space-y-3 max-h-80 overflow-y-auto pr-1">
+                      {auditGroups.map((group) => {
+                        const head = group[0];
+                        const restorable = group.filter((e) => RESTORABLE_FIELDS.has(e.field_name));
+                        return (
+                          <li key={head.id} className="text-xs rounded-md bg-muted/40 border border-border/50 p-2.5">
+                            <div className="flex justify-between gap-2 mb-2">
+                              <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                                by {head.changed_by ? (auditorNames[head.changed_by] ?? "Admin") : "Admin"}
+                              </span>
+                              <span className="text-muted-foreground whitespace-nowrap">
+                                {new Date(head.changed_at).toLocaleString()}
+                              </span>
+                            </div>
+                            <ul className="space-y-1.5">
+                              {group.map((entry) => (
+                                <li key={entry.id}>
+                                  <div className="font-medium text-foreground">{entry.field_name.replace(/_/g, " ")}</div>
+                                  <div className="text-muted-foreground break-words">
+                                    <span className="line-through opacity-70">{entry.old_value || "—"}</span>
+                                    <span className="mx-1.5">→</span>
+                                    <span className="text-foreground">{entry.new_value || "—"}</span>
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                            {restorable.length > 0 && (
+                              <div className="flex justify-end mt-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="h-7 text-xs"
+                                  onClick={() => setPendingRestore(restorable)}
+                                  disabled={restoring}
+                                >
+                                  <Undo2 className="h-3 w-3 mr-1" />
+                                  Restore these values
+                                </Button>
+                              </div>
+                            )}
+                          </li>
+                        );
+                      })}
                     </ul>
                   )}
                 </div>
@@ -573,6 +599,46 @@ export default function AdminManageUsers() {
           )}
         </SheetContent>
       </Sheet>
+
+      <AlertDialog open={!!pendingRestore} onOpenChange={(open) => !open && !restoring && setPendingRestore(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Restore previous values?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will revert the following field{(pendingRestore?.length ?? 0) === 1 ? "" : "s"} on this user's profile
+              and record a new audit entry showing the rollback. The original history is preserved.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {pendingRestore && (
+            <ul className="text-xs space-y-1.5 rounded-md bg-muted/40 border border-border/50 p-2.5 max-h-48 overflow-y-auto">
+              {pendingRestore.map((e) => (
+                <li key={e.id} className="break-words">
+                  <span className="font-medium text-foreground">{e.field_name.replace(/_/g, " ")}: </span>
+                  <span className="line-through opacity-70">{e.new_value || "—"}</span>
+                  <span className="mx-1.5">→</span>
+                  <span className="text-foreground">{e.old_value || "—"}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={restoring}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={restoring}
+              onClick={(e) => {
+                e.preventDefault();
+                if (pendingRestore) handleRestore(pendingRestore);
+              }}
+            >
+              {restoring ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Undo2 className="h-4 w-4 mr-2" />}
+              Restore
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+}
     </div>
   );
 }
