@@ -326,7 +326,7 @@ export default function CourseDetail() {
                     const activeCount = (query ? 1 : 0) + (uploaderQuery ? 1 : 0) + (batchFilter !== "all" ? 1 : 0);
                     const hasActive = activeCount > 0;
                     return (
-                  <div className="sticky top-16 z-30 mb-5">
+                  <div className="sticky top-14 md:top-16 z-30 -mx-1 px-1 py-2 mb-5 bg-background/70 backdrop-blur-md supports-[backdrop-filter]:bg-background/50 rounded-2xl">
                     <div className="sm:hidden flex items-center gap-2 mb-2">
                       <button
                         type="button"
