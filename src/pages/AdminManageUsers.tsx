@@ -159,7 +159,7 @@ export default function AdminManageUsers() {
                     <tr
                       key={u.user_id}
                       className="border-b border-border/50 hover:bg-muted/30 transition-colors cursor-pointer"
-                      onClick={() => setSelected(u)}
+                      onClick={() => openUser(u)}
                     >
                       <td className="p-4">
                         <div className="flex items-center gap-3">
