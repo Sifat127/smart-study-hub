@@ -23,7 +23,7 @@ const profileSchema = z.object({
     .regex(/^[+\d\s-]*$/i, "Phone may only contain digits, spaces, + or -")
     .optional()
     .or(z.literal("")),
-  room_number: z.string().trim().max(20).optional().or(z.literal("")),
+  section: z.string().trim().max(20).optional().or(z.literal("")),
   department: z.string().trim().max(120).optional().or(z.literal("")),
   batch: z.string().trim().max(20).optional().or(z.literal("")),
   bio: z.string().trim().max(500, "Bio must be 500 characters or less").optional().or(z.literal("")),
@@ -38,7 +38,7 @@ export default function Profile() {
   const [form, setForm] = useState({
     full_name: "",
     phone_number: "",
-    room_number: "",
+    section: "",
     department: "",
     batch: "",
     bio: "",
@@ -61,7 +61,7 @@ export default function Profile() {
     setForm({
       full_name: profile.full_name ?? "",
       phone_number: profile.phone_number ?? "",
-      room_number: profile.room_number ?? "",
+      section: profile.section ?? "",
       department: profile.department ?? "",
       batch: profile.batch ?? "",
       bio: profile.bio ?? "",
@@ -101,7 +101,7 @@ export default function Profile() {
       .update({
         full_name: parsed.data.full_name,
         phone_number: parsed.data.phone_number || null,
-        room_number: parsed.data.room_number || null,
+        section: parsed.data.section || null,
         department: parsed.data.department || null,
         batch: parsed.data.batch || null,
         bio: parsed.data.bio || null,
@@ -244,8 +244,8 @@ export default function Profile() {
                 <Input id="phone_number" value={form.phone_number} onChange={(e) => setForm({ ...form, phone_number: e.target.value })} placeholder="+880 ..." maxLength={20} />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="room_number">Room number</Label>
-                <Input id="room_number" value={form.room_number} onChange={(e) => setForm({ ...form, room_number: e.target.value })} placeholder="e.g. 504" maxLength={20} />
+                <Label htmlFor="section">Section</Label>
+                <Input id="section" value={form.section} onChange={(e) => setForm({ ...form, section: e.target.value })} placeholder="e.g. 69_E" maxLength={20} />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="batch">Batch</Label>
