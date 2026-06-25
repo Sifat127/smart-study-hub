@@ -101,13 +101,6 @@ export default function Navbar() {
 
         <div className="md:hidden flex items-center gap-1">
           <button
-            onClick={toggleTheme}
-            className="p-2 rounded-xl hover:bg-white/5 transition-colors text-muted-foreground hover:text-foreground"
-            aria-label="Toggle theme"
-          >
-            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </button>
-          <button
             className="p-2 rounded-xl hover:bg-white/5 border border-white/10 hover:border-border"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
