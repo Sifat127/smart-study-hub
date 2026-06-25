@@ -118,6 +118,23 @@ export default function Signup() {
               </div>
             </div>
             <div className="space-y-2">
+              <Label htmlFor="roll">Student Roll Number</Label>
+              <div className="relative">
+                <IdCard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="roll"
+                  placeholder="e.g. 221-15-1234"
+                  className="pl-10 tracking-wide"
+                  value={rollNumber}
+                  onChange={(e) => setRollNumber(e.target.value)}
+                  autoComplete="off"
+                  inputMode="text"
+                  maxLength={20}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">3–20 characters, letters/numbers/dashes only.</p>
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
