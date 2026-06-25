@@ -7,7 +7,16 @@ type AppRole = "admin" | "user";
 interface AuthContextType {
   session: Session | null;
   user: User | null;
-  profile: { full_name: string | null; avatar_url: string | null; roll_number: string | null } | null;
+  profile: {
+    full_name: string | null;
+    avatar_url: string | null;
+    roll_number: string | null;
+    phone_number: string | null;
+    room_number: string | null;
+    department: string | null;
+    batch: string | null;
+    bio: string | null;
+  } | null;
   role: AppRole;
   isAdmin: boolean;
   loading: boolean;
