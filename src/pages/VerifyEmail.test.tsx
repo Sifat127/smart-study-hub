@@ -154,17 +154,12 @@ describe("VerifyEmail page", () => {
 
   it("resends a fresh code and shows a success toast", async () => {
     resendMock.mockResolvedValueOnce({ error: null });
-    renderPage();
-    // The initial 30s cooldown blocks the button — bypass by calling resend programmatically
-    // through the visible enabled state. We fast-forward by directly invoking after enabling.
-    // Instead, target the button once enabled by waiting; for speed, fake timers:
     vi.useFakeTimers();
-    try {
-      vi.advanceTimersByTime(31_000);
-    } finally {
-      vi.useRealTimers();
-    }
-    const user = userEvent.setup();
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    renderPage();
+    await vi.advanceTimersByTimeAsync(31_000);
+    vi.useRealTimers();
+
     const btn = await screen.findByRole("button", { name: /resend code/i });
     await user.click(btn);
 
@@ -178,14 +173,12 @@ describe("VerifyEmail page", () => {
 
   it("shows a destructive toast when resend fails", async () => {
     resendMock.mockResolvedValueOnce({ error: { message: "rate limit exceeded" } });
-    renderPage();
     vi.useFakeTimers();
-    try {
-      vi.advanceTimersByTime(31_000);
-    } finally {
-      vi.useRealTimers();
-    }
-    const user = userEvent.setup();
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    renderPage();
+    await vi.advanceTimersByTimeAsync(31_000);
+    vi.useRealTimers();
+
     const btn = await screen.findByRole("button", { name: /resend code/i });
     await user.click(btn);
 
