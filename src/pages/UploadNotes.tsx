@@ -40,6 +40,11 @@ export default function UploadNotes() {
   const [uploading, setUploading] = useState(false);
   const [done, setDone] = useState(false);
 
+  // Non-admin users can only upload student notes, never academic materials.
+  useEffect(() => {
+    if (!isAdmin && kind !== "notes") setKind("notes");
+  }, [isAdmin, kind]);
+
   useEffect(() => {
     if (!authLoading && !user) navigate("/login?redirect=/upload-notes");
   }, [authLoading, user, navigate]);
