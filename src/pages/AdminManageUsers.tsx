@@ -48,6 +48,15 @@ interface UserRow {
 
 const UNASSIGNED = "Unassigned";
 
+interface AuditEntry {
+  id: string;
+  field_name: string;
+  old_value: string | null;
+  new_value: string | null;
+  changed_at: string;
+  changed_by: string | null;
+}
+
 export default function AdminManageUsers() {
   const { toast } = useToast();
   const { user: currentUser } = useAuth();
@@ -57,6 +66,7 @@ export default function AdminManageUsers() {
   const [departmentFilter, setDepartmentFilter] = useState<string>("all");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [selected, setSelected] = useState<UserRow | null>(null);
+  
   const [form, setForm] = useState({
     full_name: "",
     roll_number: "",
@@ -67,6 +77,41 @@ export default function AdminManageUsers() {
     bio: "",
   });
   const [saving, setSaving] = useState(false);
+  const [auditLog, setAuditLog] = useState<AuditEntry[]>([]);
+  const [auditorNames, setAuditorNames] = useState<Record<string, string>>({});
+  const [loadingAudit, setLoadingAudit] = useState(false);
+
+  const loadAuditLog = async (userId: string) => {
+    setLoadingAudit(true);
+    const { data, error } = await supabase
+      .from("profile_audit_log")
+      .select("id, field_name, old_value, new_value, changed_at, changed_by")
+      .eq("target_user_id", userId)
+      .order("changed_at", { ascending: false })
+      .limit(50);
+    if (error) {
+      setAuditLog([]);
+    } else {
+      const entries = (data ?? []) as AuditEntry[];
+      setAuditLog(entries);
+      const actorIds = Array.from(new Set(entries.map((e) => e.changed_by).filter(Boolean))) as string[];
+      const missing = actorIds.filter((id) => !auditorNames[id]);
+      if (missing.length > 0) {
+        const { data: profs } = await supabase
+          .from("profiles")
+          .select("user_id, full_name")
+          .in("user_id", missing);
+        if (profs) {
+          setAuditorNames((prev) => {
+            const next = { ...prev };
+            for (const p of profs) next[p.user_id] = p.full_name ?? "Admin";
+            return next;
+          });
+        }
+      }
+    }
+    setLoadingAudit(false);
+  };
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -101,6 +146,7 @@ export default function AdminManageUsers() {
       batch: data?.batch ?? u.batch ?? "",
       bio: data?.bio ?? "",
     });
+    loadAuditLog(u.user_id);
   };
 
   const handleSave = async () => {
@@ -410,6 +456,35 @@ export default function AdminManageUsers() {
                     {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
                     Save changes
                   </Button>
+                </div>
+
+                <div className="pt-4 border-t border-border/50">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="font-display font-semibold text-sm">Admin edit history</h3>
+                    {loadingAudit && <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />}
+                  </div>
+                  {!loadingAudit && auditLog.length === 0 ? (
+                    <p className="text-xs text-muted-foreground">No admin edits recorded yet.</p>
+                  ) : (
+                    <ul className="space-y-2 max-h-64 overflow-y-auto pr-1">
+                      {auditLog.map((entry) => (
+                        <li key={entry.id} className="text-xs rounded-md bg-muted/40 border border-border/50 p-2">
+                          <div className="flex justify-between gap-2 mb-1">
+                            <span className="font-medium text-foreground">{entry.field_name.replace(/_/g, " ")}</span>
+                            <span className="text-muted-foreground whitespace-nowrap">{new Date(entry.changed_at).toLocaleString()}</span>
+                          </div>
+                          <div className="text-muted-foreground break-words">
+                            <span className="line-through opacity-70">{entry.old_value || "—"}</span>
+                            <span className="mx-1.5">→</span>
+                            <span className="text-foreground">{entry.new_value || "—"}</span>
+                          </div>
+                          <div className="text-[10px] text-muted-foreground mt-1">
+                            by {entry.changed_by ? (auditorNames[entry.changed_by] ?? "Admin") : "Admin"}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               </div>
             </>
