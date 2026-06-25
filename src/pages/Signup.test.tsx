@@ -31,10 +31,11 @@ const renderSignup = () =>
     </MemoryRouter>,
   );
 
-const fillForm = async (email: string) => {
+const fillForm = async (email: string, opts?: { roll?: string }) => {
   const user = userEvent.setup();
   await user.type(screen.getByLabelText(/full name/i), "Test User");
-  const emailInput = screen.getByLabelText(/email/i);
+  await user.type(screen.getByLabelText(/roll number/i), opts?.roll ?? "221-15-1234");
+  const emailInput = screen.getByLabelText(/^email$/i);
   await user.type(emailInput, email);
   await user.type(screen.getByLabelText(/password/i), "Str0ngPass!23");
   await user.click(screen.getByRole("button", { name: /create account/i }));
@@ -70,7 +71,21 @@ describe("Signup page — DIU email gate", () => {
     expect(signUpMock).not.toHaveBeenCalled();
   });
 
-  it("accepts @diu.edu.bd, calls signUp, and navigates to /login on success", async () => {
+  it("rejects an invalid roll number format", async () => {
+    renderSignup();
+    await fillForm("student@diu.edu.bd", { roll: "ab" });
+
+    await waitFor(() => expect(toastMock).toHaveBeenCalled());
+    expect(signUpMock).not.toHaveBeenCalled();
+    expect(toastMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: expect.stringMatching(/invalid roll number/i),
+        variant: "destructive",
+      }),
+    );
+  });
+
+  it("accepts @diu.edu.bd, calls signUp with roll number, and navigates to /verify-email", async () => {
     signUpMock.mockResolvedValueOnce({ error: null });
     renderSignup();
     await fillForm("student@diu.edu.bd");
@@ -80,11 +95,16 @@ describe("Signup page — DIU email gate", () => {
         "student@diu.edu.bd",
         "Str0ngPass!23",
         "Test User",
+        "221-15-1234",
       ),
     );
-    await waitFor(() => expect(navigateMock).toHaveBeenCalledWith("/login"));
+    await waitFor(() =>
+      expect(navigateMock).toHaveBeenCalledWith(
+        "/verify-email?email=student%40diu.edu.bd",
+      ),
+    );
     expect(toastMock).toHaveBeenCalledWith(
-      expect.objectContaining({ title: expect.stringMatching(/account created/i) }),
+      expect.objectContaining({ title: expect.stringMatching(/check your diu email/i) }),
     );
   });
 
@@ -98,6 +118,7 @@ describe("Signup page — DIU email gate", () => {
         "student@diu.edu.bd",
         "Str0ngPass!23",
         "Test User",
+        "221-15-1234",
       ),
     );
   });

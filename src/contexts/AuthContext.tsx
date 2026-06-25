@@ -7,11 +7,11 @@ type AppRole = "admin" | "user";
 interface AuthContextType {
   session: Session | null;
   user: User | null;
-  profile: { full_name: string | null; avatar_url: string | null } | null;
+  profile: { full_name: string | null; avatar_url: string | null; roll_number: string | null } | null;
   role: AppRole;
   isAdmin: boolean;
   loading: boolean;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string, fullName: string, rollNumber: string) => Promise<{ error: string | null }>;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
 }
@@ -27,7 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchUserData = async (userId: string) => {
     const [profileRes, roleRes] = await Promise.all([
-      supabase.from("profiles").select("full_name, avatar_url").eq("user_id", userId).maybeSingle(),
+      supabase.from("profiles").select("full_name, avatar_url, roll_number").eq("user_id", userId).maybeSingle(),
       supabase.from("user_roles").select("role").eq("user_id", userId),
     ]);
     if (profileRes.data) setProfile(profileRes.data);
@@ -65,11 +65,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, fullName: string) => {
+  const signUp = async (email: string, password: string, fullName: string, rollNumber: string) => {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: fullName }, emailRedirectTo: window.location.origin },
+      options: {
+        data: { full_name: fullName, roll_number: rollNumber },
+        emailRedirectTo: window.location.origin,
+      },
     });
     return { error: error?.message ?? null };
   };

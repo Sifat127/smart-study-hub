@@ -24,17 +24,23 @@ export default function Login() {
       toast({ title: "Please fill in all fields", variant: "destructive" });
       return;
     }
+    const normalizedEmail = email.trim().toLowerCase();
     setSubmitting(true);
-    const { error } = await signIn(email.trim(), password);
+    const { error } = await signIn(normalizedEmail, password);
     setSubmitting(false);
     if (error) {
+      if (/email not confirmed|not\s*confirmed/i.test(error)) {
+        toast({
+          title: "Verify your email first",
+          description: "Enter the 6-digit code we sent to your DIU email.",
+        });
+        navigate(`/verify-email?email=${encodeURIComponent(normalizedEmail)}`);
+        return;
+      }
       toast({ title: "Login failed", description: error, variant: "destructive" });
     } else {
       toast({ title: "Welcome back!" });
-      // Small delay so role is fetched before redirect
       setTimeout(() => {
-        // Re-read isAdmin won't work here since state updates async.
-        // We'll let the onAuthStateChange + a useEffect in App handle redirect.
         navigate("/");
       }, 300);
     }
@@ -91,7 +97,7 @@ export default function Login() {
               <Label htmlFor="email">Email</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input id="email" type="email" placeholder="you@example.com" className="pl-10" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Input id="email" type="email" placeholder="you@diu.edu.bd" className="pl-10" value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
             </div>
             <div className="space-y-2">
