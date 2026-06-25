@@ -7,11 +7,11 @@ type AppRole = "admin" | "user";
 interface AuthContextType {
   session: Session | null;
   user: User | null;
-  profile: { full_name: string | null; avatar_url: string | null } | null;
+  profile: { full_name: string | null; avatar_url: string | null; roll_number: string | null } | null;
   role: AppRole;
   isAdmin: boolean;
   loading: boolean;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string, fullName: string, rollNumber: string) => Promise<{ error: string | null }>;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
 }
