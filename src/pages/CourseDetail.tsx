@@ -51,6 +51,34 @@ export default function CourseDetail() {
   const [uploaderQuery, setUploaderQuery] = useState("");
   const [batchFilter, setBatchFilter] = useState<string>("all");
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+
+  const handleDownload = async (url: string, fileName: string, key: string) => {
+    if (downloadingId) return;
+    setDownloadingId(key);
+    const toastId = toast.loading(`Preparing ${fileName}...`);
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Request failed (${res.status})`);
+      const blob = await res.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = objectUrl;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      toast.success("Download started", { id: toastId, description: fileName });
+    } catch (err) {
+      toast.error("Download failed", {
+        id: toastId,
+        description: err instanceof Error ? err.message : "Please try again.",
+      });
+    } finally {
+      setDownloadingId(null);
+    }
+  };
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab: "materials" | "notes" = searchParams.get("tab") === "notes" ? "notes" : "materials";
   const setActiveTab = (tab: "materials" | "notes") => {
@@ -240,19 +268,33 @@ export default function CourseDetail() {
                       </div>
                       {activeTab === "materials" && (chapter.pdf_url || chapter.pdf_path) && (
                         <div className="flex flex-wrap gap-2">
-                          <Button size="sm" className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold" asChild>
-                            <a href={resolveUrl(chapter.pdf_url, chapter.pdf_path)!} download={chapter.pdf_name ?? true} target="_blank" rel="noopener noreferrer">
-                              <Download className="h-4 w-4 mr-1.5" /> Download PDF
-                            </a>
+                          <Button
+                            size="sm"
+                            className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold"
+                            disabled={downloadingId === `pdf-${chapter.id}`}
+                            onClick={() => handleDownload(resolveUrl(chapter.pdf_url, chapter.pdf_path)!, chapter.pdf_name ?? `${chapter.title}.pdf`, `pdf-${chapter.id}`)}
+                          >
+                            {downloadingId === `pdf-${chapter.id}` ? (
+                              <><Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> Downloading...</>
+                            ) : (
+                              <><Download className="h-4 w-4 mr-1.5" /> Download PDF</>
+                            )}
                           </Button>
                         </div>
                       )}
                       {activeTab === "notes" && (chapter.notes_url || chapter.notes_path) && (
                         <div className="flex flex-wrap gap-2">
-                          <Button size="sm" className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold" asChild>
-                            <a href={resolveUrl(chapter.notes_url, chapter.notes_path)!} download={chapter.notes_name ?? true} target="_blank" rel="noopener noreferrer">
-                              <Download className="h-4 w-4 mr-1.5" /> Download Notes
-                            </a>
+                          <Button
+                            size="sm"
+                            className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold"
+                            disabled={downloadingId === `notes-${chapter.id}`}
+                            onClick={() => handleDownload(resolveUrl(chapter.notes_url, chapter.notes_path)!, chapter.notes_name ?? `${chapter.title}-notes.pdf`, `notes-${chapter.id}`)}
+                          >
+                            {downloadingId === `notes-${chapter.id}` ? (
+                              <><Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> Downloading...</>
+                            ) : (
+                              <><Download className="h-4 w-4 mr-1.5" /> Download Notes</>
+                            )}
                           </Button>
                         </div>
                       )}
