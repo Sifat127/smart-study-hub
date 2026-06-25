@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, LogIn, UserPlus, LogOut, LayoutDashboard, User as UserIcon } from "lucide-react";
+import { Menu, X, LogIn, UserPlus, LogOut, LayoutDashboard, User as UserIcon, Search as SearchIcon } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -72,6 +72,9 @@ export default function Navbar() {
 
           {user ? (
             <>
+              <Button variant="ghost" size="icon" className="rounded-xl" asChild aria-label="Search">
+                <Link to="/search"><SearchIcon className="h-4 w-4" /></Link>
+              </Button>
               {isAdmin ? (
                 <Button variant="ghost" size="sm" className="rounded-xl" asChild>
                   <Link to="/admin"><LayoutDashboard className="h-4 w-4 mr-1.5" /> Dashboard</Link>
