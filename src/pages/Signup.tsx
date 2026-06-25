@@ -24,12 +24,21 @@ export default function Signup() {
       toast({ title: "Please fill in all fields", variant: "destructive" });
       return;
     }
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!/^[^\s@]+@diu\.edu\.bd$/i.test(normalizedEmail)) {
+      toast({
+        title: "DIU email required",
+        description: "Only @diu.edu.bd email addresses can register.",
+        variant: "destructive",
+      });
+      return;
+    }
     if (password.length < 6) {
       toast({ title: "Password must be at least 6 characters", variant: "destructive" });
       return;
     }
     setSubmitting(true);
-    const { error } = await signUp(email.trim(), password, fullName.trim());
+    const { error } = await signUp(normalizedEmail, password, fullName.trim());
     setSubmitting(false);
     if (error) {
       toast({ title: "Sign up failed", description: error, variant: "destructive" });
