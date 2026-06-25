@@ -142,8 +142,9 @@ export default function VerifyEmail() {
 
         <h1 className="font-display text-2xl font-bold text-center mb-2">Verify your email</h1>
         <p className="text-sm text-muted-foreground text-center mb-6">
-          Enter the 6-digit code we sent to{" "}
-          <span className="font-semibold text-foreground break-all">{email || "your DIU email"}</span>.
+          Click the verification link we sent to{" "}
+          <span className="font-semibold text-foreground break-all">{email || "your DIU email"}</span>
+          , or enter the 6-digit code from that email below.
         </p>
 
         <form className="space-y-5" onSubmit={handleVerify}>
