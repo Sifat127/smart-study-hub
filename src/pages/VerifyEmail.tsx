@@ -38,11 +38,33 @@ export default function VerifyEmail() {
     }, 1000);
   };
 
+  const finishVerified = async (message = "Your account is active. Please log in.") => {
+    await supabase.auth.signOut();
+    toast({ title: "Email verified", description: message });
+    navigate("/login");
+  };
+
   useEffect(() => {
     // Start an initial cooldown so the user doesn't spam resend right after signup.
     startCooldown(30);
+
+    // If the user already verified (e.g. clicked the link in the email), don't
+    // make them type a code that's already been consumed — send them to login.
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user?.email_confirmed_at) {
+        finishVerified("Your email is already verified. Please log in.");
+      }
+    });
+
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session?.user?.email_confirmed_at) {
+        finishVerified();
+      }
+    });
+
     return () => {
       if (intervalRef.current) window.clearInterval(intervalRef.current);
+      sub.subscription.unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
