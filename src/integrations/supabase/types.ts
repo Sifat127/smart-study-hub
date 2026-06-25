@@ -132,7 +132,7 @@ export type Database = {
           id: string
           phone_number: string | null
           roll_number: string | null
-          room_number: string | null
+          section: string | null
           updated_at: string
           user_id: string
         }
@@ -146,7 +146,7 @@ export type Database = {
           id?: string
           phone_number?: string | null
           roll_number?: string | null
-          room_number?: string | null
+          section?: string | null
           updated_at?: string
           user_id: string
         }
@@ -160,7 +160,7 @@ export type Database = {
           id?: string
           phone_number?: string | null
           roll_number?: string | null
-          room_number?: string | null
+          section?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -270,7 +270,7 @@ export type Database = {
           phone_number: string
           role: Database["public"]["Enums"]["app_role"]
           roll_number: string
-          room_number: string
+          section: string
           user_id: string
         }[]
       }
