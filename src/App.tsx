@@ -27,6 +27,7 @@ import UploadNotes from "./pages/UploadNotes";
 import Profile from "./pages/Profile";
 import CompleteProfile from "./pages/CompleteProfile";
 import UserDashboard from "./pages/UserDashboard";
+import Search from "./pages/Search";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
