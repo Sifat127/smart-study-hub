@@ -27,7 +27,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur-2xl bg-background/80 border-b border-border dark:bg-background/60 dark:border-white/[0.06]">
+    <nav className="sticky top-0 z-50 backdrop-blur-2xl bg-background/60 border-b border-white/[0.06]">
 
       {/* Aurora top edge glow */}
       <div className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
@@ -57,7 +57,7 @@ export default function Navbar() {
                 {active && (
                   <motion.span
                     layoutId="nav-pill"
-                    className="absolute inset-0 bg-accent/10 border border-accent/30 dark:bg-white/[0.06] dark:border-white/10 rounded-xl shadow-[0_0_20px_-4px_hsl(var(--accent)/0.4)]"
+                    className="absolute inset-0 bg-white/[0.06] border border-white/10 rounded-xl shadow-[0_0_20px_-4px_hsl(var(--accent)/0.4)]"
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
@@ -71,7 +71,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-2">
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-xl hover:bg-accent/10 dark:hover:bg-white/5 transition-colors text-muted-foreground hover:text-foreground border border-transparent hover:border-accent/30 dark:hover:border-border dark:border-white/10"
+            className="p-2 rounded-xl hover:bg-white/5 transition-colors text-muted-foreground hover:text-foreground border border-white/10 hover:border-border"
             aria-label="Toggle theme"
           >
             {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
@@ -89,7 +89,7 @@ export default function Navbar() {
                   <span className="max-w-[140px] truncate">{profile?.full_name || user.email}</span>
                 </Link>
               </Button>
-              <Button variant="outline" size="sm" className="rounded-xl border-border dark:border-white/10" onClick={handleSignOut}>
+              <Button variant="outline" size="sm" className="rounded-xl border-white/10" onClick={handleSignOut}>
                 <LogOut className="h-4 w-4 mr-1.5" /> Logout
               </Button>
             </>
@@ -108,13 +108,13 @@ export default function Navbar() {
         <div className="md:hidden flex items-center gap-1">
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-xl hover:bg-accent/10 dark:hover:bg-white/5 transition-colors text-muted-foreground"
+            className="p-2 rounded-xl hover:bg-white/5 transition-colors text-muted-foreground hover:text-foreground"
             aria-label="Toggle theme"
           >
             {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
           <button
-            className="p-2 rounded-xl hover:bg-accent/10 dark:hover:bg-white/5 border border-transparent hover:border-accent/30 dark:hover:border-border dark:border-white/10"
+            className="p-2 rounded-xl hover:bg-white/5 border border-white/10 hover:border-border"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
           >
@@ -129,7 +129,7 @@ export default function Navbar() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="md:hidden overflow-hidden border-t border-border dark:border-white/[0.06] bg-background/90 backdrop-blur-2xl"
+            className="md:hidden overflow-hidden border-t border-white/[0.06] bg-background/90 backdrop-blur-2xl"
           >
             <div className="p-4 flex flex-col gap-1">
               {navLinks.map((link) => (
@@ -139,31 +139,31 @@ export default function Navbar() {
                   onClick={() => setMobileOpen(false)}
                   className={`px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
                     location.pathname === link.to
-                      ? "bg-accent/10 text-foreground border border-accent/30 dark:bg-white/5 dark:border-white/10"
-                      : "text-muted-foreground hover:text-foreground hover:bg-accent/10 dark:hover:bg-white/5"
+                      ? "bg-white/5 text-foreground border border-white/10"
+                      : "text-muted-foreground hover:text-foreground hover:bg-white/5"
                   }`}
                 >
                   {link.label}
                 </Link>
               ))}
-              <div className="flex gap-2 mt-3 pt-3 border-t border-border dark:border-white/[0.06]">
+              <div className="flex gap-2 mt-3 pt-3 border-t border-white/[0.06]">
                 {user ? (
                   <>
                     {isAdmin && (
-                      <Button variant="outline" size="sm" className="flex-1 rounded-xl border-border dark:border-white/10" asChild>
+                      <Button variant="outline" size="sm" className="flex-1 rounded-xl border-white/10" asChild>
                         <Link to="/admin" onClick={() => setMobileOpen(false)}>Dashboard</Link>
                       </Button>
                     )}
-                    <Button variant="outline" size="sm" className="flex-1 rounded-xl border-border dark:border-white/10" asChild>
+                    <Button variant="outline" size="sm" className="flex-1 rounded-xl border-white/10" asChild>
                       <Link to="/profile" onClick={() => setMobileOpen(false)}>Profile</Link>
                     </Button>
-                    <Button size="sm" variant="outline" className="flex-1 rounded-xl border-border dark:border-white/10" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
+                    <Button size="sm" variant="outline" className="flex-1 rounded-xl border-white/10" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
                       Logout
                     </Button>
                   </>
                 ) : (
                   <>
-                    <Button variant="outline" size="sm" className="flex-1 rounded-xl border-border dark:border-white/10" asChild>
+                    <Button variant="outline" size="sm" className="flex-1 rounded-xl border-white/10" asChild>
                       <Link to="/login" onClick={() => setMobileOpen(false)}>Login</Link>
                     </Button>
                     <Button size="sm" className="flex-1 bg-gradient-primary text-primary-foreground rounded-xl" asChild>
