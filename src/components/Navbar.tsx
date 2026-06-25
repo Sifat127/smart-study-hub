@@ -152,6 +152,9 @@ export default function Navbar() {
                         <Link to="/admin" onClick={() => setMobileOpen(false)}>Dashboard</Link>
                       </Button>
                     )}
+                    <Button variant="outline" size="sm" className="flex-1 rounded-xl border-white/10" asChild>
+                      <Link to="/profile" onClick={() => setMobileOpen(false)}>Profile</Link>
+                    </Button>
                     <Button size="sm" variant="outline" className="flex-1 rounded-xl border-white/10" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
                       Logout
                     </Button>
