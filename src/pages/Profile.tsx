@@ -236,8 +236,8 @@ export default function Profile() {
             <div className="min-w-0">
               <div className="font-display text-lg font-semibold truncate">{form.full_name || "Your name"}</div>
               <div className="text-sm text-muted-foreground truncate">{user.email}</div>
-              {profile?.roll_number && (
-                <div className="text-xs text-muted-foreground mt-0.5">Roll: {profile.roll_number}</div>
+              {form.roll_number && (
+                <div className="text-xs text-muted-foreground mt-0.5">Roll: {form.roll_number}</div>
               )}
             </div>
           </div>
@@ -247,6 +247,10 @@ export default function Profile() {
               <div className="space-y-1.5">
                 <Label htmlFor="full_name">Full name</Label>
                 <Input id="full_name" value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} required maxLength={80} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="roll_number">Roll number</Label>
+                <Input id="roll_number" value={form.roll_number} onChange={(e) => setForm({ ...form, roll_number: e.target.value })} placeholder="e.g. 252-15-590" maxLength={20} required />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="phone_number">Phone number</Label>
