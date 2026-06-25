@@ -109,7 +109,6 @@ export default function Signup() {
                 <Input id="email" type="email" placeholder="you@diu.edu.bd" pattern="^[^\s@]+@diu\.edu\.bd$" title="Only @diu.edu.bd email addresses are allowed" className="pl-10" value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
               <p className="text-xs text-muted-foreground">Only <span className="font-semibold text-foreground">@diu.edu.bd</span> emails are allowed.</p>
-              </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
