@@ -73,7 +73,7 @@ export default function Footer() {
                 </div>
                 <div className="flex items-center gap-2.5">
                   <Phone className="h-4 w-4 text-accent" />
-                  +880 1234-567890
+                  +880 1922-829105
                 </div>
                 <div className="flex items-center gap-2.5">
                   <MapPin className="h-4 w-4 text-accent" />
