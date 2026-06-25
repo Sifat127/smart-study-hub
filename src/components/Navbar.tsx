@@ -19,7 +19,7 @@ export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAdmin, signOut, profile } = useAuth();
-  const { theme, toggleTheme } = useTheme();
+
 
   const handleSignOut = async () => {
     await signOut();
