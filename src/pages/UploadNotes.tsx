@@ -40,6 +40,11 @@ export default function UploadNotes() {
   const [uploading, setUploading] = useState(false);
   const [done, setDone] = useState(false);
 
+  // Non-admin users can only upload student notes, never academic materials.
+  useEffect(() => {
+    if (!isAdmin && kind !== "notes") setKind("notes");
+  }, [isAdmin, kind]);
+
   useEffect(() => {
     if (!authLoading && !user) navigate("/login?redirect=/upload-notes");
   }, [authLoading, user, navigate]);
@@ -90,12 +95,14 @@ export default function UploadNotes() {
       toast({ title: "You must be logged in", variant: "destructive" });
       return;
     }
+    // Hard guard: only admins may upload academic materials.
+    const safeKind: "material" | "notes" = isAdmin ? kind : "notes";
     setUploading(true);
     try {
       const fileUrl = await uploadToCatbox(file);
       const { error } = await supabase.from("student_uploads").insert({
         course_id: courseId,
-        kind,
+        kind: safeKind,
         batch: batch.trim(),
         student_name: studentName.trim() || null,
         title: title.trim(),
@@ -185,17 +192,19 @@ export default function UploadNotes() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <Label>Section</Label>
-              <Select value={kind} onValueChange={(v) => setKind(v as "material" | "notes")}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="material">Academic Materials</SelectItem>
-                  <SelectItem value="notes">Notes</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <div className={`grid grid-cols-1 ${isAdmin ? "sm:grid-cols-2" : ""} gap-4`}>
+            {isAdmin && (
+              <div>
+                <Label>Section</Label>
+                <Select value={kind} onValueChange={(v) => setKind(v as "material" | "notes")}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="material">Academic Materials</SelectItem>
+                    <SelectItem value="notes">Notes</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             <div>
               <Label htmlFor="batch">Batch (e.g. 67_I)</Label>
               <Input
@@ -207,6 +216,12 @@ export default function UploadNotes() {
               />
             </div>
           </div>
+
+          {!isAdmin && (
+            <p className="text-xs text-muted-foreground -mt-2">
+              You're uploading to the <span className="text-accent font-medium">Student Notes</span> section. Only admins can publish academic materials.
+            </p>
+          )}
 
           <div>
             <Label htmlFor="student-name">Your name (shown with upload)</Label>
