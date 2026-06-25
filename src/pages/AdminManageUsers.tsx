@@ -639,6 +639,3 @@ export default function AdminManageUsers() {
     </div>
   );
 }
-    </div>
-  );
-}
