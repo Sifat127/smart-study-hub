@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, LogIn, UserPlus, LogOut, LayoutDashboard, Sun, Moon, User as UserIcon } from "lucide-react";
+import { Menu, X, LogIn, UserPlus, LogOut, LayoutDashboard, User as UserIcon } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
-import { useTheme } from "@/contexts/ThemeContext";
+
 
 const navLinks = [
   { label: "Home", to: "/" },
