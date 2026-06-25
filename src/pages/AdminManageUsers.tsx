@@ -225,7 +225,36 @@ export default function AdminManageUsers() {
               </SheetHeader>
               <div className="mt-6 space-y-4 text-sm">
                 <DetailRow icon={<Mail className="h-4 w-4" />} label="Email" value={selected.email} />
-                <DetailRow icon={<GraduationCap className="h-4 w-4" />} label="Roll number" value={selected.roll_number} />
+                <div className="flex items-start gap-3 py-2 border-b border-border/50">
+                  <div className="text-muted-foreground mt-0.5"><GraduationCap className="h-4 w-4" /></div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-muted-foreground uppercase tracking-wider">Roll number</div>
+                    {editingRoll ? (
+                      <div className="flex items-center gap-2 mt-1">
+                        <Input
+                          value={rollDraft}
+                          onChange={(e) => setRollDraft(e.target.value)}
+                          maxLength={20}
+                          className="h-8"
+                          autoFocus
+                        />
+                        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={handleSaveRoll} disabled={savingRoll}>
+                          {savingRoll ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+                        </Button>
+                        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => { setEditingRoll(false); setRollDraft(selected.roll_number ?? ""); }} disabled={savingRoll}>
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <div className="font-medium break-words">{selected.roll_number || "—"}</div>
+                        <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => setEditingRoll(true)}>
+                          <Pencil className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
                 <DetailRow icon={<Phone className="h-4 w-4" />} label="Phone" value={selected.phone_number} />
                 <DetailRow icon={<Layers className="h-4 w-4" />} label="Section" value={selected.section} />
                 <DetailRow icon={<BookOpen className="h-4 w-4" />} label="Department" value={selected.department} />
