@@ -91,6 +91,77 @@ export default function AdminManageUsers() {
   const [auditLog, setAuditLog] = useState<AuditEntry[]>([]);
   const [auditorNames, setAuditorNames] = useState<Record<string, string>>({});
   const [loadingAudit, setLoadingAudit] = useState(false);
+  const [pendingRestore, setPendingRestore] = useState<AuditEntry[] | null>(null);
+  const [restoring, setRestoring] = useState(false);
+
+  const RESTORABLE_FIELDS = new Set([
+    "full_name", "roll_number", "phone_number", "section", "department", "batch", "bio",
+  ]);
+
+  // Group audit entries by changed_at + changed_by — entries written by the same
+  // admin save share an exact timestamp, so we treat them as a single snapshot.
+  const auditGroups = useMemo(() => {
+    const map = new Map<string, AuditEntry[]>();
+    for (const e of auditLog) {
+      const key = `${e.changed_at}__${e.changed_by ?? ""}`;
+      const arr = map.get(key) ?? [];
+      arr.push(e);
+      map.set(key, arr);
+    }
+    return Array.from(map.values());
+  }, [auditLog]);
+
+  const handleRestore = async (group: AuditEntry[]) => {
+    if (!selected) return;
+    const restorable = group.filter((e) => RESTORABLE_FIELDS.has(e.field_name));
+    if (restorable.length === 0) {
+      toast({ title: "Nothing to restore", variant: "destructive" });
+      setPendingRestore(null);
+      return;
+    }
+    // Validate restored values against the same rules as manual edits.
+    const update: Record<string, string | null> = {};
+    for (const e of restorable) {
+      const v = e.old_value;
+      if (e.field_name === "full_name" && (!v || !v.trim())) {
+        toast({ title: "Cannot restore empty name", variant: "destructive" });
+        return;
+      }
+      if (e.field_name === "roll_number" && v && !/^[A-Za-z0-9-]{3,20}$/.test(v)) {
+        toast({ title: "Restored roll number is invalid", variant: "destructive" });
+        return;
+      }
+      if (e.field_name === "phone_number" && v && !/^[+\d\s-]{0,20}$/.test(v)) {
+        toast({ title: "Restored phone number is invalid", variant: "destructive" });
+        return;
+      }
+      update[e.field_name] = v && v.length > 0 ? v : null;
+    }
+    setRestoring(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update(update)
+      .eq("user_id", selected.user_id);
+    setRestoring(false);
+    if (error) {
+      toast({ title: "Rollback failed", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({
+      title: "Profile restored",
+      description: `Reverted ${restorable.length} field${restorable.length === 1 ? "" : "s"} — a new audit entry was recorded.`,
+    });
+    // Refresh local table row, form, and audit log.
+    setUsers((prev) =>
+      prev.map((u) =>
+        u.user_id === selected.user_id ? { ...u, ...update } : u,
+      ),
+    );
+    setForm((prev) => ({ ...prev, ...Object.fromEntries(Object.entries(update).map(([k, v]) => [k, v ?? ""])) }));
+    setPendingRestore(null);
+    loadAuditLog(selected.user_id);
+  };
+
 
   const loadAuditLog = async (userId: string) => {
     setLoadingAudit(true);
