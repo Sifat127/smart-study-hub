@@ -24,17 +24,23 @@ export default function Login() {
       toast({ title: "Please fill in all fields", variant: "destructive" });
       return;
     }
+    const normalizedEmail = email.trim().toLowerCase();
     setSubmitting(true);
-    const { error } = await signIn(email.trim(), password);
+    const { error } = await signIn(normalizedEmail, password);
     setSubmitting(false);
     if (error) {
+      if (/email not confirmed|not\s*confirmed/i.test(error)) {
+        toast({
+          title: "Verify your email first",
+          description: "Enter the 6-digit code we sent to your DIU email.",
+        });
+        navigate(`/verify-email?email=${encodeURIComponent(normalizedEmail)}`);
+        return;
+      }
       toast({ title: "Login failed", description: error, variant: "destructive" });
     } else {
       toast({ title: "Welcome back!" });
-      // Small delay so role is fetched before redirect
       setTimeout(() => {
-        // Re-read isAdmin won't work here since state updates async.
-        // We'll let the onAuthStateChange + a useEffect in App handle redirect.
         navigate("/");
       }, 300);
     }
