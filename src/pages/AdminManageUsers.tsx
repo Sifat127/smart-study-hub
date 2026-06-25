@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, ArrowLeft, Shield, User, Loader2, Mail, Phone, Layers, GraduationCap } from "lucide-react";
+import { BookOpen, ArrowLeft, Shield, User, Loader2, Mail, Phone, Layers, GraduationCap, Pencil, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -31,6 +31,38 @@ export default function AdminManageUsers() {
   const [search, setSearch] = useState("");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [selected, setSelected] = useState<UserRow | null>(null);
+  const [editingRoll, setEditingRoll] = useState(false);
+  const [rollDraft, setRollDraft] = useState("");
+  const [savingRoll, setSavingRoll] = useState(false);
+
+  const openUser = (u: UserRow) => {
+    setSelected(u);
+    setEditingRoll(false);
+    setRollDraft(u.roll_number ?? "");
+  };
+
+  const handleSaveRoll = async () => {
+    if (!selected) return;
+    const trimmed = rollDraft.trim();
+    if (!/^[A-Za-z0-9-]{3,20}$/.test(trimmed)) {
+      toast({ title: "Invalid roll number", description: "3-20 chars: letters, numbers or dashes.", variant: "destructive" });
+      return;
+    }
+    setSavingRoll(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ roll_number: trimmed })
+      .eq("user_id", selected.user_id);
+    setSavingRoll(false);
+    if (error) {
+      toast({ title: "Couldn't update roll number", description: error.message, variant: "destructive" });
+      return;
+    }
+    setUsers((prev) => prev.map((u) => (u.user_id === selected.user_id ? { ...u, roll_number: trimmed } : u)));
+    setSelected({ ...selected, roll_number: trimmed });
+    setEditingRoll(false);
+    toast({ title: "Roll number updated" });
+  };
 
   const fetchUsers = async () => {
     setLoading(true);
