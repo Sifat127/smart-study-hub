@@ -140,7 +140,7 @@ export default function AdminManageUsers() {
     setRestoring(true);
     const { error } = await supabase
       .from("profiles")
-      .update(update)
+      .update(update as never)
       .eq("user_id", selected.user_id);
     setRestoring(false);
     if (error) {
