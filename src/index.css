@@ -119,7 +119,7 @@
   }
 
   /* Sticky-nav-friendly anchors */
-  :target { scroll-margin-top: 5rem; }
+  :target { scroll-margin-top: 8rem; }
 
   /* Cleaner global focus-visible — keyboard only */
   :focus-visible {
