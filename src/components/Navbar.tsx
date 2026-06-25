@@ -69,13 +69,7 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center gap-2">
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-xl hover:bg-white/5 transition-colors text-muted-foreground hover:text-foreground border border-white/10 hover:border-border"
-            aria-label="Toggle theme"
-          >
-            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </button>
+
           {user ? (
             <>
               {isAdmin && (
