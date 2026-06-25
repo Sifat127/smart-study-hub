@@ -67,6 +67,41 @@ export default function AdminManageUsers() {
     bio: "",
   });
   const [saving, setSaving] = useState(false);
+  const [auditLog, setAuditLog] = useState<AuditEntry[]>([]);
+  const [auditorNames, setAuditorNames] = useState<Record<string, string>>({});
+  const [loadingAudit, setLoadingAudit] = useState(false);
+
+  const loadAuditLog = async (userId: string) => {
+    setLoadingAudit(true);
+    const { data, error } = await supabase
+      .from("profile_audit_log")
+      .select("id, field_name, old_value, new_value, changed_at, changed_by")
+      .eq("target_user_id", userId)
+      .order("changed_at", { ascending: false })
+      .limit(50);
+    if (error) {
+      setAuditLog([]);
+    } else {
+      const entries = (data ?? []) as AuditEntry[];
+      setAuditLog(entries);
+      const actorIds = Array.from(new Set(entries.map((e) => e.changed_by).filter(Boolean))) as string[];
+      const missing = actorIds.filter((id) => !auditorNames[id]);
+      if (missing.length > 0) {
+        const { data: profs } = await supabase
+          .from("profiles")
+          .select("user_id, full_name")
+          .in("user_id", missing);
+        if (profs) {
+          setAuditorNames((prev) => {
+            const next = { ...prev };
+            for (const p of profs) next[p.user_id] = p.full_name ?? "Admin";
+            return next;
+          });
+        }
+      }
+    }
+    setLoadingAudit(false);
+  };
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -101,6 +136,7 @@ export default function AdminManageUsers() {
       batch: data?.batch ?? u.batch ?? "",
       bio: data?.bio ?? "",
     });
+    loadAuditLog(u.user_id);
   };
 
   const handleSave = async () => {
