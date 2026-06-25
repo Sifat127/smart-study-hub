@@ -8,7 +8,18 @@ import {
   Loader2,
   Save,
   Users as UsersIcon,
+  Undo2,
 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -80,6 +91,77 @@ export default function AdminManageUsers() {
   const [auditLog, setAuditLog] = useState<AuditEntry[]>([]);
   const [auditorNames, setAuditorNames] = useState<Record<string, string>>({});
   const [loadingAudit, setLoadingAudit] = useState(false);
+  const [pendingRestore, setPendingRestore] = useState<AuditEntry[] | null>(null);
+  const [restoring, setRestoring] = useState(false);
+
+  const RESTORABLE_FIELDS = new Set([
+    "full_name", "roll_number", "phone_number", "section", "department", "batch", "bio",
+  ]);
+
+  // Group audit entries by changed_at + changed_by — entries written by the same
+  // admin save share an exact timestamp, so we treat them as a single snapshot.
+  const auditGroups = useMemo(() => {
+    const map = new Map<string, AuditEntry[]>();
+    for (const e of auditLog) {
+      const key = `${e.changed_at}__${e.changed_by ?? ""}`;
+      const arr = map.get(key) ?? [];
+      arr.push(e);
+      map.set(key, arr);
+    }
+    return Array.from(map.values());
+  }, [auditLog]);
+
+  const handleRestore = async (group: AuditEntry[]) => {
+    if (!selected) return;
+    const restorable = group.filter((e) => RESTORABLE_FIELDS.has(e.field_name));
+    if (restorable.length === 0) {
+      toast({ title: "Nothing to restore", variant: "destructive" });
+      setPendingRestore(null);
+      return;
+    }
+    // Validate restored values against the same rules as manual edits.
+    const update: Record<string, string | null> = {};
+    for (const e of restorable) {
+      const v = e.old_value;
+      if (e.field_name === "full_name" && (!v || !v.trim())) {
+        toast({ title: "Cannot restore empty name", variant: "destructive" });
+        return;
+      }
+      if (e.field_name === "roll_number" && v && !/^[A-Za-z0-9-]{3,20}$/.test(v)) {
+        toast({ title: "Restored roll number is invalid", variant: "destructive" });
+        return;
+      }
+      if (e.field_name === "phone_number" && v && !/^[+\d\s-]{0,20}$/.test(v)) {
+        toast({ title: "Restored phone number is invalid", variant: "destructive" });
+        return;
+      }
+      update[e.field_name] = v && v.length > 0 ? v : null;
+    }
+    setRestoring(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update(update)
+      .eq("user_id", selected.user_id);
+    setRestoring(false);
+    if (error) {
+      toast({ title: "Rollback failed", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({
+      title: "Profile restored",
+      description: `Reverted ${restorable.length} field${restorable.length === 1 ? "" : "s"} — a new audit entry was recorded.`,
+    });
+    // Refresh local table row, form, and audit log.
+    setUsers((prev) =>
+      prev.map((u) =>
+        u.user_id === selected.user_id ? { ...u, ...update } : u,
+      ),
+    );
+    setForm((prev) => ({ ...prev, ...Object.fromEntries(Object.entries(update).map(([k, v]) => [k, v ?? ""])) }));
+    setPendingRestore(null);
+    loadAuditLog(selected.user_id);
+  };
+
 
   const loadAuditLog = async (userId: string) => {
     setLoadingAudit(true);
@@ -466,23 +548,49 @@ export default function AdminManageUsers() {
                   {!loadingAudit && auditLog.length === 0 ? (
                     <p className="text-xs text-muted-foreground">No admin edits recorded yet.</p>
                   ) : (
-                    <ul className="space-y-2 max-h-64 overflow-y-auto pr-1">
-                      {auditLog.map((entry) => (
-                        <li key={entry.id} className="text-xs rounded-md bg-muted/40 border border-border/50 p-2">
-                          <div className="flex justify-between gap-2 mb-1">
-                            <span className="font-medium text-foreground">{entry.field_name.replace(/_/g, " ")}</span>
-                            <span className="text-muted-foreground whitespace-nowrap">{new Date(entry.changed_at).toLocaleString()}</span>
-                          </div>
-                          <div className="text-muted-foreground break-words">
-                            <span className="line-through opacity-70">{entry.old_value || "—"}</span>
-                            <span className="mx-1.5">→</span>
-                            <span className="text-foreground">{entry.new_value || "—"}</span>
-                          </div>
-                          <div className="text-[10px] text-muted-foreground mt-1">
-                            by {entry.changed_by ? (auditorNames[entry.changed_by] ?? "Admin") : "Admin"}
-                          </div>
-                        </li>
-                      ))}
+                    <ul className="space-y-3 max-h-80 overflow-y-auto pr-1">
+                      {auditGroups.map((group) => {
+                        const head = group[0];
+                        const restorable = group.filter((e) => RESTORABLE_FIELDS.has(e.field_name));
+                        return (
+                          <li key={head.id} className="text-xs rounded-md bg-muted/40 border border-border/50 p-2.5">
+                            <div className="flex justify-between gap-2 mb-2">
+                              <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                                by {head.changed_by ? (auditorNames[head.changed_by] ?? "Admin") : "Admin"}
+                              </span>
+                              <span className="text-muted-foreground whitespace-nowrap">
+                                {new Date(head.changed_at).toLocaleString()}
+                              </span>
+                            </div>
+                            <ul className="space-y-1.5">
+                              {group.map((entry) => (
+                                <li key={entry.id}>
+                                  <div className="font-medium text-foreground">{entry.field_name.replace(/_/g, " ")}</div>
+                                  <div className="text-muted-foreground break-words">
+                                    <span className="line-through opacity-70">{entry.old_value || "—"}</span>
+                                    <span className="mx-1.5">→</span>
+                                    <span className="text-foreground">{entry.new_value || "—"}</span>
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                            {restorable.length > 0 && (
+                              <div className="flex justify-end mt-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="h-7 text-xs"
+                                  onClick={() => setPendingRestore(restorable)}
+                                  disabled={restoring}
+                                >
+                                  <Undo2 className="h-3 w-3 mr-1" />
+                                  Restore these values
+                                </Button>
+                              </div>
+                            )}
+                          </li>
+                        );
+                      })}
                     </ul>
                   )}
                 </div>
@@ -491,6 +599,43 @@ export default function AdminManageUsers() {
           )}
         </SheetContent>
       </Sheet>
+
+      <AlertDialog open={!!pendingRestore} onOpenChange={(open) => !open && !restoring && setPendingRestore(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Restore previous values?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will revert the following field{(pendingRestore?.length ?? 0) === 1 ? "" : "s"} on this user's profile
+              and record a new audit entry showing the rollback. The original history is preserved.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {pendingRestore && (
+            <ul className="text-xs space-y-1.5 rounded-md bg-muted/40 border border-border/50 p-2.5 max-h-48 overflow-y-auto">
+              {pendingRestore.map((e) => (
+                <li key={e.id} className="break-words">
+                  <span className="font-medium text-foreground">{e.field_name.replace(/_/g, " ")}: </span>
+                  <span className="line-through opacity-70">{e.new_value || "—"}</span>
+                  <span className="mx-1.5">→</span>
+                  <span className="text-foreground">{e.old_value || "—"}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={restoring}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={restoring}
+              onClick={(e) => {
+                e.preventDefault();
+                if (pendingRestore) handleRestore(pendingRestore);
+              }}
+            >
+              {restoring ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Undo2 className="h-4 w-4 mr-2" />}
+              Restore
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
