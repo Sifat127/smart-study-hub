@@ -1,14 +1,36 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, ArrowLeft, Shield, User, Loader2, Mail, Phone, Layers, GraduationCap, Pencil, Check, X } from "lucide-react";
+import {
+  BookOpen,
+  ArrowLeft,
+  Shield,
+  User,
+  Loader2,
+  Save,
+  Users as UsersIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { departments } from "@/data/mockData";
 
 interface UserRow {
   user_id: string;
@@ -19,9 +41,12 @@ interface UserRow {
   section: string | null;
   department: string | null;
   batch: string | null;
+  bio?: string | null;
   role: string;
   created_at: string;
 }
+
+const UNASSIGNED = "Unassigned";
 
 export default function AdminManageUsers() {
   const { toast } = useToast();
@@ -29,40 +54,19 @@ export default function AdminManageUsers() {
   const [users, setUsers] = useState<UserRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [departmentFilter, setDepartmentFilter] = useState<string>("all");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [selected, setSelected] = useState<UserRow | null>(null);
-  const [editingRoll, setEditingRoll] = useState(false);
-  const [rollDraft, setRollDraft] = useState("");
-  const [savingRoll, setSavingRoll] = useState(false);
-
-  const openUser = (u: UserRow) => {
-    setSelected(u);
-    setEditingRoll(false);
-    setRollDraft(u.roll_number ?? "");
-  };
-
-  const handleSaveRoll = async () => {
-    if (!selected) return;
-    const trimmed = rollDraft.trim();
-    if (!/^[A-Za-z0-9-]{3,20}$/.test(trimmed)) {
-      toast({ title: "Invalid roll number", description: "3-20 chars: letters, numbers or dashes.", variant: "destructive" });
-      return;
-    }
-    setSavingRoll(true);
-    const { error } = await supabase
-      .from("profiles")
-      .update({ roll_number: trimmed })
-      .eq("user_id", selected.user_id);
-    setSavingRoll(false);
-    if (error) {
-      toast({ title: "Couldn't update roll number", description: error.message, variant: "destructive" });
-      return;
-    }
-    setUsers((prev) => prev.map((u) => (u.user_id === selected.user_id ? { ...u, roll_number: trimmed } : u)));
-    setSelected({ ...selected, roll_number: trimmed });
-    setEditingRoll(false);
-    toast({ title: "Roll number updated" });
-  };
+  const [form, setForm] = useState({
+    full_name: "",
+    roll_number: "",
+    phone_number: "",
+    section: "",
+    department: "",
+    batch: "",
+    bio: "",
+  });
+  const [saving, setSaving] = useState(false);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -79,16 +83,99 @@ export default function AdminManageUsers() {
     fetchUsers();
   }, []);
 
+  const openUser = async (u: UserRow) => {
+    // Pull full row (including bio) for editing.
+    const { data } = await supabase
+      .from("profiles")
+      .select("full_name, roll_number, phone_number, section, department, batch, bio")
+      .eq("user_id", u.user_id)
+      .maybeSingle();
+    const merged: UserRow = { ...u, bio: data?.bio ?? null };
+    setSelected(merged);
+    setForm({
+      full_name: data?.full_name ?? u.full_name ?? "",
+      roll_number: data?.roll_number ?? u.roll_number ?? "",
+      phone_number: data?.phone_number ?? u.phone_number ?? "",
+      section: data?.section ?? u.section ?? "",
+      department: data?.department ?? u.department ?? "",
+      batch: data?.batch ?? u.batch ?? "",
+      bio: data?.bio ?? "",
+    });
+  };
+
+  const handleSave = async () => {
+    if (!selected) return;
+    const name = form.full_name.trim();
+    const roll = form.roll_number.trim();
+    if (!name) {
+      toast({ title: "Name is required", variant: "destructive" });
+      return;
+    }
+    if (!/^[A-Za-z0-9-]{3,20}$/.test(roll)) {
+      toast({ title: "Invalid roll number", description: "3-20 chars: letters, numbers or dashes.", variant: "destructive" });
+      return;
+    }
+    if (form.phone_number && !/^[+\d\s-]{0,20}$/.test(form.phone_number.trim())) {
+      toast({ title: "Invalid phone number", variant: "destructive" });
+      return;
+    }
+    setSaving(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        full_name: name,
+        roll_number: roll,
+        phone_number: form.phone_number.trim() || null,
+        section: form.section.trim() || null,
+        department: form.department.trim() || null,
+        batch: form.batch.trim() || null,
+        bio: form.bio.trim() || null,
+      })
+      .eq("user_id", selected.user_id);
+    setSaving(false);
+    if (error) {
+      toast({ title: "Couldn't save changes", description: error.message, variant: "destructive" });
+      return;
+    }
+    setUsers((prev) =>
+      prev.map((u) =>
+        u.user_id === selected.user_id
+          ? {
+              ...u,
+              full_name: name,
+              roll_number: roll,
+              phone_number: form.phone_number.trim() || null,
+              section: form.section.trim() || null,
+              department: form.department.trim() || null,
+              batch: form.batch.trim() || null,
+            }
+          : u,
+      ),
+    );
+    toast({ title: "User updated" });
+    setSelected(null);
+  };
+
   const handleRoleChange = async (userId: string, newRole: string) => {
     if (userId === currentUser?.id) {
       toast({ title: "You can't change your own role", variant: "destructive" });
       return;
     }
     setUpdatingId(userId);
-    const { error } = await supabase
+    // user_roles row may not exist yet — upsert by (user_id, role) uniqueness.
+    const { data: existing } = await supabase
       .from("user_roles")
-      .update({ role: newRole as "admin" | "user" })
-      .eq("user_id", userId);
+      .select("id")
+      .eq("user_id", userId)
+      .maybeSingle();
+    const { error } = existing
+      ? await supabase
+          .from("user_roles")
+          .update({ role: newRole as "admin" | "user" })
+          .eq("user_id", userId)
+      : await supabase
+          .from("user_roles")
+          .insert({ user_id: userId, role: newRole as "admin" | "user" });
 
     if (error) {
       toast({ title: "Role update failed", description: error.message, variant: "destructive" });
@@ -100,11 +187,35 @@ export default function AdminManageUsers() {
   };
 
   const q = search.trim().toLowerCase();
-  const filtered = users.filter((u) =>
-    !q ||
-    [u.full_name, u.email, u.roll_number, u.phone_number, u.section, u.department, u.batch]
-      .some((v) => v && v.toLowerCase().includes(q))
+  const filtered = useMemo(
+    () =>
+      users.filter((u) => {
+        const matchesQuery =
+          !q ||
+          [u.full_name, u.email, u.roll_number, u.phone_number, u.section, u.department, u.batch]
+            .some((v) => v && v.toLowerCase().includes(q));
+        const dept = (u.department || UNASSIGNED).trim() || UNASSIGNED;
+        const matchesDept = departmentFilter === "all" || dept === departmentFilter;
+        return matchesQuery && matchesDept;
+      }),
+    [users, q, departmentFilter],
   );
+
+  // Group by department for display.
+  const grouped = useMemo(() => {
+    const map = new Map<string, UserRow[]>();
+    for (const u of filtered) {
+      const key = (u.department || UNASSIGNED).trim() || UNASSIGNED;
+      const list = map.get(key) ?? [];
+      list.push(u);
+      map.set(key, list);
+    }
+    return Array.from(map.entries()).sort(([a], [b]) => {
+      if (a === UNASSIGNED) return 1;
+      if (b === UNASSIGNED) return -1;
+      return a.localeCompare(b);
+    });
+  }, [filtered]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -123,165 +234,188 @@ export default function AdminManageUsers() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-6">
+        <div className="mb-6 flex flex-col sm:flex-row gap-3">
           <Input
             placeholder="Search by name, email, roll, section, department..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="max-w-md"
           />
+          <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
+            <SelectTrigger className="sm:w-64">
+              <SelectValue placeholder="All departments" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All departments</SelectItem>
+              {departments.map((d) => (
+                <SelectItem key={d.id} value={d.name}>{d.name}</SelectItem>
+              ))}
+              <SelectItem value={UNASSIGNED}>Unassigned</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {loading ? (
           <div className="flex justify-center py-16">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
+        ) : grouped.length === 0 ? (
+          <div className="bg-card rounded-xl border border-border p-8 text-center text-muted-foreground">
+            No users found
+          </div>
         ) : (
-          <div className="bg-card rounded-xl border border-border card-shadow overflow-x-auto">
-            <table className="w-full text-sm min-w-[800px]">
-              <thead>
-                <tr className="border-b border-border bg-muted/50">
-                  <th className="text-left p-4 font-display font-semibold">User</th>
-                  <th className="text-left p-4 font-display font-semibold">Email</th>
-                  <th className="text-left p-4 font-display font-semibold hidden md:table-cell">Roll</th>
-                  <th className="text-left p-4 font-display font-semibold hidden lg:table-cell">Phone</th>
-                  <th className="text-left p-4 font-display font-semibold hidden lg:table-cell">Section</th>
-                  <th className="text-left p-4 font-display font-semibold hidden md:table-cell">Department</th>
-                  <th className="text-left p-4 font-display font-semibold hidden md:table-cell">Batch</th>
-                  <th className="text-left p-4 font-display font-semibold">Role</th>
-                  <th className="text-right p-4 font-display font-semibold">Change</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((u) => {
-                  const isSelf = u.user_id === currentUser?.id;
-                  return (
-                    <tr
-                      key={u.user_id}
-                      className="border-b border-border/50 hover:bg-muted/30 transition-colors cursor-pointer"
-                      onClick={() => openUser(u)}
-                    >
-                      <td className="p-4">
-                        <div className="flex items-center gap-3">
-                          <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center">
-                            {u.role === "admin" ? (
-                              <Shield className="h-4 w-4 text-primary" />
-                            ) : (
-                              <User className="h-4 w-4 text-muted-foreground" />
-                            )}
-                          </div>
-                          <div>
-                            <span className="font-medium">{u.full_name || "Unknown"}</span>
-                            {isSelf && <span className="text-xs text-muted-foreground ml-2">(You)</span>}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-4 text-muted-foreground truncate max-w-[220px]">{u.email || "—"}</td>
-                      <td className="p-4 text-muted-foreground hidden md:table-cell">{u.roll_number || "—"}</td>
-                      <td className="p-4 text-muted-foreground hidden lg:table-cell">{u.phone_number || "—"}</td>
-                      <td className="p-4 text-muted-foreground hidden lg:table-cell">{u.section || "—"}</td>
-                      <td className="p-4 text-muted-foreground hidden md:table-cell truncate max-w-[160px]">{u.department || "—"}</td>
-                      <td className="p-4 text-muted-foreground hidden md:table-cell">{u.batch || "—"}</td>
-                      <td className="p-4">
-                        <Badge variant={u.role === "admin" ? "default" : "secondary"}>{u.role}</Badge>
-                      </td>
-                      <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
-                        {updatingId === u.user_id ? (
-                          <Loader2 className="h-4 w-4 animate-spin text-primary inline-block" />
-                        ) : (
-                          <Select
-                            value={u.role}
-                            onValueChange={(val) => handleRoleChange(u.user_id, val)}
-                            disabled={isSelf}
+          <div className="space-y-8">
+            {grouped.map(([dept, rows]) => (
+              <section key={dept}>
+                <div className="flex items-center gap-2 mb-3">
+                  <UsersIcon className="h-4 w-4 text-primary" />
+                  <h2 className="font-display font-semibold text-lg">{dept}</h2>
+                  <Badge variant="secondary" className="ml-1">{rows.length}</Badge>
+                </div>
+                <div className="bg-card rounded-xl border border-border card-shadow overflow-x-auto">
+                  <table className="w-full text-sm min-w-[800px]">
+                    <thead>
+                      <tr className="border-b border-border bg-muted/50">
+                        <th className="text-left p-4 font-display font-semibold">User</th>
+                        <th className="text-left p-4 font-display font-semibold">Email</th>
+                        <th className="text-left p-4 font-display font-semibold hidden md:table-cell">Roll</th>
+                        <th className="text-left p-4 font-display font-semibold hidden lg:table-cell">Phone</th>
+                        <th className="text-left p-4 font-display font-semibold hidden lg:table-cell">Section</th>
+                        <th className="text-left p-4 font-display font-semibold hidden md:table-cell">Batch</th>
+                        <th className="text-left p-4 font-display font-semibold">Role</th>
+                        <th className="text-right p-4 font-display font-semibold">Change</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rows.map((u) => {
+                        const isSelf = u.user_id === currentUser?.id;
+                        return (
+                          <tr
+                            key={u.user_id}
+                            className="border-b border-border/50 hover:bg-muted/30 transition-colors cursor-pointer"
+                            onClick={() => openUser(u)}
                           >
-                            <SelectTrigger className="w-28 h-8 text-xs inline-flex">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="user">User</SelectItem>
-                              <SelectItem value="admin">Admin</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-                {filtered.length === 0 && (
-                  <tr><td colSpan={9} className="p-8 text-center text-muted-foreground">No users found</td></tr>
-                )}
-              </tbody>
-            </table>
+                            <td className="p-4">
+                              <div className="flex items-center gap-3">
+                                <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center">
+                                  {u.role === "admin" ? (
+                                    <Shield className="h-4 w-4 text-primary" />
+                                  ) : (
+                                    <User className="h-4 w-4 text-muted-foreground" />
+                                  )}
+                                </div>
+                                <div>
+                                  <span className="font-medium">{u.full_name || "Unknown"}</span>
+                                  {isSelf && <span className="text-xs text-muted-foreground ml-2">(You)</span>}
+                                </div>
+                              </div>
+                            </td>
+                            <td className="p-4 text-muted-foreground truncate max-w-[220px]">{u.email || "—"}</td>
+                            <td className="p-4 text-muted-foreground hidden md:table-cell">{u.roll_number || "—"}</td>
+                            <td className="p-4 text-muted-foreground hidden lg:table-cell">{u.phone_number || "—"}</td>
+                            <td className="p-4 text-muted-foreground hidden lg:table-cell">{u.section || "—"}</td>
+                            <td className="p-4 text-muted-foreground hidden md:table-cell">{u.batch || "—"}</td>
+                            <td className="p-4">
+                              <Badge variant={u.role === "admin" ? "default" : "secondary"}>{u.role}</Badge>
+                            </td>
+                            <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
+                              {updatingId === u.user_id ? (
+                                <Loader2 className="h-4 w-4 animate-spin text-primary inline-block" />
+                              ) : (
+                                <Select
+                                  value={u.role}
+                                  onValueChange={(val) => handleRoleChange(u.user_id, val)}
+                                  disabled={isSelf}
+                                >
+                                  <SelectTrigger className="w-28 h-8 text-xs inline-flex">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="user">User</SelectItem>
+                                    <SelectItem value="admin">Admin</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            ))}
           </div>
         )}
       </div>
 
       <Sheet open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
-        <SheetContent className="overflow-y-auto">
+        <SheetContent className="overflow-y-auto sm:max-w-lg">
           {selected && (
             <>
               <SheetHeader>
-                <SheetTitle>{selected.full_name || "Unknown user"}</SheetTitle>
+                <SheetTitle>Edit user</SheetTitle>
               </SheetHeader>
               <div className="mt-6 space-y-4 text-sm">
-                <DetailRow icon={<Mail className="h-4 w-4" />} label="Email" value={selected.email} />
-                <div className="flex items-start gap-3 py-2 border-b border-border/50">
-                  <div className="text-muted-foreground mt-0.5"><GraduationCap className="h-4 w-4" /></div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-xs text-muted-foreground uppercase tracking-wider">Roll number</div>
-                    {editingRoll ? (
-                      <div className="flex items-center gap-2 mt-1">
-                        <Input
-                          value={rollDraft}
-                          onChange={(e) => setRollDraft(e.target.value)}
-                          maxLength={20}
-                          className="h-8"
-                          autoFocus
-                        />
-                        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={handleSaveRoll} disabled={savingRoll}>
-                          {savingRoll ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
-                        </Button>
-                        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => { setEditingRoll(false); setRollDraft(selected.roll_number ?? ""); }} disabled={savingRoll}>
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <div className="font-medium break-words">{selected.roll_number || "—"}</div>
-                        <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => setEditingRoll(true)}>
-                          <Pencil className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
-                    )}
+                <div>
+                  <Label className="text-xs text-muted-foreground uppercase tracking-wider">Email</Label>
+                  <div className="font-medium break-words mt-1">{selected.email || "—"}</div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="m_full_name">Full name</Label>
+                  <Input id="m_full_name" value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} maxLength={80} />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="m_roll">Roll number</Label>
+                    <Input id="m_roll" value={form.roll_number} onChange={(e) => setForm({ ...form, roll_number: e.target.value })} maxLength={20} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="m_phone">Phone</Label>
+                    <Input id="m_phone" value={form.phone_number} onChange={(e) => setForm({ ...form, phone_number: e.target.value })} maxLength={20} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="m_section">Section</Label>
+                    <Input id="m_section" value={form.section} onChange={(e) => setForm({ ...form, section: e.target.value })} placeholder="e.g. 69_E" maxLength={20} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="m_batch">Batch</Label>
+                    <Input id="m_batch" value={form.batch} onChange={(e) => setForm({ ...form, batch: e.target.value })} placeholder="e.g. 60th" maxLength={20} />
                   </div>
                 </div>
-                <DetailRow icon={<Phone className="h-4 w-4" />} label="Phone" value={selected.phone_number} />
-                <DetailRow icon={<Layers className="h-4 w-4" />} label="Section" value={selected.section} />
-                <DetailRow icon={<BookOpen className="h-4 w-4" />} label="Department" value={selected.department} />
-                <DetailRow icon={<GraduationCap className="h-4 w-4" />} label="Batch" value={selected.batch} />
-                <DetailRow icon={<Shield className="h-4 w-4" />} label="Role" value={selected.role} />
-                <DetailRow
-                  icon={<User className="h-4 w-4" />}
-                  label="Joined"
-                  value={new Date(selected.created_at).toLocaleDateString()}
-                />
+                <div className="space-y-1.5">
+                  <Label htmlFor="m_department">Department</Label>
+                  <Select value={form.department || undefined} onValueChange={(v) => setForm({ ...form, department: v })}>
+                    <SelectTrigger id="m_department">
+                      <SelectValue placeholder="Select department" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {departments.map((d) => (
+                        <SelectItem key={d.id} value={d.name}>{d.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="m_bio">Bio</Label>
+                  <Textarea id="m_bio" rows={3} value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} maxLength={500} />
+                </div>
+                <div className="grid grid-cols-2 gap-3 pt-2 text-xs text-muted-foreground border-t border-border/50">
+                  <div><span className="block uppercase tracking-wider">Role</span><span className="text-foreground font-medium">{selected.role}</span></div>
+                  <div><span className="block uppercase tracking-wider">Joined</span><span className="text-foreground font-medium">{new Date(selected.created_at).toLocaleDateString()}</span></div>
+                </div>
+                <div className="flex justify-end gap-2 pt-2">
+                  <Button variant="ghost" onClick={() => setSelected(null)} disabled={saving}>Cancel</Button>
+                  <Button onClick={handleSave} disabled={saving} className="bg-gradient-primary text-primary-foreground">
+                    {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+                    Save changes
+                  </Button>
+                </div>
               </div>
             </>
           )}
         </SheetContent>
       </Sheet>
-    </div>
-  );
-}
-
-function DetailRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string | null }) {
-  return (
-    <div className="flex items-start gap-3 py-2 border-b border-border/50">
-      <div className="text-muted-foreground mt-0.5">{icon}</div>
-      <div className="flex-1 min-w-0">
-        <div className="text-xs text-muted-foreground uppercase tracking-wider">{label}</div>
-        <div className="font-medium break-words">{value || "—"}</div>
-      </div>
     </div>
   );
 }
