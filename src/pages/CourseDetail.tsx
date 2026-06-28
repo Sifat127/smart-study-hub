@@ -582,10 +582,25 @@ export default function CourseDetail() {
                               )}
                             </div>
                             <div className="flex flex-wrap gap-2">
-                              <Button size="sm" className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold" asChild>
-                                <a href={u.file_url} target="_blank" rel="noopener noreferrer">
-                                  <Eye className="h-4 w-4 mr-1.5" /> View
-                                </a>
+                              <Button
+                                size="sm"
+                                className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold"
+                                onClick={async () => {
+                                  if (!requireAuth("view this file")) return;
+                                  try {
+                                    if (u.file_id) {
+                                      const { getDownloadUrl } = await import("@/lib/storage");
+                                      const signed = await getDownloadUrl(u.file_id, false);
+                                      window.open(signed, "_blank", "noopener,noreferrer");
+                                    } else {
+                                      window.open(u.file_url, "_blank", "noopener,noreferrer");
+                                    }
+                                  } catch (err) {
+                                    toast.error("Couldn't open file", { description: err instanceof Error ? err.message : "Please try again." });
+                                  }
+                                }}
+                              >
+                                <Eye className="h-4 w-4 mr-1.5" /> View
                               </Button>
                             </div>
                           </div>
