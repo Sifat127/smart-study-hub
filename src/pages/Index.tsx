@@ -45,6 +45,7 @@ const floatingElements = [
 
 export default function Index() {
   const navigate = useNavigate();
+  const departments = useDepartments();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searching, setSearching] = useState(false);
