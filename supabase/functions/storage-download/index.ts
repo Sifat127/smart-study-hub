@@ -68,6 +68,12 @@ Deno.serve(async (req) => {
       .update({ download_count: (file.download_count ?? 0) + 1 })
       .eq("id", file.id);
 
+    // When called from JS (fetch), browsers can't follow cross-origin redirects to R2
+    // while preserving our Authorization header AND surfacing the final URL. Return the
+    // signed URL as JSON when the client asks for it; otherwise 302 for direct navigation.
+    if (url.searchParams.get("json") === "1") {
+      return json({ url: signed, filename: file.original_filename });
+    }
     return new Response(null, {
       status: 302,
       headers: { ...corsHeaders, Location: signed, "Cache-Control": "no-store" },
