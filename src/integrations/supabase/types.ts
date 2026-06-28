@@ -47,6 +47,13 @@ export type Database = {
             referencedRelation: "chapters"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "chapter_downloads_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       chapters: {
@@ -432,6 +439,44 @@ export type Database = {
       }
     }
     Views: {
+      chapters_public: {
+        Row: {
+          course_id: string | null
+          description: string | null
+          id: string | null
+          notes_name: string | null
+          pdf_name: string | null
+          title: string | null
+          uploaded_at: string | null
+        }
+        Insert: {
+          course_id?: string | null
+          description?: string | null
+          id?: string | null
+          notes_name?: string | null
+          pdf_name?: string | null
+          title?: string | null
+          uploaded_at?: string | null
+        }
+        Update: {
+          course_id?: string | null
+          description?: string | null
+          id?: string | null
+          notes_name?: string | null
+          pdf_name?: string | null
+          title?: string | null
+          uploaded_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapters_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles_public: {
         Row: {
           avatar_url: string | null
