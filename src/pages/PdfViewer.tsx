@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { downloadFile, getPreviewBytes } from "@/lib/storage";
+import { downloadFile, getCachedPreviewBytes, getPreviewBytes } from "@/lib/storage";
 import { getDocument, GlobalWorkerOptions, type PDFDocumentProxy } from "pdfjs-dist";
 import pdfWorker from "pdfjs-dist/build/pdf.worker.mjs?url";
 import { toast } from "sonner";
@@ -48,7 +48,9 @@ export default function PdfViewer() {
   const fileName = searchParams.get("name") || "document.pdf";
   const back = searchParams.get("back") || "/";
 
-  const [state, setState] = useState<State>({ status: "loading" });
+  const [state, setState] = useState<State>(() =>
+    fileId && getCachedPreviewBytes(fileId) ? { status: "loading" } : { status: "loading" },
+  );
   const [attempt, setAttempt] = useState(0);
   const [page, setPage] = useState(1);
   const [pageInput, setPageInput] = useState("1");
@@ -85,7 +87,14 @@ export default function PdfViewer() {
         // the buffer it is given, so we hand it a separate clone.
         bytesRef.current = bytes;
         const renderCopy = new Uint8Array(bytes);
-        const pdf = await getDocument({ data: renderCopy }).promise;
+        // Hint pdf.js to skip its own range-request / streaming machinery —
+        // we already have all the bytes in memory, so those code paths only
+        // add overhead before the first page paints.
+        const pdf = await getDocument({
+          data: renderCopy,
+          disableAutoFetch: true,
+          disableStream: true,
+        }).promise;
         if (cancelled) {
           pdf.destroy();
           return;
