@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { uploadFile } from "@/lib/storage";
 
 interface CourseOption {
   id: string;
@@ -44,17 +45,6 @@ export default function AdminUploadPdf() {
     fetchCourses();
   }, []);
 
-  const uploadToCatbox = async (f: File): Promise<string> => {
-    const form = new FormData();
-    form.append("file", f);
-    const { data, error } = await supabase.functions.invoke("upload-to-catbox", {
-      body: form,
-    });
-    if (error) throw new Error(error.message);
-    if (!data?.url) throw new Error(data?.error || "Upload failed");
-    return data.url as string;
-  };
-
   const handleUpload = async () => {
     if (!file || !title || !courseId) {
       toast({ title: "Title, Course এবং PDF ফাইল দিন", variant: "destructive" });
@@ -63,24 +53,45 @@ export default function AdminUploadPdf() {
 
     setUploading(true);
     try {
-      const pdfUrl = await uploadToCatbox(file);
+      const course = courses.find((c) => c.id === courseId);
+      const pdf = await uploadFile(file, {
+        title,
+        course_id: courseId,
+        course_code: course?.code,
+        department: course?.department,
+        semester: course ? String(course.semester) : undefined,
+        visibility: "authenticated",
+        requireAdmin: true,
+      });
 
-      let notesUrl: string | null = null;
+      let notesFileId: string | null = null;
       let notesName: string | null = null;
+      let notesUrl: string | null = null;
       if (notesFile) {
-        notesUrl = await uploadToCatbox(notesFile);
-        notesName = notesFile.name;
+        const notes = await uploadFile(notesFile, {
+          title: `${title} – Notes`,
+          course_id: courseId,
+          course_code: course?.code,
+          department: course?.department,
+          semester: course ? String(course.semester) : undefined,
+          visibility: "authenticated",
+          requireAdmin: true,
+        });
+        notesFileId = notes.id;
+        notesName = notes.original_filename;
+        notesUrl = notes.public_url;
       }
 
       const { error: insertError } = await supabase.from("chapters").insert({
         course_id: courseId,
         title,
         description: description || null,
-        pdf_name: file.name,
-        pdf_url: pdfUrl,
+        pdf_name: pdf.original_filename,
+        pdf_url: pdf.public_url,
+        file_id: pdf.id,
         notes_name: notesName,
         notes_url: notesUrl,
-      });
+      } as never);
       if (insertError) throw insertError;
 
       setUploaded(true);
@@ -90,6 +101,7 @@ export default function AdminUploadPdf() {
       setTitle("");
       setDescription("");
       setCourseId("");
+      void notesFileId; // notes file_id is tracked separately if schema gains a notes_file_id column later
     } catch (err: any) {
       toast({ title: "আপলোড ব্যর্থ হয়েছে", description: err.message, variant: "destructive" });
     } finally {

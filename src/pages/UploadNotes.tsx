@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { uploadFile } from "@/lib/storage";
 import { useAuth } from "@/contexts/AuthContext";
 import { departments } from "@/data/mockData";
 
@@ -77,15 +78,6 @@ export default function UploadNotes() {
     [courses, department, semester],
   );
 
-  const uploadToCatbox = async (f: File): Promise<string> => {
-    const form = new FormData();
-    form.append("file", f);
-    const { data, error } = await supabase.functions.invoke("upload-to-catbox", { body: form });
-    if (error) throw new Error(error.message);
-    if (!data?.url) throw new Error(data?.error || "Upload failed");
-    return data.url as string;
-  };
-
   const handleSubmit = async () => {
     if (!department || !semester || !courseId || !batch.trim() || !title.trim() || !file) {
       toast({ title: "Please fill every field and attach a file", variant: "destructive" });
@@ -99,7 +91,21 @@ export default function UploadNotes() {
     const safeKind: "material" | "notes" = isAdmin ? kind : "notes";
     setUploading(true);
     try {
-      const fileUrl = await uploadToCatbox(file);
+      const course = courses.find((c) => c.id === courseId);
+      const uploaded = await uploadFile(file, {
+        title: title.trim(),
+        course_id: courseId,
+        course_code: course?.code,
+        department,
+        semester,
+        tags: [safeKind, batch.trim()],
+        visibility: "authenticated",
+        requireAdmin: safeKind === "material",
+      });
+      // file_url is NOT NULL on student_uploads — point legacy column at our download endpoint.
+      const legacyUrl =
+        uploaded.public_url ??
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/storage-download?file_id=${uploaded.id}`;
       const { error } = await supabase.from("student_uploads").insert({
         course_id: courseId,
         kind: safeKind,
@@ -107,10 +113,11 @@ export default function UploadNotes() {
         student_name: studentName.trim() || null,
         title: title.trim(),
         description: description.trim() || null,
-        file_name: file.name,
-        file_url: fileUrl,
+        file_name: uploaded.original_filename,
+        file_url: legacyUrl,
+        file_id: uploaded.id,
         uploaded_by: user.id,
-      });
+      } as never);
       if (error) throw error;
       setDone(true);
       toast({ title: "Uploaded successfully!" });
