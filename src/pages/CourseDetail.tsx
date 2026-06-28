@@ -196,7 +196,42 @@ export default function CourseDetail() {
     return data.publicUrl;
   };
 
-  // Prefer external URL (Catbox); fall back to Supabase storage path
+  // Derive filtered chapter + upload lists once per dependency change so the
+  // lazy-render hooks below can slice from a stable array reference.
+  const filteredChapters = useMemo(
+    () => chapters.filter(c => activeTab === "materials"
+      ? (c.pdf_url || c.pdf_path || c.file_id)
+      : (c.notes_url || c.notes_path)),
+    [chapters, activeTab]
+  );
+  const tabUploads = useMemo(
+    () => studentUploads.filter(u => u.kind === (activeTab === "materials" ? "material" : "notes")),
+    [studentUploads, activeTab]
+  );
+  const batches = useMemo(
+    () => Array.from(new Set(tabUploads.map(u => u.batch))).sort(),
+    [tabUploads]
+  );
+  const filteredUploads = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const uq = uploaderQuery.trim().toLowerCase();
+    return tabUploads.filter(u => {
+      if (batchFilter !== "all" && u.batch !== batchFilter) return false;
+      if (uq && !(u.student_name || "").toLowerCase().includes(uq)) return false;
+      if (q && !(u.title.toLowerCase().includes(q) || u.batch.toLowerCase().includes(q))) return false;
+      return true;
+    });
+  }, [tabUploads, query, uploaderQuery, batchFilter]);
+
+  // Lazy-render: only the first ~6 items render immediately; an IntersectionObserver
+  // sentinel adds more as the user scrolls. Heavy descriptions/buttons stay off the
+  // DOM until needed, keeping initial paint + scroll cost low on mobile.
+  const { visible: visibleChapters, sentinelRef: chaptersSentinelRef, hasMore: hasMoreChapters } =
+    useLazyList(filteredChapters, 6, 6);
+  const { visible: visibleUploads, sentinelRef: uploadsSentinelRef, hasMore: hasMoreUploads } =
+    useLazyList(filteredUploads, 6, 6);
+
+
   const resolveUrl = (url: string | null, path: string | null): string | null => {
     if (url) return url;
     if (path) return getPublicUrl(path);
