@@ -173,9 +173,14 @@ export default function CourseDetail() {
 
     // 2) Always revalidate in the background (stale-while-revalidate).
     async function fetchData() {
+      // Anonymous visitors can only read non-sensitive chapter columns (catalog browsing).
+      // Storage paths/URLs and file_id are restricted to authenticated users at the DB level.
+      const chapterColumns = user
+        ? "id, title, description, pdf_name, pdf_path, pdf_url, notes_name, notes_path, notes_url, file_id, uploaded_at"
+        : "id, title, description, pdf_name, notes_name, uploaded_at";
       const baseRequests: Promise<any>[] = [
         Promise.resolve(supabase.from("courses").select("id, code, name").eq("id", courseId!).maybeSingle()),
-        Promise.resolve(supabase.from("chapters").select("id, title, description, pdf_name, pdf_path, pdf_url, notes_name, notes_path, notes_url, file_id, uploaded_at").eq("course_id", courseId!).order("uploaded_at")),
+        Promise.resolve(supabase.from("chapters").select(chapterColumns).eq("course_id", courseId!).order("uploaded_at")),
       ];
       // Student uploads are gated by RLS — only fetch when signed in to avoid 401 noise.
       if (user) {
