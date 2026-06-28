@@ -215,6 +215,9 @@ export function prefetchPreviewBytes(fileId: string | null | undefined): void {
   void getPreviewBytes(fileId).catch(() => {
     /* prefetch is best-effort */
   });
+}
+
+
 
 
 /** Trigger a browser download for the given file id. */
