@@ -2,12 +2,13 @@ import { Link } from "react-router-dom";
 import { Monitor, Zap, Briefcase, ArrowRight, FolderOpen, Code, Database, Pill, BookText, Scale, Shirt, Building2, Radio, Plane, Apple, HeartPulse, Clapperboard } from "lucide-react";
 import Layout from "@/components/Layout";
 import PageHeader from "@/components/PageHeader";
-import { departments } from "@/data/mockData";
+import { useDepartments } from "@/hooks/useDepartments";
 
 const deptIcons: Record<string, React.ElementType> = { Monitor, Zap, Briefcase, Code, Database, Pill, BookText, Scale, Shirt, Building2, Radio, Plane, Apple, HeartPulse, Clapperboard };
 
 
 export default function Departments() {
+  const departments = useDepartments();
   return (
     <Layout>
       <PageHeader
