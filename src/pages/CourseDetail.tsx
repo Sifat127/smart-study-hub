@@ -259,13 +259,19 @@ export default function CourseDetail() {
     });
   }, [tabUploads, query, uploaderQuery, batchFilter]);
 
+  const sortedUploads = useMemo(() => {
+    const arr = [...filteredUploads];
+    arr.sort((a, b) => cmp(a, b, new Date(a.created_at).getTime(), new Date(b.created_at).getTime()));
+    return arr;
+  }, [filteredUploads, cmp]);
+
   // Lazy-render: only the first ~6 items render immediately; an IntersectionObserver
   // sentinel adds more as the user scrolls. Heavy descriptions/buttons stay off the
   // DOM until needed, keeping initial paint + scroll cost low on mobile.
   const { visible: visibleChapters, sentinelRef: chaptersSentinelRef, hasMore: hasMoreChapters } =
-    useLazyList(filteredChapters, 6, 6);
+    useLazyList(sortedChapters, 6, 6);
   const { visible: visibleUploads, sentinelRef: uploadsSentinelRef, hasMore: hasMoreUploads } =
-    useLazyList(filteredUploads, 6, 6);
+    useLazyList(sortedUploads, 6, 6);
 
 
   const resolveUrl = (url: string | null, path: string | null): string | null => {
