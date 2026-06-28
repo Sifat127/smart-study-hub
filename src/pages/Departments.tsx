@@ -39,7 +39,7 @@ export default function Departments() {
                       <h2 className="font-display text-xl font-bold mb-1 group-hover:text-accent">{dept.name}</h2>
                       <p className="text-muted-foreground text-sm font-medium mb-2">{dept.fullName}</p>
                       <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{dept.description}</p>
-                      <p className="text-sm text-muted-foreground mb-4">{dept.totalCourses} courses • 12 semesters</p>
+                      <p className="text-sm text-muted-foreground mb-4">12 semesters</p>
                       <div className="flex items-center text-primary font-semibold text-sm group-hover:text-accent">
                         Explore Department
                         <ArrowRight className="ml-2 h-4 w-4" />
