@@ -13,6 +13,18 @@ import { toast } from "sonner";
 import { downloadFile as downloadFileFromStorage, prefetchPreviewBytes } from "@/lib/storage";
 import { readCache, writeCache } from "@/lib/listCache";
 import { useLazyList } from "@/lib/useLazyList";
+import { ArrowDown, ArrowUp, ArrowDownAZ, ArrowUpAZ } from "lucide-react";
+
+type SortValue = "newest" | "oldest" | "az" | "za";
+const SORT_OPTIONS: { value: SortValue; label: string; icon: typeof ArrowDown }[] = [
+  { value: "newest", label: "Newest first", icon: ArrowDown },
+  { value: "oldest", label: "Oldest first", icon: ArrowUp },
+  { value: "az", label: "Title A–Z", icon: ArrowDownAZ },
+  { value: "za", label: "Title Z–A", icon: ArrowUpAZ },
+];
+const SORT_LABELS: Record<SortValue, string> = Object.fromEntries(
+  SORT_OPTIONS.map((o) => [o.value, o.label])
+) as Record<SortValue, string>;
 
 
 
