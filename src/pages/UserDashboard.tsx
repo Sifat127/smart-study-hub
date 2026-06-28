@@ -375,6 +375,7 @@ interface ChapterRow {
 const SEMESTERS = Array.from({ length: 12 }, (_, i) => i + 1);
 
 function FilterChaptersSection() {
+  const departments = useDepartments();
   const [dept, setDept] = useState<string>("all");
   const [courseId, setCourseId] = useState<string>("all");
   const [sem, setSem] = useState<string>("all");
