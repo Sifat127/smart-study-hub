@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { downloadFile as downloadFileFromStorage, prefetchPreviewBytes } from "@/lib/storage";
 import { readCache, writeCache } from "@/lib/listCache";
 import { useLazyList } from "@/lib/useLazyList";
+import Highlight from "@/components/Highlight";
 import { ArrowDown, ArrowUp, ArrowDownAZ, ArrowUpAZ } from "lucide-react";
 
 type SortValue = "newest" | "oldest" | "az" | "za";
@@ -541,22 +542,26 @@ export default function CourseDetail() {
                     </div>
                     <div className="flex-1 min-w-0">
 
-                      <h3 className="font-display font-semibold text-lg mb-1 tracking-tight">{chapter.title}</h3>
+                      <h3 className="font-display font-semibold text-lg mb-1 tracking-tight">
+                        <Highlight text={chapter.title} query={query} />
+                      </h3>
                       {chapter.description && (
-                        <p className="text-sm text-muted-foreground mb-3">{chapter.description}</p>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          <Highlight text={chapter.description} query={query} />
+                        </p>
                       )}
                       <div className="flex items-center gap-2 text-xs text-muted-foreground mb-4 flex-wrap">
                         {activeTab === "materials" && chapter.pdf_name && (
                           <>
                             <FileText className="h-3.5 w-3.5" />
-                            <span className="truncate max-w-full">{chapter.pdf_name}</span>
+                            <span className="truncate max-w-full"><Highlight text={chapter.pdf_name} query={query} /></span>
                             <span>•</span>
                           </>
                         )}
                         {activeTab === "notes" && chapter.notes_name && (
                           <>
                             <StickyNote className="h-3.5 w-3.5" />
-                            <span className="truncate max-w-full">{chapter.notes_name}</span>
+                            <span className="truncate max-w-full"><Highlight text={chapter.notes_name} query={query} /></span>
                             <span>•</span>
                           </>
                         )}
@@ -786,22 +791,26 @@ export default function CourseDetail() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start gap-2 flex-wrap mb-1.5">
-                              <h3 className="font-display font-semibold text-lg tracking-tight">{u.title}</h3>
-                              <span className="text-[10px] uppercase tracking-[0.15em] px-2.5 py-0.5 rounded-full bg-accent/15 text-accent border border-accent/25 font-semibold shadow-[0_0_12px_hsl(var(--accent)/0.25)]">Batch {u.batch}</span>
+                              <h3 className="font-display font-semibold text-lg tracking-tight">
+                                <Highlight text={u.title} query={query} />
+                              </h3>
+                              <span className="text-[10px] uppercase tracking-[0.15em] px-2.5 py-0.5 rounded-full bg-accent/15 text-accent border border-accent/25 font-semibold shadow-[0_0_12px_hsl(var(--accent)/0.25)]">Batch <Highlight text={u.batch} query={query} /></span>
                             </div>
                             {u.description && (
-                              <p className="text-sm text-muted-foreground mb-3">{u.description}</p>
+                              <p className="text-sm text-muted-foreground mb-3">
+                                <Highlight text={u.description} query={query} />
+                              </p>
                             )}
                             <div className="flex items-center gap-2 text-xs text-muted-foreground mb-4 flex-wrap">
                               <FileText className="h-3.5 w-3.5" />
-                              <span className="truncate max-w-full">{u.file_name}</span>
+                              <span className="truncate max-w-full"><Highlight text={u.file_name} query={query || uploaderQuery} /></span>
                               <span>•</span>
                               <Calendar className="h-3.5 w-3.5" />
                               <span>{new Date(u.created_at).toLocaleDateString()}</span>
                               {u.student_name && (
                                 <>
                                   <span>•</span>
-                                  <span>by <span className="text-foreground/80 font-medium">{u.student_name}</span></span>
+                                  <span>by <span className="text-foreground/80 font-medium"><Highlight text={u.student_name} query={uploaderQuery || query} /></span></span>
                                 </>
                               )}
                             </div>
