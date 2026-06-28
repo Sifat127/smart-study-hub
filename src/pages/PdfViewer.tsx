@@ -93,6 +93,8 @@ export default function PdfViewer() {
     setState({ status: "loading" });
     setPage(1);
     setPageInput("1");
+    setFullLoaded(false);
+    bytesRef.current = null;
 
     (async () => {
       try {
