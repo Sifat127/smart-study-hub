@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { AlertCircle, FileText, Loader2, Lock, RefreshCw } from "lucide-react";
+import { AlertCircle, ExternalLink, FileText, Loader2, Lock, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getDocument, GlobalWorkerOptions } from "pdfjs-dist";
 import pdfWorker from "pdfjs-dist/build/pdf.worker.mjs?url";
@@ -134,6 +134,16 @@ export default function StudentUploadPreview({ fileId, fileName, legacyUrl, canP
 
   const pdf = isPdf(fileName);
 
+  const openPdf = async () => {
+    if (fileId) {
+      const { getDownloadUrl } = await import("@/lib/storage");
+      const url = await getDownloadUrl(fileId, false);
+      window.open(url, "_blank", "noopener,noreferrer");
+      return;
+    }
+    if (legacyUrl) window.open(legacyUrl, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <div
       ref={rootRef}
@@ -157,14 +167,21 @@ export default function StudentUploadPreview({ fileId, fileName, legacyUrl, canP
                 <p className="text-sm font-medium">Preview unavailable</p>
                 <p className="text-xs text-muted-foreground mt-1 break-words max-w-xs">{state.message}</p>
               </div>
-              <Button
-                size="sm"
-                variant="outline"
-                className="rounded-lg"
-                onClick={() => setAttempt((n) => n + 1)}
-              >
-                <RefreshCw className="h-3.5 w-3.5 mr-1.5" /> Retry
-              </Button>
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="rounded-lg"
+                  onClick={() => setAttempt((n) => n + 1)}
+                >
+                  <RefreshCw className="h-3.5 w-3.5 mr-1.5" /> Retry
+                </Button>
+                {(fileId || legacyUrl) && (
+                  <Button size="sm" className="rounded-lg font-semibold" onClick={openPdf}>
+                    <ExternalLink className="h-3.5 w-3.5 mr-1.5" /> Open PDF
+                  </Button>
+                )}
+              </div>
             </>
           ) : (
             <>
@@ -183,7 +200,7 @@ export default function StudentUploadPreview({ fileId, fileName, legacyUrl, canP
           <canvas
             ref={canvasRef}
             aria-label={`${fileName} preview`}
-            className="mx-auto block h-full max-w-full bg-background object-contain"
+            className="mx-auto block h-full max-h-full max-w-full bg-background object-contain"
           />
         </div>
       )}
