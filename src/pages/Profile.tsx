@@ -37,6 +37,7 @@ const profileSchema = z.object({
 
 export default function Profile() {
   const { user, profile, loading: authLoading } = useAuth();
+  const departments = useDepartments();
   const { toast } = useToast();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
