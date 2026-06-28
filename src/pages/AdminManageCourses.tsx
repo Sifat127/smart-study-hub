@@ -10,6 +10,13 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useDepartments } from "@/hooks/useDepartments";
 import { useSemesters } from "@/hooks/useSemesters";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Pagination, PaginationContent, PaginationItem, PaginationLink,
+  PaginationNext, PaginationPrevious,
+} from "@/components/ui/pagination";
+
+const PAGE_SIZE = 20;
 
 interface Course {
   id: string;
