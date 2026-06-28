@@ -1,12 +1,12 @@
 // storage-upload: authenticated multipart upload -> Cloudflare R2 -> public.files row.
 // Body: multipart/form-data with field `file` (required) and optional metadata fields:
 //   title, subject, department, semester, course_code, course_id, year,
-//   tags (comma-separated), visibility (public|authenticated|private),
+//   tags (comma-separated), visibility (authenticated|private),
 //   require_admin ("true" to reject non-admins).
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { z } from "npm:zod@3.23.8";
-import { readR2Config, r2Upload, r2Delete, r2PublicUrl } from "../_shared/r2.ts";
+import { readR2Config, r2Upload, r2Delete } from "../_shared/r2.ts";
 
 const MAX_SIZE = 50 * 1024 * 1024; // 50 MB
 
@@ -19,7 +19,7 @@ const MetaSchema = z.object({
   course_id: z.string().uuid().optional(),
   year: z.string().max(10).optional(),
   tags: z.string().max(500).optional(),
-  visibility: z.enum(["public", "authenticated", "private"]).optional(),
+  visibility: z.enum(["authenticated", "private"]).optional(),
   require_admin: z.string().optional(),
 });
 
@@ -115,7 +115,7 @@ Deno.serve(async (req) => {
     await r2Upload(cfg, objectKey, buf, contentType);
 
     const visibility = meta.visibility ?? "authenticated";
-    const publicUrl = visibility === "public" ? r2PublicUrl(cfg, objectKey) : null;
+    const publicUrl = null;
     const tagsArr = meta.tags
       ? meta.tags.split(",").map((t) => t.trim()).filter(Boolean)
       : [];

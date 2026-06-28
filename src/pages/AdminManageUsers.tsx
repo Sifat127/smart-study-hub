@@ -58,6 +58,7 @@ interface UserRow {
 }
 
 const UNASSIGNED = "Unassigned";
+const FUNCTIONS_BASE = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
 
 interface AuditEntry {
   id: string;
@@ -97,6 +98,13 @@ export default function AdminManageUsers() {
   const RESTORABLE_FIELDS = new Set([
     "full_name", "roll_number", "phone_number", "section", "department", "batch", "bio",
   ]);
+
+  const getAdminAuthHeader = async () => {
+    const { data } = await supabase.auth.getSession();
+    const token = data.session?.access_token;
+    if (!token) throw new Error("Admin session expired. Please sign in again.");
+    return `Bearer ${token}`;
+  };
 
   // Group audit entries by changed_at + changed_by — entries written by the same
   // admin save share an exact timestamp, so we treat them as a single snapshot.
@@ -197,11 +205,21 @@ export default function AdminManageUsers() {
 
   const fetchUsers = async () => {
     setLoading(true);
-    const { data, error } = await supabase.rpc("admin_list_users");
-    if (error) {
-      toast({ title: "Couldn't load users", description: error.message, variant: "destructive" });
-    } else if (data) {
-      setUsers(data as UserRow[]);
+    try {
+      const auth = await getAdminAuthHeader();
+      const res = await fetch(`${FUNCTIONS_BASE}/admin-users`, {
+        method: "GET",
+        headers: { Authorization: auth },
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error || `Request failed (${res.status})`);
+      setUsers((body.users ?? []) as UserRow[]);
+    } catch (err) {
+      toast({
+        title: "Couldn't load users",
+        description: err instanceof Error ? err.message : "Please try again.",
+        variant: "destructive",
+      });
     }
     setLoading(false);
   };
@@ -290,26 +308,23 @@ export default function AdminManageUsers() {
       return;
     }
     setUpdatingId(userId);
-    // user_roles row may not exist yet — upsert by (user_id, role) uniqueness.
-    const { data: existing } = await supabase
-      .from("user_roles")
-      .select("id")
-      .eq("user_id", userId)
-      .maybeSingle();
-    const { error } = existing
-      ? await supabase
-          .from("user_roles")
-          .update({ role: newRole as "admin" | "user" })
-          .eq("user_id", userId)
-      : await supabase
-          .from("user_roles")
-          .insert({ user_id: userId, role: newRole as "admin" | "user" });
-
-    if (error) {
-      toast({ title: "Role update failed", description: error.message, variant: "destructive" });
-    } else {
+    try {
+      const auth = await getAdminAuthHeader();
+      const res = await fetch(`${FUNCTIONS_BASE}/admin-users`, {
+        method: "PATCH",
+        headers: { Authorization: auth, "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: userId, role: newRole }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error || `Request failed (${res.status})`);
       toast({ title: `Role updated to ${newRole}` });
       setUsers((prev) => prev.map((u) => (u.user_id === userId ? { ...u, role: newRole } : u)));
+    } catch (err) {
+      toast({
+        title: "Role update failed",
+        description: err instanceof Error ? err.message : "Please try again.",
+        variant: "destructive",
+      });
     }
     setUpdatingId(null);
   };
