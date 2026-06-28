@@ -28,6 +28,7 @@ import Profile from "./pages/Profile";
 import CompleteProfile from "./pages/CompleteProfile";
 import UserDashboard from "./pages/UserDashboard";
 import Search from "./pages/Search";
+import PdfViewer from "./pages/PdfViewer";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
