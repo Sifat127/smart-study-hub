@@ -8,5 +8,8 @@ import "@fontsource/raleway/700.css";
 import "@fontsource/raleway/800.css";
 import "@fontsource/raleway/900.css";
 import "./index.css";
+import { initPerfGuard } from "./lib/perfGuard";
+
+initPerfGuard();
 
 createRoot(document.getElementById("root")!).render(<App />);
