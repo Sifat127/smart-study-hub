@@ -10,6 +10,7 @@ import PageHeader from "@/components/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { downloadFile as downloadFileFromStorage } from "@/lib/storage";
 
 
 interface CourseData {
@@ -28,6 +29,7 @@ interface ChapterData {
   notes_name: string | null;
   notes_path: string | null;
   notes_url: string | null;
+  file_id: string | null;
   uploaded_at: string;
 }
 
@@ -40,6 +42,7 @@ interface StudentUpload {
   description: string | null;
   file_name: string;
   file_url: string;
+  file_id: string | null;
   created_at: string;
 }
 
@@ -68,30 +71,41 @@ export default function CourseDetail() {
     return false;
   };
 
-  const handleDownload = async (url: string, fileName: string, key: string) => {
+  const handleDownload = async (
+    url: string | null,
+    fileName: string,
+    key: string,
+    fileId?: string | null,
+  ) => {
     if (!requireAuth("download this file")) return;
     if (downloadingId) return;
 
     setDownloadingId(key);
     const toastId = toast.loading(`Preparing ${fileName}...`);
     try {
-      // Catbox URLs don't send CORS headers, so proxy them through our edge function.
-      const isCatbox = url.startsWith("https://files.catbox.moe/");
-      const fetchUrl = isCatbox
-        ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/download-file?url=${encodeURIComponent(url)}&name=${encodeURIComponent(fileName)}`
-        : url;
-
-      const res = await fetch(fetchUrl);
-      if (!res.ok) throw new Error(`Request failed (${res.status})`);
-      const blob = await res.blob();
-      const objectUrl = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = objectUrl;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      if (fileId) {
+        // New R2-backed files: stream through storage-download with auth.
+        await downloadFileFromStorage(fileId, fileName);
+      } else if (url) {
+        // Legacy path (Catbox or Supabase storage public URL).
+        const isCatbox = url.startsWith("https://files.catbox.moe/");
+        const fetchUrl = isCatbox
+          ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/download-file?url=${encodeURIComponent(url)}&name=${encodeURIComponent(fileName)}`
+          : url;
+        const res = await fetch(fetchUrl);
+        if (!res.ok) throw new Error(`Request failed (${res.status})`);
+        const blob = await res.blob();
+        const objectUrl = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = objectUrl;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      } else {
+        throw new Error("File is unavailable");
+      }
       toast.success("Download started", { id: toastId, description: fileName });
 
       // Log download history (best-effort; ignore errors so download UX isn't impacted)
@@ -127,12 +141,12 @@ export default function CourseDetail() {
     async function fetchData() {
       const baseRequests: Promise<any>[] = [
         Promise.resolve(supabase.from("courses").select("id, code, name").eq("id", courseId!).maybeSingle()),
-        Promise.resolve(supabase.from("chapters").select("id, title, description, pdf_name, pdf_path, pdf_url, notes_name, notes_path, notes_url, uploaded_at").eq("course_id", courseId!).order("uploaded_at")),
+        Promise.resolve(supabase.from("chapters").select("id, title, description, pdf_name, pdf_path, pdf_url, notes_name, notes_path, notes_url, file_id, uploaded_at").eq("course_id", courseId!).order("uploaded_at")),
       ];
       // Student uploads are gated by RLS — only fetch when signed in to avoid 401 noise.
       if (user) {
         baseRequests.push(
-          Promise.resolve(supabase.from("student_uploads").select("id, kind, batch, student_name, title, description, file_name, file_url, created_at").eq("course_id", courseId!).order("created_at", { ascending: false }))
+          Promise.resolve(supabase.from("student_uploads").select("id, kind, batch, student_name, title, description, file_name, file_url, file_id, created_at").eq("course_id", courseId!).order("created_at", { ascending: false }))
         );
       }
       const [courseRes, chaptersRes, uploadsRes] = await Promise.all(baseRequests);
@@ -263,7 +277,7 @@ export default function CourseDetail() {
             </div>
           </div>
           {(() => {
-            const filtered = chapters.filter(c => activeTab === "materials" ? (c.pdf_url || c.pdf_path) : (c.notes_url || c.notes_path));
+            const filtered = chapters.filter(c => activeTab === "materials" ? (c.pdf_url || c.pdf_path || c.file_id) : (c.notes_url || c.notes_path));
             const tabUploads = studentUploads.filter(u => u.kind === (activeTab === "materials" ? "material" : "notes"));
             const batches = Array.from(new Set(tabUploads.map(u => u.batch))).sort();
             const q = query.trim().toLowerCase();
@@ -327,7 +341,7 @@ export default function CourseDetail() {
                         <Calendar className="h-3.5 w-3.5" />
                         <span>{new Date(chapter.uploaded_at).toLocaleDateString()}</span>
                       </div>
-                      {activeTab === "materials" && (chapter.pdf_url || chapter.pdf_path) && (
+                      {activeTab === "materials" && (chapter.pdf_url || chapter.pdf_path || chapter.file_id) && (
                         <div className="flex flex-wrap gap-2">
                           {!user ? (
                             <Button
@@ -348,7 +362,7 @@ export default function CourseDetail() {
                               size="sm"
                               className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold"
                               disabled={downloadingId === `pdf-${chapter.id}`}
-                              onClick={() => handleDownload(resolveUrl(chapter.pdf_url, chapter.pdf_path)!, chapter.pdf_name ?? `${chapter.title}.pdf`, `pdf-${chapter.id}`)}
+                              onClick={() => handleDownload(resolveUrl(chapter.pdf_url, chapter.pdf_path), chapter.pdf_name ?? `${chapter.title}.pdf`, `pdf-${chapter.id}`, chapter.file_id)}
                             >
                               {downloadingId === `pdf-${chapter.id}` ? (
                                 <><Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> Downloading...</>
@@ -380,7 +394,7 @@ export default function CourseDetail() {
                               size="sm"
                               className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold"
                               disabled={downloadingId === `notes-${chapter.id}`}
-                              onClick={() => handleDownload(resolveUrl(chapter.notes_url, chapter.notes_path)!, chapter.notes_name ?? `${chapter.title}-notes.pdf`, `notes-${chapter.id}`)}
+                              onClick={() => handleDownload(resolveUrl(chapter.notes_url, chapter.notes_path), chapter.notes_name ?? `${chapter.title}-notes.pdf`, `notes-${chapter.id}`)}
                             >
                               {downloadingId === `notes-${chapter.id}` ? (
                                 <><Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> Downloading...</>
@@ -568,10 +582,25 @@ export default function CourseDetail() {
                               )}
                             </div>
                             <div className="flex flex-wrap gap-2">
-                              <Button size="sm" className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold" asChild>
-                                <a href={u.file_url} target="_blank" rel="noopener noreferrer">
-                                  <Eye className="h-4 w-4 mr-1.5" /> View
-                                </a>
+                              <Button
+                                size="sm"
+                                className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold"
+                                onClick={async () => {
+                                  if (!requireAuth("view this file")) return;
+                                  try {
+                                    if (u.file_id) {
+                                      const { getDownloadUrl } = await import("@/lib/storage");
+                                      const signed = await getDownloadUrl(u.file_id, false);
+                                      window.open(signed, "_blank", "noopener,noreferrer");
+                                    } else {
+                                      window.open(u.file_url, "_blank", "noopener,noreferrer");
+                                    }
+                                  } catch (err) {
+                                    toast.error("Couldn't open file", { description: err instanceof Error ? err.message : "Please try again." });
+                                  }
+                                }}
+                              >
+                                <Eye className="h-4 w-4 mr-1.5" /> View
                               </Button>
                             </div>
                           </div>
