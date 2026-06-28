@@ -21,6 +21,7 @@ import Contact from "./pages/Contact";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminUploadPdf from "./pages/AdminUploadPdf";
 import AdminManageCourses from "./pages/AdminManageCourses";
+import AdminManageChapters from "./pages/AdminManageChapters";
 import AdminManageUsers from "./pages/AdminManageUsers";
 import AdminSettings from "./pages/AdminSettings";
 import UploadNotes from "./pages/UploadNotes";
@@ -57,6 +58,7 @@ const App = () => (
             <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
             <Route path="/admin/upload-pdf" element={<ProtectedRoute requireAdmin><AdminUploadPdf /></ProtectedRoute>} />
             <Route path="/admin/manage-courses" element={<ProtectedRoute requireAdmin><AdminManageCourses /></ProtectedRoute>} />
+            <Route path="/admin/manage-chapters" element={<ProtectedRoute requireAdmin><AdminManageChapters /></ProtectedRoute>} />
             <Route path="/admin/manage-users" element={<ProtectedRoute requireAdmin><AdminManageUsers /></ProtectedRoute>} />
             <Route path="/admin/settings" element={<ProtectedRoute requireAdmin><AdminSettings /></ProtectedRoute>} />
             <Route path="/upload-notes" element={<ProtectedRoute><UploadNotes /></ProtectedRoute>} />
