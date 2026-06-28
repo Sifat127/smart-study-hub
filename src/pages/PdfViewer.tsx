@@ -59,6 +59,9 @@ export default function PdfViewer() {
   const canvasContainerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const renderTaskRef = useRef<{ cancel: () => void } | null>(null);
+  // Cached copy of the raw PDF bytes pdf.js is rendering, so the Download
+  // button serves the exact same payload without re-fetching.
+  const bytesRef = useRef<Uint8Array | null>(null);
 
   // -- Load the PDF document ------------------------------------------------
   useEffect(() => {
@@ -78,7 +81,11 @@ export default function PdfViewer() {
         // built-in viewer — pdf.js is the only renderer in play.
         const bytes = await getPreviewBytes(fileId);
         if (cancelled) return;
-        const pdf = await getDocument({ data: bytes }).promise;
+        // Keep a pristine copy for the download button. pdf.js may transfer
+        // the buffer it is given, so we hand it a separate clone.
+        bytesRef.current = bytes;
+        const renderCopy = new Uint8Array(bytes);
+        const pdf = await getDocument({ data: renderCopy }).promise;
         if (cancelled) {
           pdf.destroy();
           return;
@@ -257,6 +264,25 @@ export default function PdfViewer() {
 
   const onDownload = async () => {
     try {
+      // Prefer the bytes already rendered on-screen so the download exactly
+      // matches what the user is viewing (no second network round-trip, no
+      // chance of serving a different signed payload).
+      const bytes = bytesRef.current;
+      if (bytes) {
+        const blob = new Blob([new Uint8Array(bytes)], { type: "application/pdf" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        a.rel = "noopener noreferrer";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        return;
+      }
+      // Fallback: the document hasn't finished loading yet — fetch the
+      // signed URL so the user isn't stuck waiting.
       await downloadFile(fileId, fileName);
     } catch (err) {
       toast.error("Couldn't download file", {
