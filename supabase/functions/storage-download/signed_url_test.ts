@@ -75,9 +75,7 @@ async function r2SignedGetUrl(key: string, opts: SignOptions): Promise<string> {
 }
 
 Deno.test("signed URL for inline preview embeds application/pdf + inline disposition", async () => {
-  ensureR2();
-  const cfg = readR2Config();
-  const url = await r2SignedGetUrl(cfg, TEST_OBJECT_KEY, {
+  const url = await r2SignedGetUrl(TEST_OBJECT_KEY, {
     expiresInSeconds: 120,
     contentType: "application/pdf",
     inlineFileName: TEST_FILENAME,
@@ -91,9 +89,7 @@ Deno.test("signed URL for inline preview embeds application/pdf + inline disposi
 });
 
 Deno.test("signed URL for download embeds attachment disposition", async () => {
-  ensureR2();
-  const cfg = readR2Config();
-  const url = await r2SignedGetUrl(cfg, TEST_OBJECT_KEY, {
+  const url = await r2SignedGetUrl(TEST_OBJECT_KEY, {
     expiresInSeconds: 120,
     contentType: "application/pdf",
     downloadFileName: TEST_FILENAME,
@@ -104,9 +100,7 @@ Deno.test("signed URL for download embeds attachment disposition", async () => {
 });
 
 Deno.test("R2 returns Chrome/Firefox-friendly headers for inline preview", async () => {
-  ensureR2();
-  const cfg = readR2Config();
-  const url = await r2SignedGetUrl(cfg, TEST_OBJECT_KEY, {
+  const url = await r2SignedGetUrl(TEST_OBJECT_KEY, {
     expiresInSeconds: 120,
     contentType: "application/pdf",
     inlineFileName: TEST_FILENAME,
@@ -122,9 +116,7 @@ Deno.test("R2 returns Chrome/Firefox-friendly headers for inline preview", async
 });
 
 Deno.test("R2 returns attachment headers that trigger browser download", async () => {
-  ensureR2();
-  const cfg = readR2Config();
-  const url = await r2SignedGetUrl(cfg, TEST_OBJECT_KEY, {
+  const url = await r2SignedGetUrl(TEST_OBJECT_KEY, {
     expiresInSeconds: 120,
     contentType: "application/pdf",
     downloadFileName: TEST_FILENAME,
@@ -142,9 +134,7 @@ Deno.test("R2 returns attachment headers that trigger browser download", async (
 // number, proving the file content survives the signed-URL flow intact —
 // the same bytes Chrome and Firefox would feed to their PDF viewer.
 Deno.test("signed URL streams real PDF bytes (magic %PDF-)", async () => {
-  ensureR2();
-  const cfg = readR2Config();
-  const url = await r2SignedGetUrl(cfg, TEST_OBJECT_KEY, {
+  const url = await r2SignedGetUrl(TEST_OBJECT_KEY, {
     expiresInSeconds: 120,
     contentType: "application/pdf",
     inlineFileName: TEST_FILENAME,
