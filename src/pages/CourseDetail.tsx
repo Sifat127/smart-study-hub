@@ -701,6 +701,9 @@ export default function CourseDetail() {
                         </div>
                       </div>
                     ))}
+                    {hasMoreUploads && (
+                      <div ref={uploadsSentinelRef} aria-hidden="true" className="h-8" />
+                    )}
                   </div>
                   )}
                 </div>
