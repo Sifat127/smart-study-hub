@@ -305,18 +305,35 @@
   50% { box-shadow: 0 0 32px hsl(var(--accent) / 0.55), 0 0 64px hsl(var(--accent) / 0.2); }
 }
 
+/* Reduced motion: respect OS preference — kill motion + heavy ambient effects */
 @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
   }
+  .typewriter-cursor { animation: blink 0.7s step-end infinite !important; }
+  .aurora-orb, .noise,
+  .animate-float, .animate-float-delayed, .animate-float-slow,
+  .animate-aurora-1, .animate-aurora-2, .animate-aurora-3,
+  .animate-shimmer, .animate-glow-pulse { display: none !important; }
+  .tilt-3d:hover, .card-lift:hover { transform: none !important; }
 }
 
-/* Mobile: disable all motion for smoother, faster experience */
+/* Mobile: kill motion + heavy GPU effects for smoother scrolling */
 @media (max-width: 767px) {
   html {
     scroll-behavior: auto !important;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: none;
   }
 
   *, *::before, *::after {
@@ -328,21 +345,29 @@
     scroll-behavior: auto !important;
   }
 
-  .typewriter-cursor {
-    animation: blink 0.7s step-end infinite !important;
+  .typewriter-cursor { animation: blink 0.7s step-end infinite !important; }
+
+  /* Drop expensive ambient layers entirely on mobile */
+  .aurora-orb, .noise,
+  .animate-float, .animate-float-delayed, .animate-float-slow,
+  .animate-aurora-1, .animate-aurora-2, .animate-aurora-3,
+  .animate-shimmer, .animate-glow-pulse { display: none !important; }
+
+  /* Backdrop blur is one of the most expensive ops on mobile GPUs.
+     Swap for a solid surface — keeps the look without per-frame filter passes. */
+  .glass, .glass-strong {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: hsl(var(--card) / 0.92) !important;
   }
 
-  .aurora-orb,
-  .noise,
-  .animate-float,
-  .animate-float-delayed,
-  .animate-float-slow,
-  .animate-aurora-1,
-  .animate-aurora-2,
-  .animate-aurora-3,
-  .animate-shimmer,
-  .animate-glow-pulse {
-    display: none !important;
+  /* Disable hover-only transforms on touch */
+  .tilt-3d:hover, .card-lift:hover { transform: none !important; }
+
+  /* Skip rendering off-screen sections — big paint win on long pages */
+  main section {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 600px;
   }
 }
 
