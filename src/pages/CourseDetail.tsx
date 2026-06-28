@@ -341,7 +341,7 @@ export default function CourseDetail() {
                         <Calendar className="h-3.5 w-3.5" />
                         <span>{new Date(chapter.uploaded_at).toLocaleDateString()}</span>
                       </div>
-                      {activeTab === "materials" && (chapter.pdf_url || chapter.pdf_path) && (
+                      {activeTab === "materials" && (chapter.pdf_url || chapter.pdf_path || chapter.file_id) && (
                         <div className="flex flex-wrap gap-2">
                           {!user ? (
                             <Button
