@@ -335,7 +335,7 @@ export default function CourseDetail() {
         badgeIcon={<BookOpen className="h-4 w-4" />}
       >
         <div className="mt-5 flex items-center justify-center gap-2 flex-wrap">
-          <Button variant="ghost" size="sm" className="text-white/70 hover:text-white hover:bg-white/10 rounded-xl border border-white/10" asChild>
+          <Button variant="ghost" size="sm" className="text-white/90 hover:text-white hover:bg-white/10 rounded-xl border border-white/10" asChild>
             <Link to={`/departments/${deptId}/semester/${semId}`}>
               <ArrowLeft className="h-4 w-4 mr-1.5" /> Back to Semester {semId}
             </Link>
