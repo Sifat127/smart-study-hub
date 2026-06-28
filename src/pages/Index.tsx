@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import Layout from "@/components/Layout";
 import TypewriterText from "@/components/TypewriterText";
 import CountUpNumber from "@/components/CountUpNumber";
-import { departments, recentPDFs } from "@/data/mockData";
+import { recentPDFs } from "@/data/mockData";
+import { useDepartments } from "@/hooks/useDepartments";
 import { supabase } from "@/integrations/supabase/client";
 
 interface SearchResult {
