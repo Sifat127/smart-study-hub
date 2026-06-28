@@ -4,9 +4,11 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 import {
   AlertCircle,
   ArrowLeft,
+  CheckCircle2,
   ChevronLeft,
   ChevronRight,
   Download,
+  Eye,
   Loader2,
   Maximize2,
   Minimize2,
