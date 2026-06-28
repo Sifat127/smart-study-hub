@@ -48,6 +48,7 @@ interface RecentDownload {
 export default function UserDashboard() {
   const { user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const departments = useDepartments();
 
   const [query, setQuery] = useState("");
   const [semester, setSemester] = useState<string>("all");
