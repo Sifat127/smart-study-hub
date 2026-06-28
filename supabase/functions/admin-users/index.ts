@@ -1,5 +1,5 @@
 // admin-users: server-side admin user listing + role updates.
-// GET returns admin_list_users(). PATCH { user_id, role } changes another user's role.
+// GET returns user/profile/role rows. PATCH { user_id, role } changes another user's role.
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { z } from "npm:zod@3.23.8";
@@ -45,9 +45,36 @@ Deno.serve(async (req) => {
     if (!isAdmin) return json({ error: "Forbidden" }, 403);
 
     if (req.method === "GET") {
-      const { data, error } = await admin.rpc("admin_list_users");
-      if (error) return json({ error: error.message }, 500);
-      return json({ users: data ?? [] });
+      const [{ data: profiles, error: profileErr }, { data: roles, error: rolesErr }, usersRes] =
+        await Promise.all([
+          admin
+            .from("profiles")
+            .select("user_id, full_name, roll_number, phone_number, section, department, batch, created_at"),
+          admin.from("user_roles").select("user_id, role"),
+          admin.auth.admin.listUsers({ page: 1, perPage: 1000 }),
+        ]);
+      if (profileErr) return json({ error: profileErr.message }, 500);
+      if (rolesErr) return json({ error: rolesErr.message }, 500);
+      if (usersRes.error) return json({ error: usersRes.error.message }, 500);
+
+      const emailById = new Map(
+        (usersRes.data.users ?? []).map((u) => [u.id, u.email ?? null]),
+      );
+      const roleById = new Map<string, "admin" | "user">();
+      for (const row of roles ?? []) {
+        if (row.role === "admin") roleById.set(row.user_id, "admin");
+        else if (!roleById.has(row.user_id)) roleById.set(row.user_id, "user");
+      }
+
+      const users = (profiles ?? [])
+        .map((p) => ({
+          ...p,
+          email: emailById.get(p.user_id) ?? null,
+          role: roleById.get(p.user_id) ?? "user",
+        }))
+        .sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)));
+
+      return json({ users });
     }
 
     const parsed = RoleUpdate.safeParse(await req.json().catch(() => ({})));
