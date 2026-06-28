@@ -117,7 +117,7 @@ export default function UploadNotes() {
         file_url: legacyUrl,
         file_id: uploaded.id,
         uploaded_by: user.id,
-      } as never);
+      });
       if (error) throw error;
       setDone(true);
       toast({ title: "Uploaded successfully!" });

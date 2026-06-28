@@ -91,7 +91,7 @@ export default function AdminUploadPdf() {
         file_id: pdf.id,
         notes_name: notesName,
         notes_url: notesUrl,
-      } as never);
+      });
       if (insertError) throw insertError;
 
       setUploaded(true);
