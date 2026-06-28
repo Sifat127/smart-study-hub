@@ -98,10 +98,10 @@ export default function PdfViewer() {
     };
   }, [fileId, attempt]);
 
-  // Tear down the pdf + blob URL when the document changes or page unmounts.
+  // Tear down the pdf document when it changes or the page unmounts.
   useEffect(() => {
     if (state.status !== "ready") return;
-    const { pdf, objectUrl } = state;
+    const { pdf } = state;
     return () => {
       try {
         renderTaskRef.current?.cancel();
@@ -109,7 +109,6 @@ export default function PdfViewer() {
         /* noop */
       }
       pdf.destroy();
-      URL.revokeObjectURL(objectUrl);
     };
   }, [state]);
 
