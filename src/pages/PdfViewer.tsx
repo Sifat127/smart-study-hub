@@ -81,7 +81,11 @@ export default function PdfViewer() {
         // built-in viewer — pdf.js is the only renderer in play.
         const bytes = await getPreviewBytes(fileId);
         if (cancelled) return;
-        const pdf = await getDocument({ data: bytes }).promise;
+        // Keep a pristine copy for the download button. pdf.js may transfer
+        // the buffer it is given, so we hand it a separate clone.
+        bytesRef.current = bytes;
+        const renderCopy = new Uint8Array(bytes);
+        const pdf = await getDocument({ data: renderCopy }).promise;
         if (cancelled) {
           pdf.destroy();
           return;
