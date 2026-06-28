@@ -65,6 +65,7 @@ export default function PdfViewer() {
   const [pageInput, setPageInput] = useState("1");
   const [zoom, setZoom] = useState<Zoom>("fit");
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const { reduceMotion, setReduceMotion } = useReducedMotion();
   // True once the entire PDF byte stream has been pulled into memory. While
   // false, we're in "fast preview" mode — pdf.js is range-fetching pages on
   // demand, so the Download button has to fall back to a fresh signed URL.
