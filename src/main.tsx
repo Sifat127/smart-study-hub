@@ -8,5 +8,8 @@ import "@fontsource/raleway/700.css";
 import "@fontsource/raleway/800.css";
 import "@fontsource/raleway/900.css";
 import "./index.css";
+import { bootstrapReducedMotion } from "./hooks/useReducedMotion";
 
+bootstrapReducedMotion();
 createRoot(document.getElementById("root")!).render(<App />);
+
