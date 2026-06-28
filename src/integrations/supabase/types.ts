@@ -53,6 +53,7 @@ export type Database = {
         Row: {
           course_id: string
           description: string | null
+          file_id: string | null
           id: string
           notes_name: string | null
           notes_path: string | null
@@ -66,6 +67,7 @@ export type Database = {
         Insert: {
           course_id: string
           description?: string | null
+          file_id?: string | null
           id?: string
           notes_name?: string | null
           notes_path?: string | null
@@ -79,6 +81,7 @@ export type Database = {
         Update: {
           course_id?: string
           description?: string | null
+          file_id?: string | null
           id?: string
           notes_name?: string | null
           notes_path?: string | null
@@ -95,6 +98,13 @@ export type Database = {
             columns: ["course_id"]
             isOneToOne: false
             referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chapters_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "files"
             referencedColumns: ["id"]
           },
         ]
@@ -153,6 +163,117 @@ export type Database = {
           name?: string
           semester?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      file_deletion_failures: {
+        Row: {
+          attempts: number
+          bucket_name: string
+          created_at: string
+          id: string
+          last_attempt_at: string | null
+          object_key: string
+          reason: string | null
+          storage_provider: string
+        }
+        Insert: {
+          attempts?: number
+          bucket_name: string
+          created_at?: string
+          id?: string
+          last_attempt_at?: string | null
+          object_key: string
+          reason?: string | null
+          storage_provider: string
+        }
+        Update: {
+          attempts?: number
+          bucket_name?: string
+          created_at?: string
+          id?: string
+          last_attempt_at?: string | null
+          object_key?: string
+          reason?: string | null
+          storage_provider?: string
+        }
+        Relationships: []
+      }
+      files: {
+        Row: {
+          bucket_name: string
+          course_code: string | null
+          course_id: string | null
+          department: string | null
+          download_count: number
+          file_size: number
+          file_type: string
+          id: string
+          last_updated: string
+          object_key: string
+          original_filename: string
+          public_url: string | null
+          semester: string | null
+          sha256: string | null
+          storage_provider: string
+          subject: string | null
+          tags: string[]
+          title: string
+          unique_filename: string
+          upload_date: string
+          uploader_id: string | null
+          visibility: string
+          year: string | null
+        }
+        Insert: {
+          bucket_name: string
+          course_code?: string | null
+          course_id?: string | null
+          department?: string | null
+          download_count?: number
+          file_size: number
+          file_type: string
+          id?: string
+          last_updated?: string
+          object_key: string
+          original_filename: string
+          public_url?: string | null
+          semester?: string | null
+          sha256?: string | null
+          storage_provider?: string
+          subject?: string | null
+          tags?: string[]
+          title: string
+          unique_filename: string
+          upload_date?: string
+          uploader_id?: string | null
+          visibility?: string
+          year?: string | null
+        }
+        Update: {
+          bucket_name?: string
+          course_code?: string | null
+          course_id?: string | null
+          department?: string | null
+          download_count?: number
+          file_size?: number
+          file_type?: string
+          id?: string
+          last_updated?: string
+          object_key?: string
+          original_filename?: string
+          public_url?: string | null
+          semester?: string | null
+          sha256?: string | null
+          storage_provider?: string
+          subject?: string | null
+          tags?: string[]
+          title?: string
+          unique_filename?: string
+          upload_date?: string
+          uploader_id?: string | null
+          visibility?: string
+          year?: string | null
         }
         Relationships: []
       }
@@ -237,6 +358,7 @@ export type Database = {
           course_id: string
           created_at: string
           description: string | null
+          file_id: string | null
           file_name: string
           file_url: string
           id: string
@@ -250,6 +372,7 @@ export type Database = {
           course_id: string
           created_at?: string
           description?: string | null
+          file_id?: string | null
           file_name: string
           file_url: string
           id?: string
@@ -263,6 +386,7 @@ export type Database = {
           course_id?: string
           created_at?: string
           description?: string | null
+          file_id?: string | null
           file_name?: string
           file_url?: string
           id?: string
@@ -277,6 +401,13 @@ export type Database = {
             columns: ["course_id"]
             isOneToOne: false
             referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_uploads_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "files"
             referencedColumns: ["id"]
           },
         ]
