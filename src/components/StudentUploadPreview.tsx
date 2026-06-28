@@ -25,8 +25,8 @@ function isPdf(name: string) {
 }
 
 /**
- * Inline preview for student-upload PDFs. Lazily fetches a signed URL when the
- * card scrolls into view, renders it in an <iframe>, and surfaces a retry-able
+ * Inline preview for student-upload PDFs. Lazily fetches the PDF when the
+ * card scrolls into view, renders page one to canvas, and surfaces a retry-able
  * error state if the fetch fails (auth, network, expired session, etc).
  */
 export default function StudentUploadPreview({ fileId, fileName, legacyUrl, canPreview }: Props) {
@@ -98,11 +98,12 @@ export default function StudentUploadPreview({ fileId, fileName, legacyUrl, canP
 
   useEffect(() => {
     if (state.status !== "ready") return;
+    const readyState = state;
     let cancelled = false;
 
     async function renderFirstPage() {
       try {
-        const loadingTask = getDocument(state.url);
+        const loadingTask = getDocument(readyState.url);
         const pdf = await loadingTask.promise;
         const page = await pdf.getPage(1);
         const canvas = canvasRef.current;
