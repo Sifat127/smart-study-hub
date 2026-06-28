@@ -10,6 +10,7 @@ import PageHeader from "@/components/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { downloadFile as downloadFileFromStorage } from "@/lib/storage";
 
 
 interface CourseData {
@@ -28,6 +29,7 @@ interface ChapterData {
   notes_name: string | null;
   notes_path: string | null;
   notes_url: string | null;
+  file_id: string | null;
   uploaded_at: string;
 }
 
@@ -40,6 +42,7 @@ interface StudentUpload {
   description: string | null;
   file_name: string;
   file_url: string;
+  file_id: string | null;
   created_at: string;
 }
 
@@ -68,30 +71,41 @@ export default function CourseDetail() {
     return false;
   };
 
-  const handleDownload = async (url: string, fileName: string, key: string) => {
+  const handleDownload = async (
+    url: string | null,
+    fileName: string,
+    key: string,
+    fileId?: string | null,
+  ) => {
     if (!requireAuth("download this file")) return;
     if (downloadingId) return;
 
     setDownloadingId(key);
     const toastId = toast.loading(`Preparing ${fileName}...`);
     try {
-      // Catbox URLs don't send CORS headers, so proxy them through our edge function.
-      const isCatbox = url.startsWith("https://files.catbox.moe/");
-      const fetchUrl = isCatbox
-        ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/download-file?url=${encodeURIComponent(url)}&name=${encodeURIComponent(fileName)}`
-        : url;
-
-      const res = await fetch(fetchUrl);
-      if (!res.ok) throw new Error(`Request failed (${res.status})`);
-      const blob = await res.blob();
-      const objectUrl = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = objectUrl;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      if (fileId) {
+        // New R2-backed files: stream through storage-download with auth.
+        await downloadFileFromStorage(fileId, fileName);
+      } else if (url) {
+        // Legacy path (Catbox or Supabase storage public URL).
+        const isCatbox = url.startsWith("https://files.catbox.moe/");
+        const fetchUrl = isCatbox
+          ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/download-file?url=${encodeURIComponent(url)}&name=${encodeURIComponent(fileName)}`
+          : url;
+        const res = await fetch(fetchUrl);
+        if (!res.ok) throw new Error(`Request failed (${res.status})`);
+        const blob = await res.blob();
+        const objectUrl = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = objectUrl;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      } else {
+        throw new Error("File is unavailable");
+      }
       toast.success("Download started", { id: toastId, description: fileName });
 
       // Log download history (best-effort; ignore errors so download UX isn't impacted)
