@@ -339,20 +339,8 @@ export default function CourseDetail() {
             </div>
           </div>
           {(() => {
-            const filtered = chapters.filter(c => activeTab === "materials" ? (c.pdf_url || c.pdf_path || c.file_id) : (c.notes_url || c.notes_path));
-            const tabUploads = studentUploads.filter(u => u.kind === (activeTab === "materials" ? "material" : "notes"));
-            const batches = Array.from(new Set(tabUploads.map(u => u.batch))).sort();
-            const q = query.trim().toLowerCase();
-            const uq = uploaderQuery.trim().toLowerCase();
-            const uploads = tabUploads.filter(u => {
-              if (batchFilter !== "all" && u.batch !== batchFilter) return false;
-              if (uq && !(u.student_name || "").toLowerCase().includes(uq)) return false;
-              if (q && !(
-                u.title.toLowerCase().includes(q) ||
-                u.batch.toLowerCase().includes(q)
-              )) return false;
-              return true;
-            });
+            const filtered = filteredChapters;
+            const uploads = filteredUploads;
             if (filtered.length === 0 && tabUploads.length === 0) {
               return (
                 <div className="glass-strong rounded-3xl p-12 text-center max-w-2xl mx-auto card-lift">
@@ -366,7 +354,7 @@ export default function CourseDetail() {
             }
             return (
             <div className="space-y-4 max-w-3xl mx-auto">
-              {filtered.map((chapter) => (
+              {visibleChapters.map((chapter) => (
                 <div
                   key={chapter.id}
                   className="glass rounded-3xl p-5 md:p-6 card-lift scroll-mt-32 md:scroll-mt-36"
@@ -378,6 +366,7 @@ export default function CourseDetail() {
                         : <StickyNote className="h-5 w-5" />}
                     </div>
                     <div className="flex-1 min-w-0">
+
                       <h3 className="font-display font-semibold text-lg mb-1 tracking-tight">{chapter.title}</h3>
                       {chapter.description && (
                         <p className="text-sm text-muted-foreground mb-3">{chapter.description}</p>
