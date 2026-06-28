@@ -27,7 +27,7 @@ GlobalWorkerOptions.workerSrc = pdfWorker;
 
 type State =
   | { status: "loading" }
-  | { status: "ready"; pdf: PDFDocumentProxy; objectUrl: string }
+  | { status: "ready"; pdf: PDFDocumentProxy }
   | { status: "error"; message: string };
 
 const MIN_ZOOM = 0.5;
