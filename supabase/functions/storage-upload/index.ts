@@ -6,7 +6,7 @@
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { z } from "npm:zod@3.23.8";
-import { readR2Config, r2Upload, r2Delete, r2PublicUrl } from "../_shared/r2.ts";
+import { readR2Config, r2Upload, r2Delete } from "../_shared/r2.ts";
 
 const MAX_SIZE = 50 * 1024 * 1024; // 50 MB
 
