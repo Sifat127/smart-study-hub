@@ -23,6 +23,7 @@ import AdminUploadPdf from "./pages/AdminUploadPdf";
 import AdminManageCourses from "./pages/AdminManageCourses";
 import AdminAuditLog from "./pages/AdminAuditLog";
 import AdminManageDepartments from "./pages/AdminManageDepartments";
+import AdminManageSemesters from "./pages/AdminManageSemesters";
 import AdminManageChapters from "./pages/AdminManageChapters";
 import AdminManageUsers from "./pages/AdminManageUsers";
 import AdminSettings from "./pages/AdminSettings";
@@ -60,6 +61,7 @@ const App = () => (
             <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
             <Route path="/admin/upload-pdf" element={<ProtectedRoute requireAdmin><AdminUploadPdf /></ProtectedRoute>} />
             <Route path="/admin/manage-departments" element={<ProtectedRoute requireAdmin><AdminManageDepartments /></ProtectedRoute>} />
+            <Route path="/admin/manage-semesters" element={<ProtectedRoute requireAdmin><AdminManageSemesters /></ProtectedRoute>} />
             <Route path="/admin/manage-courses" element={<ProtectedRoute requireAdmin><AdminManageCourses /></ProtectedRoute>} />
             <Route path="/admin/manage-chapters" element={<ProtectedRoute requireAdmin><AdminManageChapters /></ProtectedRoute>} />
             <Route path="/admin/audit-log" element={<ProtectedRoute requireAdmin><AdminAuditLog /></ProtectedRoute>} />

@@ -51,6 +51,8 @@ export default function AdminManageDepartments() {
   const [rows, setRows] = useState<DeptRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [iconFilter, setIconFilter] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<"sort_asc" | "sort_desc" | "name_asc" | "name_desc">("sort_asc");
 
   const [editing, setEditing] = useState<DeptRow | null>(null);
   const [isNew, setIsNew] = useState(false);
@@ -77,13 +79,25 @@ export default function AdminManageDepartments() {
 
   const visible = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return rows;
-    return rows.filter((d) =>
-      d.id.toLowerCase().includes(q) ||
-      d.name.toLowerCase().includes(q) ||
-      d.full_name.toLowerCase().includes(q)
-    );
-  }, [rows, search]);
+    let list = rows.filter((d) => {
+      if (iconFilter !== "all" && d.icon !== iconFilter) return false;
+      if (!q) return true;
+      return (
+        d.id.toLowerCase().includes(q) ||
+        d.name.toLowerCase().includes(q) ||
+        d.full_name.toLowerCase().includes(q)
+      );
+    });
+    const sorted = [...list].sort((a, b) => {
+      switch (sortBy) {
+        case "sort_desc": return b.sort_order - a.sort_order;
+        case "name_asc": return a.name.localeCompare(b.name);
+        case "name_desc": return b.name.localeCompare(a.name);
+        default: return a.sort_order - b.sort_order;
+      }
+    });
+    return sorted;
+  }, [rows, search, iconFilter, sortBy]);
 
   function openNew() {
     const nextOrder = rows.length ? Math.max(...rows.map((r) => r.sort_order)) + 10 : 10;
@@ -178,7 +192,7 @@ export default function AdminManageDepartments() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row md:items-end gap-3 mb-6">
+        <div className="flex flex-col md:flex-row md:items-end gap-3 mb-4">
           <div className="flex-1">
             <Label htmlFor="search">Search</Label>
             <div className="relative">
@@ -186,7 +200,43 @@ export default function AdminManageDepartments() {
               <Input id="search" className="pl-9" placeholder="Search by ID, short name, or full name…" value={search} onChange={(e) => setSearch(e.target.value)} />
             </div>
           </div>
+          <div className="w-full md:w-44">
+            <Label>Icon</Label>
+            <Select value={iconFilter} onValueChange={setIconFilter}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All icons</SelectItem>
+                {iconChoices.map((name) => (
+                  <SelectItem key={name} value={name}>{name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="w-full md:w-52">
+            <Label>Sort by</Label>
+            <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="sort_asc">Sort order ↑</SelectItem>
+                <SelectItem value="sort_desc">Sort order ↓</SelectItem>
+                <SelectItem value="name_asc">Name A → Z</SelectItem>
+                <SelectItem value="name_desc">Name Z → A</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <Button onClick={openNew}><Plus className="h-4 w-4 mr-1" /> New Department</Button>
+        </div>
+
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <p className="text-sm text-muted-foreground">
+            Showing <span className="font-medium text-foreground">{visible.length}</span> of {rows.length} departments
+            {(search || iconFilter !== "all") && (
+              <button
+                onClick={() => { setSearch(""); setIconFilter("all"); }}
+                className="ml-3 text-primary hover:underline"
+              >Clear filters</button>
+            )}
+          </p>
         </div>
 
         {loading ? (

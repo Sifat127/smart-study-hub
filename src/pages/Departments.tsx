@@ -3,12 +3,14 @@ import { Monitor, Zap, Briefcase, ArrowRight, FolderOpen, Code, Database, Pill, 
 import Layout from "@/components/Layout";
 import PageHeader from "@/components/PageHeader";
 import { useDepartments } from "@/hooks/useDepartments";
+import { useDepartmentCourseCounts } from "@/hooks/useDepartmentCourseCounts";
 
 const deptIcons: Record<string, React.ElementType> = { Monitor, Zap, Briefcase, Code, Database, Pill, BookText, Scale, Shirt, Building2, Radio, Plane, Apple, HeartPulse, Clapperboard };
 
 
 export default function Departments() {
   const departments = useDepartments();
+  const counts = useDepartmentCourseCounts();
   return (
     <Layout>
       <PageHeader
@@ -39,7 +41,9 @@ export default function Departments() {
                       <h2 className="font-display text-xl font-bold mb-1 group-hover:text-accent">{dept.name}</h2>
                       <p className="text-muted-foreground text-sm font-medium mb-2">{dept.fullName}</p>
                       <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{dept.description}</p>
-                      <p className="text-sm text-muted-foreground mb-4">12 semesters</p>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        {counts[(dept.id || "").toUpperCase()] ?? counts[(dept.name || "").toUpperCase()] ?? 0} courses
+                      </p>
                       <div className="flex items-center text-primary font-semibold text-sm group-hover:text-accent">
                         Explore Department
                         <ArrowRight className="ml-2 h-4 w-4" />

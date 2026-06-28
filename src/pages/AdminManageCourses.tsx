@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useDepartments } from "@/hooks/useDepartments";
+import { useSemesters } from "@/hooks/useSemesters";
 
 interface Course {
   id: string;
@@ -21,6 +23,8 @@ const emptyForm = { code: "", name: "", department: "", semester: "1" };
 
 export default function AdminManageCourses() {
   const { toast } = useToast();
+  const departments = useDepartments();
+  const semesters = useSemesters();
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -185,8 +189,10 @@ export default function AdminManageCourses() {
               <Select value={form.department} onValueChange={(v) => setForm({ ...form, department: v })}>
                 <SelectTrigger><SelectValue placeholder="Select department" /></SelectTrigger>
                 <SelectContent>
-                  {["CSE","EEE","BBA","SWE","CIS","PHARMACY","ENGLISH","LAW","TEXTILE","ARCH","JMC","THM","NFE","PH","MCT"].map(d => (
-                    <SelectItem key={d} value={d}>{d}</SelectItem>
+                  {departments.map((d) => (
+                    <SelectItem key={d.id} value={(d.name || d.id).toUpperCase()}>
+                      {(d.name || d.id).toUpperCase()} — {d.fullName}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -196,8 +202,8 @@ export default function AdminManageCourses() {
               <Select value={form.semester} onValueChange={(v) => setForm({ ...form, semester: v })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {Array.from({ length: 12 }, (_, i) => (
-                    <SelectItem key={i + 1} value={String(i + 1)}>Semester {i + 1}</SelectItem>
+                  {semesters.map((s) => (
+                    <SelectItem key={s.id} value={String(s.number)}>{s.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
