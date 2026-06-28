@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { downloadFile as downloadFileFromStorage, prefetchPreviewBytes } from "@/lib/storage";
 import { readCache, writeCache } from "@/lib/listCache";
 import { useLazyList } from "@/lib/useLazyList";
+import Highlight from "@/components/Highlight";
 import { ArrowDown, ArrowUp, ArrowDownAZ, ArrowUpAZ } from "lucide-react";
 
 type SortValue = "newest" | "oldest" | "az" | "za";
