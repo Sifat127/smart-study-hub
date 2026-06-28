@@ -215,6 +215,26 @@ export default function CourseDetail() {
       return haystack.includes(q);
     });
   }, [chapters, activeTab, query]);
+
+  // Comparator shared by chapters and uploads — keeps sort behavior identical.
+  const cmp = useMemo(() => {
+    const titleOf = (x: { title: string }) => x.title.toLowerCase();
+    return <T extends { title: string }>(a: T, b: T, aTime: number, bTime: number) => {
+      switch (sortBy) {
+        case "oldest": return aTime - bTime;
+        case "az": return titleOf(a).localeCompare(titleOf(b));
+        case "za": return titleOf(b).localeCompare(titleOf(a));
+        case "newest":
+        default: return bTime - aTime;
+      }
+    };
+  }, [sortBy]);
+
+  const sortedChapters = useMemo(() => {
+    const arr = [...filteredChapters];
+    arr.sort((a, b) => cmp(a, b, new Date(a.uploaded_at).getTime(), new Date(b.uploaded_at).getTime()));
+    return arr;
+  }, [filteredChapters, cmp]);
   const tabUploads = useMemo(
     () => studentUploads.filter(u => u.kind === (activeTab === "materials" ? "material" : "notes")),
     [studentUploads, activeTab]
