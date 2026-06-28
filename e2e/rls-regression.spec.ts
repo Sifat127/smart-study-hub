@@ -205,6 +205,42 @@ test.describe("RLS regression — anonymous client", () => {
   });
 });
 
+test.describe("RLS regression — authenticated user chapter columns", () => {
+  test.skip(!hasUser, "TEST_USER_EMAIL / TEST_USER_PASSWORD not set");
+
+  test("authenticated user CAN select chapters pdf_path/notes_path (CourseDetail signed-in query)", async () => {
+    const api = await request.newContext({ baseURL: SUPABASE_URL });
+    const { access_token } = await signIn(api, USER_EMAIL, USER_PASSWORD);
+    const h = authHeaders(access_token);
+
+    // Mirrors the exact column list CourseDetail.tsx requests when signed in.
+    const res = await api.get(
+      "/rest/v1/chapters?select=id,title,description,pdf_name,pdf_path,pdf_url,notes_name,notes_path,notes_url,file_id,uploaded_at&limit=1",
+      { headers: h },
+    );
+    expect(
+      res.ok(),
+      `authed user read sensitive chapter columns failed: ${res.status()} ${await res.text()}`,
+    ).toBe(true);
+    const rows = (await res.json()) as Record<string, unknown>[];
+    expect(Array.isArray(rows)).toBe(true);
+    if (rows.length > 0) {
+      for (const col of [
+        "id", "title", "description", "pdf_name", "pdf_path", "pdf_url",
+        "notes_name", "notes_path", "notes_url", "file_id", "uploaded_at",
+      ]) {
+        expect(
+          col in rows[0],
+          `authed user chapter row missing column ${col}`,
+        ).toBe(true);
+      }
+    }
+
+    await api.dispose();
+  });
+});
+
+
 test.describe("RLS regression — normal authenticated user", () => {
   test.skip(!hasUser, "TEST_USER_EMAIL / TEST_USER_PASSWORD not set");
 
