@@ -277,7 +277,7 @@ export default function CourseDetail() {
             </div>
           </div>
           {(() => {
-            const filtered = chapters.filter(c => activeTab === "materials" ? (c.pdf_url || c.pdf_path) : (c.notes_url || c.notes_path));
+            const filtered = chapters.filter(c => activeTab === "materials" ? (c.pdf_url || c.pdf_path || c.file_id) : (c.notes_url || c.notes_path));
             const tabUploads = studentUploads.filter(u => u.kind === (activeTab === "materials" ? "material" : "notes"));
             const batches = Array.from(new Set(tabUploads.map(u => u.batch))).sort();
             const q = query.trim().toLowerCase();
