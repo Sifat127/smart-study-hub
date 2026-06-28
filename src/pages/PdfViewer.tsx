@@ -543,6 +543,32 @@ export default function PdfViewer() {
               <div className="mx-1 hidden h-5 w-px bg-border/60 sm:block" />
               <Button
                 size="icon"
+                variant={reduceMotion ? "secondary" : "ghost"}
+                className="h-8 w-8 rounded-lg"
+                aria-label={reduceMotion ? "Reduce motion: on" : "Reduce motion: off"}
+                aria-pressed={reduceMotion}
+                title={
+                  reduceMotion
+                    ? "Reduce motion is ON — click to restore animations"
+                    : "Reduce motion is OFF — click to disable viewer transitions"
+                }
+                onClick={() => {
+                  const next = !reduceMotion;
+                  setReduceMotion(next);
+                  toast.success(
+                    next ? "Reduced motion enabled" : "Animations restored",
+                    {
+                      description: next
+                        ? "Viewer transitions are off. Your preference is saved."
+                        : "Transitions and subtle animations are back on.",
+                    },
+                  );
+                }}
+              >
+                {reduceMotion ? <ZapOff className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}
+              </Button>
+              <Button
+                size="icon"
                 variant="ghost"
                 className="h-8 w-8 rounded-lg"
                 aria-label={isFullscreen ? "Exit full screen" : "Enter full screen"}
