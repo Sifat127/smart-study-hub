@@ -1,5 +1,5 @@
 import { useParams, Link, useSearchParams, useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, FileText, Eye, Calendar, BookOpen, Loader2, StickyNote, Share2, Search, X, SlidersHorizontal, ChevronDown, Download, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { downloadFile as downloadFileFromStorage, prefetchPreviewBytes } from "@/lib/storage";
+import { readCache, writeCache } from "@/lib/listCache";
+import { useLazyList } from "@/lib/useLazyList";
 
 
 
@@ -138,6 +140,23 @@ export default function CourseDetail() {
   };
 
   useEffect(() => {
+    if (!courseId) return;
+
+    // 1) Hydrate immediately from sessionStorage so revisits feel instant.
+    const cacheKey = `course:${courseId}:${user ? "auth" : "anon"}`;
+    const cached = readCache<{
+      course: CourseData | null;
+      chapters: ChapterData[];
+      uploads: StudentUpload[];
+    }>(cacheKey);
+    if (cached) {
+      if (cached.course) setCourse(cached.course);
+      setChapters(cached.chapters ?? []);
+      setStudentUploads(cached.uploads ?? []);
+      setLoading(false);
+    }
+
+    // 2) Always revalidate in the background (stale-while-revalidate).
     async function fetchData() {
       const baseRequests: Promise<any>[] = [
         Promise.resolve(supabase.from("courses").select("id, code, name").eq("id", courseId!).maybeSingle()),
@@ -151,13 +170,23 @@ export default function CourseDetail() {
       }
       const [courseRes, chaptersRes, uploadsRes] = await Promise.all(baseRequests);
 
-      if (courseRes?.data) setCourse(courseRes.data);
-      if (chaptersRes?.data) setChapters(chaptersRes.data);
-      if (uploadsRes?.data) setStudentUploads(uploadsRes.data as StudentUpload[]);
+      const nextCourse = courseRes?.data ?? null;
+      const nextChapters = (chaptersRes?.data ?? []) as ChapterData[];
+      const nextUploads = (uploadsRes?.data ?? []) as StudentUpload[];
+
+      if (nextCourse) setCourse(nextCourse);
+      setChapters(nextChapters);
+      if (uploadsRes?.data) setStudentUploads(nextUploads);
       else if (!user) setStudentUploads([]);
       setLoading(false);
+
+      writeCache(cacheKey, {
+        course: nextCourse,
+        chapters: nextChapters,
+        uploads: user ? nextUploads : [],
+      });
     }
-    if (courseId) fetchData();
+    fetchData();
   }, [courseId, user]);
 
 
@@ -167,7 +196,42 @@ export default function CourseDetail() {
     return data.publicUrl;
   };
 
-  // Prefer external URL (Catbox); fall back to Supabase storage path
+  // Derive filtered chapter + upload lists once per dependency change so the
+  // lazy-render hooks below can slice from a stable array reference.
+  const filteredChapters = useMemo(
+    () => chapters.filter(c => activeTab === "materials"
+      ? (c.pdf_url || c.pdf_path || c.file_id)
+      : (c.notes_url || c.notes_path)),
+    [chapters, activeTab]
+  );
+  const tabUploads = useMemo(
+    () => studentUploads.filter(u => u.kind === (activeTab === "materials" ? "material" : "notes")),
+    [studentUploads, activeTab]
+  );
+  const batches = useMemo(
+    () => Array.from(new Set(tabUploads.map(u => u.batch))).sort(),
+    [tabUploads]
+  );
+  const filteredUploads = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const uq = uploaderQuery.trim().toLowerCase();
+    return tabUploads.filter(u => {
+      if (batchFilter !== "all" && u.batch !== batchFilter) return false;
+      if (uq && !(u.student_name || "").toLowerCase().includes(uq)) return false;
+      if (q && !(u.title.toLowerCase().includes(q) || u.batch.toLowerCase().includes(q))) return false;
+      return true;
+    });
+  }, [tabUploads, query, uploaderQuery, batchFilter]);
+
+  // Lazy-render: only the first ~6 items render immediately; an IntersectionObserver
+  // sentinel adds more as the user scrolls. Heavy descriptions/buttons stay off the
+  // DOM until needed, keeping initial paint + scroll cost low on mobile.
+  const { visible: visibleChapters, sentinelRef: chaptersSentinelRef, hasMore: hasMoreChapters } =
+    useLazyList(filteredChapters, 6, 6);
+  const { visible: visibleUploads, sentinelRef: uploadsSentinelRef, hasMore: hasMoreUploads } =
+    useLazyList(filteredUploads, 6, 6);
+
+
   const resolveUrl = (url: string | null, path: string | null): string | null => {
     if (url) return url;
     if (path) return getPublicUrl(path);
@@ -275,20 +339,8 @@ export default function CourseDetail() {
             </div>
           </div>
           {(() => {
-            const filtered = chapters.filter(c => activeTab === "materials" ? (c.pdf_url || c.pdf_path || c.file_id) : (c.notes_url || c.notes_path));
-            const tabUploads = studentUploads.filter(u => u.kind === (activeTab === "materials" ? "material" : "notes"));
-            const batches = Array.from(new Set(tabUploads.map(u => u.batch))).sort();
-            const q = query.trim().toLowerCase();
-            const uq = uploaderQuery.trim().toLowerCase();
-            const uploads = tabUploads.filter(u => {
-              if (batchFilter !== "all" && u.batch !== batchFilter) return false;
-              if (uq && !(u.student_name || "").toLowerCase().includes(uq)) return false;
-              if (q && !(
-                u.title.toLowerCase().includes(q) ||
-                u.batch.toLowerCase().includes(q)
-              )) return false;
-              return true;
-            });
+            const filtered = filteredChapters;
+            const uploads = filteredUploads;
             if (filtered.length === 0 && tabUploads.length === 0) {
               return (
                 <div className="glass-strong rounded-3xl p-12 text-center max-w-2xl mx-auto card-lift">
@@ -302,7 +354,7 @@ export default function CourseDetail() {
             }
             return (
             <div className="space-y-4 max-w-3xl mx-auto">
-              {filtered.map((chapter) => (
+              {visibleChapters.map((chapter) => (
                 <div
                   key={chapter.id}
                   className="glass rounded-3xl p-5 md:p-6 card-lift scroll-mt-32 md:scroll-mt-36"
@@ -314,6 +366,7 @@ export default function CourseDetail() {
                         : <StickyNote className="h-5 w-5" />}
                     </div>
                     <div className="flex-1 min-w-0">
+
                       <h3 className="font-display font-semibold text-lg mb-1 tracking-tight">{chapter.title}</h3>
                       {chapter.description && (
                         <p className="text-sm text-muted-foreground mb-3">{chapter.description}</p>
@@ -405,6 +458,11 @@ export default function CourseDetail() {
                   </div>
                 </div>
               ))}
+              {hasMoreChapters && (
+                <div ref={chaptersSentinelRef} aria-hidden="true" className="h-8" />
+              )}
+
+
 
               {tabUploads.length > 0 && (
                 <div className="pt-6">
@@ -541,7 +599,7 @@ export default function CourseDetail() {
                     </div>
                   ) : (
                   <div className="space-y-4">
-                    {uploads.map((u, i) => (
+                    {visibleUploads.map((u, i) => (
                       <div
                         key={u.id}
                         className="glass rounded-3xl p-5 md:p-6 card-lift"
@@ -643,6 +701,9 @@ export default function CourseDetail() {
                         </div>
                       </div>
                     ))}
+                    {hasMoreUploads && (
+                      <div ref={uploadsSentinelRef} aria-hidden="true" className="h-8" />
+                    )}
                   </div>
                   )}
                 </div>
