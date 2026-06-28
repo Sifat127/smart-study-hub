@@ -77,9 +77,9 @@ export default function DepartmentDetail() {
                 <div key={sem.id}>
                   <Link
                     to={`/departments/${deptId}/semester/${sem.id}`}
-                    className="group block glass rounded-2xl p-5 hover:border-accent/30 hover:card-shadow-hover transition-all duration-300 hover:-translate-y-1 text-center"
+                    className="group block glass rounded-2xl p-5 hover:border-accent/30 hover:card-shadow-hover text-center"
                   >
-                    <div className="h-12 w-12 mx-auto rounded-xl bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-gradient-primary transition-all">
+                    <div className="h-12 w-12 mx-auto rounded-xl bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-gradient-primary">
                       <GraduationCap className="h-6 w-6 text-primary group-hover:text-primary-foreground" />
                     </div>
                     <h3 className="font-display font-semibold">{sem.name}</h3>

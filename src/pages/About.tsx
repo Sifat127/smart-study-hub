@@ -36,7 +36,7 @@ export default function About() {
                 whileInView="visible"
                 viewport={{ once: true }}
                 variants={fadeUp}
-                className="glass rounded-2xl p-6 text-center hover:border-accent/30 transition-all duration-300"
+                className="glass rounded-2xl p-6 text-center hover:border-accent/30"
               >
                 <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
                   <s.icon className="h-5 w-5 text-primary" />
@@ -52,7 +52,7 @@ export default function About() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="glass rounded-2xl p-8 hover:border-accent/30 transition-all duration-300"
+              className="glass rounded-2xl p-8 hover:border-accent/30"
             >
               <div className="h-12 w-12 rounded-xl bg-accent/10 flex items-center justify-center mb-4">
                 <Target className="h-6 w-6 text-accent" />
@@ -68,7 +68,7 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="glass rounded-2xl p-8 hover:border-accent/30 transition-all duration-300"
+              className="glass rounded-2xl p-8 hover:border-accent/30"
             >
               <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
                 <Lightbulb className="h-6 w-6 text-primary" />

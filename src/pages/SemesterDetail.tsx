@@ -81,10 +81,10 @@ export default function SemesterDetail() {
                 <div key={course.id}>
                   <Link
                     to={`/departments/${deptId}/semester/${semId}/course/${course.id}`}
-                    className="group block glass rounded-2xl p-6 hover:border-accent/30 hover:card-shadow-hover transition-all duration-300 hover:-translate-y-1"
+                    className="group block glass rounded-2xl p-6 hover:border-accent/30 hover:card-shadow-hover"
                   >
                     <div className="flex items-start gap-4">
-                      <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-gradient-primary transition-all">
+                      <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-gradient-primary">
                         <BookOpen className="h-6 w-6 text-primary group-hover:text-primary-foreground" />
                       </div>
                       <div className="min-w-0 flex-1">
@@ -93,7 +93,7 @@ export default function SemesterDetail() {
                         </div>
                         <h3 className="font-display font-semibold text-lg mb-3">{course.name}</h3>
                         <div className="flex items-center text-primary font-medium text-sm">
-                          View Chapters <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                          View Chapters <ArrowRight className="ml-1 h-4 w-4" />
                         </div>
                       </div>
                     </div>
