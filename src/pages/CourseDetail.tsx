@@ -10,7 +10,7 @@ import PageHeader from "@/components/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import { downloadFile as downloadFileFromStorage } from "@/lib/storage";
+import { downloadFile as downloadFileFromStorage, prefetchPreviewBytes } from "@/lib/storage";
 
 
 
@@ -580,13 +580,33 @@ export default function CourseDetail() {
                               <Button
                                 size="sm"
                                 className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold"
+                                onMouseEnter={() => {
+                                  // Warm the cache for this PDF plus its
+                                  // immediate neighbours so opening + paging
+                                  // between sibling uploads feels instant.
+                                  prefetchPreviewBytes(u.file_id);
+                                  prefetchPreviewBytes(uploads[i - 1]?.file_id);
+                                  prefetchPreviewBytes(uploads[i + 1]?.file_id);
+                                }}
+                                onFocus={() => {
+                                  prefetchPreviewBytes(u.file_id);
+                                  prefetchPreviewBytes(uploads[i - 1]?.file_id);
+                                  prefetchPreviewBytes(uploads[i + 1]?.file_id);
+                                }}
+                                onTouchStart={() => prefetchPreviewBytes(u.file_id)}
                                 onClick={() => {
                                   if (!requireAuth("view this file")) return;
                                   if (u.file_id) {
                                     const back = location.pathname + location.search;
-                                    navigate(
-                                      `/pdf/${u.file_id}?name=${encodeURIComponent(u.file_name)}&back=${encodeURIComponent(back)}`,
-                                    );
+                                    const prev = uploads[i - 1]?.file_id ?? "";
+                                    const next = uploads[i + 1]?.file_id ?? "";
+                                    const params = new URLSearchParams({
+                                      name: u.file_name,
+                                      back,
+                                    });
+                                    if (prev) params.set("prev", prev);
+                                    if (next) params.set("next", next);
+                                    navigate(`/pdf/${u.file_id}?${params.toString()}`);
                                   } else {
                                     window.open(u.file_url, "_blank", "noopener,noreferrer");
                                   }

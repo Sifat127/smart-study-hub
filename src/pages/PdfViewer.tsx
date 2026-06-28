@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { downloadFile, getPreviewBytes } from "@/lib/storage";
+import { downloadFile, getPreviewBytes, prefetchPreviewBytes } from "@/lib/storage";
 import { getDocument, GlobalWorkerOptions, type PDFDocumentProxy } from "pdfjs-dist";
 import pdfWorker from "pdfjs-dist/build/pdf.worker.mjs?url";
 import { toast } from "sonner";
@@ -98,6 +98,13 @@ export default function PdfViewer() {
           return;
         }
         setState({ status: "ready", pdf });
+        // Once the requested PDF is rendering, warm the cache for the
+        // previous/next siblings the referrer page passed along. This makes
+        // hopping between adjacent uploads feel instant.
+        const prev = searchParams.get("prev");
+        const next = searchParams.get("next");
+        prefetchPreviewBytes(prev);
+        prefetchPreviewBytes(next);
       } catch (err) {
         if (cancelled) return;
         setState({

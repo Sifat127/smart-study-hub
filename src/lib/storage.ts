@@ -204,6 +204,21 @@ export async function getPreviewBytes(fileId: string): Promise<Uint8Array> {
   }
 }
 
+/**
+ * Warm the preview cache for a file id without blocking the caller. Safe to
+ * call repeatedly: cached/in-flight fetches are deduped, and any error is
+ * swallowed because prefetch failure must never affect the UI.
+ */
+export function prefetchPreviewBytes(fileId: string | null | undefined): void {
+  if (!fileId) return;
+  if (PREVIEW_CACHE.has(fileId) || PREVIEW_INFLIGHT.has(fileId)) return;
+  void getPreviewBytes(fileId).catch(() => {
+    /* prefetch is best-effort */
+  });
+}
+
+
+
 
 /** Trigger a browser download for the given file id. */
 export async function downloadFile(fileId: string, fileName: string): Promise<void> {
