@@ -60,6 +60,7 @@ export default function AdminManageDepartments() {
   const [search, setSearch] = useState("");
   const [iconFilter, setIconFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<"sort_asc" | "sort_desc" | "name_asc" | "name_desc">("sort_asc");
+  const [page, setPage] = useState(1);
 
   const [editing, setEditing] = useState<DeptRow | null>(null);
   const [isNew, setIsNew] = useState(false);
