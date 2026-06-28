@@ -542,22 +542,26 @@ export default function CourseDetail() {
                     </div>
                     <div className="flex-1 min-w-0">
 
-                      <h3 className="font-display font-semibold text-lg mb-1 tracking-tight">{chapter.title}</h3>
+                      <h3 className="font-display font-semibold text-lg mb-1 tracking-tight">
+                        <Highlight text={chapter.title} query={query} />
+                      </h3>
                       {chapter.description && (
-                        <p className="text-sm text-muted-foreground mb-3">{chapter.description}</p>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          <Highlight text={chapter.description} query={query} />
+                        </p>
                       )}
                       <div className="flex items-center gap-2 text-xs text-muted-foreground mb-4 flex-wrap">
                         {activeTab === "materials" && chapter.pdf_name && (
                           <>
                             <FileText className="h-3.5 w-3.5" />
-                            <span className="truncate max-w-full">{chapter.pdf_name}</span>
+                            <span className="truncate max-w-full"><Highlight text={chapter.pdf_name} query={query} /></span>
                             <span>•</span>
                           </>
                         )}
                         {activeTab === "notes" && chapter.notes_name && (
                           <>
                             <StickyNote className="h-3.5 w-3.5" />
-                            <span className="truncate max-w-full">{chapter.notes_name}</span>
+                            <span className="truncate max-w-full"><Highlight text={chapter.notes_name} query={query} /></span>
                             <span>•</span>
                           </>
                         )}
