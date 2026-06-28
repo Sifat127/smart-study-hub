@@ -58,7 +58,15 @@ export default function PdfViewer() {
   const shellRef = useRef<HTMLDivElement | null>(null);
   const canvasContainerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const renderTaskRef = useRef<{ cancel: () => void } | null>(null);
+  // The in-flight render task plus its promise. We MUST await the promise
+  // after calling cancel() before starting another render on the same
+  // canvas — pdf.js writes asynchronously and a new render() while the old
+  // is still touching the canvas throws
+  // "Cannot use the same canvas during multiple render() operations".
+  const renderTaskRef = useRef<{
+    task: { cancel: () => void };
+    done: Promise<void>;
+  } | null>(null);
   // Cached copy of the raw PDF bytes pdf.js is rendering, so the Download
   // button serves the exact same payload without re-fetching.
   const bytesRef = useRef<Uint8Array | null>(null);
@@ -124,10 +132,13 @@ export default function PdfViewer() {
     if (state.status !== "ready") return;
     const { pdf } = state;
     return () => {
-      try {
-        renderTaskRef.current?.cancel();
-      } catch {
-        /* noop */
+      const current = renderTaskRef.current;
+      if (current) {
+        try {
+          current.task.cancel();
+        } catch {
+          /* noop */
+        }
       }
       pdf.destroy();
     };
@@ -141,10 +152,22 @@ export default function PdfViewer() {
     const container = canvasContainerRef.current;
     if (!canvas || !container) return;
 
-    try {
-      renderTaskRef.current?.cancel();
-    } catch {
-      /* noop */
+    // Cancel any in-flight render AND wait for it to actually finish before
+    // we resize/redraw the canvas. Without the await, pdf.js may still be
+    // writing pixels when we kick off the next render, which throws the
+    // "Cannot use the same canvas during multiple render() operations" error
+    // and leaves the page half-painted.
+    const previous = renderTaskRef.current;
+    renderTaskRef.current = null;
+    if (previous) {
+      try {
+        previous.task.cancel();
+      } catch {
+        /* noop */
+      }
+      await previous.done.catch(() => {
+        /* expected: RenderingCancelledException */
+      });
     }
 
     const pageProxy = await pdf.getPage(page);
@@ -164,16 +187,29 @@ export default function PdfViewer() {
     canvas.style.height = `${Math.floor(viewport.height / dpr)}px`;
 
     const task = pageProxy.render({ canvasContext: ctx, viewport });
-    renderTaskRef.current = task;
+    const done = task.promise.then(
+      () => undefined,
+      (err) => {
+        // RenderingCancelledException is expected when the user pages quickly.
+        if ((err as { name?: string })?.name !== "RenderingCancelledException") {
+          throw err;
+        }
+      },
+    );
+    renderTaskRef.current = { task, done };
+
     try {
-      await task.promise;
+      await done;
+      // Warm the neighbours so the next/prev page transition feels instant.
+      // pdf.js caches parsed pages internally; touching getPage is cheap and
+      // primes the cache without rendering.
+      const numPages = pdf.numPages;
+      if (page + 1 <= numPages) void pdf.getPage(page + 1).catch(() => {});
+      if (page - 1 >= 1) void pdf.getPage(page - 1).catch(() => {});
     } catch (err) {
-      // `RenderingCancelledException` is expected when the user flips pages quickly.
-      if ((err as { name?: string })?.name !== "RenderingCancelledException") {
-        toast.error("Couldn't render this page", {
-          description: err instanceof Error ? err.message : "Please try again.",
-        });
-      }
+      toast.error("Couldn't render this page", {
+        description: err instanceof Error ? err.message : "Please try again.",
+      });
     }
   }, [state, page, zoom]);
 
