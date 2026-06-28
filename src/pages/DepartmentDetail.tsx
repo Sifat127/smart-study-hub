@@ -59,7 +59,7 @@ export default function DepartmentDetail() {
         badgeIcon={<Layers className="h-4 w-4" />}
       >
         <div className="mt-4">
-          <Button variant="ghost" size="sm" className="text-white/80 hover:text-white hover:bg-white/10 md:text-primary-foreground/60 md:hover:text-primary-foreground md:hover:bg-primary-foreground/10" asChild>
+          <Button variant="ghost" size="sm" className="text-white/90 hover:text-white hover:bg-white/10" asChild>
             <Link to="/departments"><ArrowLeft className="h-4 w-4 mr-1" /> Back to Departments</Link>
           </Button>
         </div>
