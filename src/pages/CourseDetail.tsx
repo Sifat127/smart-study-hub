@@ -586,18 +586,15 @@ export default function CourseDetail() {
                               <Button
                                 size="sm"
                                 className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold"
-                                onClick={async () => {
+                                onClick={() => {
                                   if (!requireAuth("view this file")) return;
-                                  try {
-                                    if (u.file_id) {
-                                      const { getDownloadUrl } = await import("@/lib/storage");
-                                      const signed = await getDownloadUrl(u.file_id, false);
-                                      window.open(signed, "_blank", "noopener,noreferrer");
-                                    } else {
-                                      window.open(u.file_url, "_blank", "noopener,noreferrer");
-                                    }
-                                  } catch (err) {
-                                    toast.error("Couldn't open file", { description: err instanceof Error ? err.message : "Please try again." });
+                                  if (u.file_id) {
+                                    const back = location.pathname + location.search;
+                                    navigate(
+                                      `/pdf/${u.file_id}?name=${encodeURIComponent(u.file_name)}&back=${encodeURIComponent(back)}`,
+                                    );
+                                  } else {
+                                    window.open(u.file_url, "_blank", "noopener,noreferrer");
                                   }
                                 }}
                               >

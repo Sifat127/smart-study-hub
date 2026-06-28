@@ -28,6 +28,7 @@ import Profile from "./pages/Profile";
 import CompleteProfile from "./pages/CompleteProfile";
 import UserDashboard from "./pages/UserDashboard";
 import Search from "./pages/Search";
+import PdfViewer from "./pages/PdfViewer";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -62,6 +63,7 @@ const App = () => (
             <Route path="/complete-profile" element={<CompleteProfile />} />
             <Route path="/dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
             <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
+            <Route path="/pdf/:fileId" element={<ProtectedRoute><PdfViewer /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
