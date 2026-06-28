@@ -107,6 +107,12 @@ export default function AdminManageDepartments() {
     return sorted;
   }, [rows, search, iconFilter, sortBy]);
 
+  useEffect(() => { setPage(1); }, [search, iconFilter, sortBy]);
+
+  const totalPages = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const paged = visible.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
   function openNew() {
     const nextOrder = rows.length ? Math.max(...rows.map((r) => r.sort_order)) + 10 : 10;
     setForm({ ...emptyForm, sort_order: nextOrder });
