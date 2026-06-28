@@ -140,6 +140,23 @@ export default function CourseDetail() {
   };
 
   useEffect(() => {
+    if (!courseId) return;
+
+    // 1) Hydrate immediately from sessionStorage so revisits feel instant.
+    const cacheKey = `course:${courseId}:${user ? "auth" : "anon"}`;
+    const cached = readCache<{
+      course: CourseData | null;
+      chapters: ChapterData[];
+      uploads: StudentUpload[];
+    }>(cacheKey);
+    if (cached) {
+      if (cached.course) setCourse(cached.course);
+      setChapters(cached.chapters ?? []);
+      setStudentUploads(cached.uploads ?? []);
+      setLoading(false);
+    }
+
+    // 2) Always revalidate in the background (stale-while-revalidate).
     async function fetchData() {
       const baseRequests: Promise<any>[] = [
         Promise.resolve(supabase.from("courses").select("id, code, name").eq("id", courseId!).maybeSingle()),
@@ -153,13 +170,23 @@ export default function CourseDetail() {
       }
       const [courseRes, chaptersRes, uploadsRes] = await Promise.all(baseRequests);
 
-      if (courseRes?.data) setCourse(courseRes.data);
-      if (chaptersRes?.data) setChapters(chaptersRes.data);
-      if (uploadsRes?.data) setStudentUploads(uploadsRes.data as StudentUpload[]);
+      const nextCourse = courseRes?.data ?? null;
+      const nextChapters = (chaptersRes?.data ?? []) as ChapterData[];
+      const nextUploads = (uploadsRes?.data ?? []) as StudentUpload[];
+
+      if (nextCourse) setCourse(nextCourse);
+      setChapters(nextChapters);
+      if (uploadsRes?.data) setStudentUploads(nextUploads);
       else if (!user) setStudentUploads([]);
       setLoading(false);
+
+      writeCache(cacheKey, {
+        course: nextCourse,
+        chapters: nextChapters,
+        uploads: user ? nextUploads : [],
+      });
     }
-    if (courseId) fetchData();
+    fetchData();
   }, [courseId, user]);
 
 
