@@ -85,7 +85,14 @@ export default function PdfViewer() {
         // the buffer it is given, so we hand it a separate clone.
         bytesRef.current = bytes;
         const renderCopy = new Uint8Array(bytes);
-        const pdf = await getDocument({ data: renderCopy }).promise;
+        // Hint pdf.js to skip its own range-request / streaming machinery —
+        // we already have all the bytes in memory, so those code paths only
+        // add overhead before the first page paints.
+        const pdf = await getDocument({
+          data: renderCopy,
+          disableAutoFetch: true,
+          disableStream: true,
+        }).promise;
         if (cancelled) {
           pdf.destroy();
           return;

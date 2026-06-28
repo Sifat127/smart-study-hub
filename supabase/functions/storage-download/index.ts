@@ -71,7 +71,10 @@ Deno.serve(async (req) => {
           ...corsHeaders,
           "Content-Type": isPdf ? "application/pdf" : contentType || "application/octet-stream",
           "Content-Disposition": `inline; filename="${originalName}"`,
-          "Cache-Control": "no-store",
+          // Allow short-lived private browser caching so repeat opens of the
+          // same PDF skip the R2 round-trip entirely. The response is gated
+          // by an Authorization header so it must be `private`.
+          "Cache-Control": "private, max-age=300",
           "X-Content-Type-Options": "nosniff",
         },
       });
