@@ -1,6 +1,5 @@
 import { useParams, Link, useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { ArrowLeft, FileText, Eye, Calendar, BookOpen, Loader2, StickyNote, Share2, Search, X, SlidersHorizontal, ChevronDown, Download, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -265,10 +264,8 @@ export default function CourseDetail() {
                     }`}
                   >
                     {isActive && (
-                      <motion.span
-                        layoutId="tab-pill"
+                      <span
                         className="absolute inset-0 bg-gradient-primary rounded-xl shadow-glow"
-                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
                       />
                     )}
                     <span className="relative z-10 flex items-center gap-2"><Icon className="h-4 w-4" /> {label}</span>
