@@ -171,35 +171,76 @@ export default function AdminManageSemesters() {
         </p>
 
         {loading ? (
-          <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {Array.from({ length: PAGE_SIZE }).map((_, i) => (
+              <div key={i} className="bg-card rounded-xl border border-border p-5 card-shadow">
+                <div className="flex items-start gap-3">
+                  <Skeleton className="h-10 w-10 rounded-lg shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-28" />
+                    <Skeleton className="h-3 w-40" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         ) : visible.length === 0 ? (
           <div className="bg-card rounded-xl border border-border p-12 text-center">
             <GraduationCap className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
             <p className="font-medium">No semesters found</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {visible.map((s) => (
-              <div key={s.id} className="bg-card rounded-xl border border-border p-5 card-shadow">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-start gap-3 min-w-0">
-                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                      <span className="font-display font-bold text-primary">{s.number}</span>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {paged.map((s) => (
+                <div key={s.id} className="bg-card rounded-xl border border-border p-5 card-shadow">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3 min-w-0">
+                      <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <span className="font-display font-bold text-primary">{s.number}</span>
+                      </div>
+                      <div className="min-w-0">
+                        <h3 className="font-display font-semibold truncate">{s.name}</h3>
+                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{s.description || "—"}</p>
+                        <p className="text-[10px] text-muted-foreground mt-1">Sort #{s.sort_order}</p>
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <h3 className="font-display font-semibold truncate">{s.name}</h3>
-                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{s.description || "—"}</p>
-                      <p className="text-[10px] text-muted-foreground mt-1">Sort #{s.sort_order}</p>
+                    <div className="flex gap-2 shrink-0">
+                      <Button size="icon" variant="outline" onClick={() => openEdit(s)} aria-label="Edit"><Pencil className="h-4 w-4" /></Button>
+                      <Button size="icon" variant="outline" onClick={() => setDeleting(s)} aria-label="Delete"><Trash2 className="h-4 w-4 text-destructive" /></Button>
                     </div>
-                  </div>
-                  <div className="flex gap-2 shrink-0">
-                    <Button size="icon" variant="outline" onClick={() => openEdit(s)} aria-label="Edit"><Pencil className="h-4 w-4" /></Button>
-                    <Button size="icon" variant="outline" onClick={() => setDeleting(s)} aria-label="Delete"><Trash2 className="h-4 w-4 text-destructive" /></Button>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+            {totalPages > 1 && (
+              <Pagination className="mt-6">
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={(e) => { e.preventDefault(); setPage(Math.max(1, currentPage - 1)); }}
+                      className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                  {Array.from({ length: totalPages }).map((_, i) => (
+                    <PaginationItem key={i}>
+                      <PaginationLink
+                        isActive={currentPage === i + 1}
+                        onClick={(e) => { e.preventDefault(); setPage(i + 1); }}
+                        className="cursor-pointer"
+                      >{i + 1}</PaginationLink>
+                    </PaginationItem>
+                  ))}
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={(e) => { e.preventDefault(); setPage(Math.min(totalPages, currentPage + 1)); }}
+                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            )}
+          </>
         )}
       </div>
 
