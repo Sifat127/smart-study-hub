@@ -57,7 +57,7 @@ export default function SemesterDetail() {
         badgeIcon={<GraduationCap className="h-4 w-4" />}
       >
         <div className="mt-4">
-          <Button variant="ghost" size="sm" className="text-primary-foreground/60 hover:text-primary-foreground hover:bg-primary-foreground/10" asChild>
+          <Button variant="ghost" size="sm" className="text-white/80 hover:text-white hover:bg-white/10 md:text-primary-foreground/60 md:hover:text-primary-foreground md:hover:bg-primary-foreground/10" asChild>
             <Link to={`/departments/${deptId}`}><ArrowLeft className="h-4 w-4 mr-1" /> Back to {dept.name}</Link>
           </Button>
         </div>
