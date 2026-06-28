@@ -228,7 +228,12 @@ export default function CourseDetail() {
     return tabUploads.filter(u => {
       if (batchFilter !== "all" && u.batch !== batchFilter) return false;
       if (uq && !(u.student_name || "").toLowerCase().includes(uq)) return false;
-      if (q && !(u.title.toLowerCase().includes(q) || u.batch.toLowerCase().includes(q))) return false;
+      if (q) {
+        const hay = [u.title, u.batch, u.file_name, u.student_name ?? "", u.description ?? ""]
+          .join(" ")
+          .toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
       return true;
     });
   }, [tabUploads, query, uploaderQuery, batchFilter]);
