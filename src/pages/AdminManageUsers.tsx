@@ -308,6 +308,14 @@ export default function AdminManageUsers() {
       toast({ title: "You can't change your own role", variant: "destructive" });
       return;
     }
+    const target = users.find((u) => u.user_id === userId);
+    if (target && target.role === newRole) {
+      toast({
+        title: `Already ${newRole}`,
+        description: `${target.full_name || target.email || "This user"} already has the ${newRole} role — no change needed.`,
+      });
+      return;
+    }
     setUpdatingId(userId);
     try {
       const auth = await getAdminAuthHeader();
