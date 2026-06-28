@@ -569,12 +569,6 @@ export default function CourseDetail() {
                             {u.description && (
                               <p className="text-sm text-muted-foreground mb-3">{u.description}</p>
                             )}
-                            <StudentUploadPreview
-                              fileId={u.file_id}
-                              fileName={u.file_name}
-                              legacyUrl={u.file_id ? null : u.file_url}
-                              canPreview={!!user}
-                            />
                             <div className="flex items-center gap-2 text-xs text-muted-foreground mb-4 flex-wrap">
                               <FileText className="h-3.5 w-3.5" />
                               <span className="truncate max-w-full">{u.file_name}</span>
