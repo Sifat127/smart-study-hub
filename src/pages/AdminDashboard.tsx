@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, Layers, FileText, Users, Upload, Settings, GraduationCap, Loader2, StickyNote } from "lucide-react";
+import { BookOpen, Layers, FileText, Users, Upload, Settings, GraduationCap, Loader2, StickyNote, FileEdit } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 
 const actions = [
   { label: "Upload PDF", icon: Upload, desc: "Add new chapter PDFs", to: "/admin/upload-pdf" },
+  { label: "Manage Chapters", icon: FileEdit, desc: "Edit chapter info & linked PDFs", to: "/admin/manage-chapters" },
   { label: "Upload Student Notes", icon: StickyNote, desc: "Submit student notes & materials", to: "/upload-notes" },
   { label: "Manage Courses", icon: BookOpen, desc: "Edit course details", to: "/admin/manage-courses" },
   { label: "Manage Users", icon: Users, desc: "View registered users", to: "/admin/manage-users" },
