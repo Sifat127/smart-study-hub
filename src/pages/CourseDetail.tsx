@@ -1,9 +1,10 @@
 import { useParams, Link, useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, FileText, Eye, Calendar, BookOpen, Loader2, StickyNote, Share2, Search, X, SlidersHorizontal, ChevronDown, Download, Lock } from "lucide-react";
+import { ArrowLeft, FileText, Eye, Calendar, BookOpen, Loader2, StickyNote, Share2, Search, X, SlidersHorizontal, ChevronDown, Download, Lock, ArrowUpDown, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import Layout from "@/components/Layout";
 import PageHeader from "@/components/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
