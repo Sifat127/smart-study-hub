@@ -541,7 +541,7 @@ export default function CourseDetail() {
                     </div>
                   ) : (
                   <div className="space-y-4">
-                    {uploads.map((u) => (
+                    {uploads.map((u, i) => (
                       <div
                         key={u.id}
                         className="glass rounded-3xl p-5 md:p-6 card-lift"
