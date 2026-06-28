@@ -306,11 +306,8 @@ export default function CourseDetail() {
             return (
             <div className="space-y-4 max-w-3xl mx-auto">
               {filtered.map((chapter, i) => (
-                <motion.div
+                <div
                   key={chapter.id}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.06 }}
                   className="glass rounded-3xl p-5 md:p-6 card-lift scroll-mt-32 md:scroll-mt-36"
                 >
                   <div className="flex items-start gap-4">
@@ -409,7 +406,7 @@ export default function CourseDetail() {
 
                     </div>
                   </div>
-                </motion.div>
+                </div>
               ))}
 
               {tabUploads.length > 0 && (
@@ -548,11 +545,8 @@ export default function CourseDetail() {
                   ) : (
                   <div className="space-y-4">
                     {uploads.map((u, i) => (
-                      <motion.div
+                      <div
                         key={u.id}
-                        initial={{ opacity: 0, y: 12 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.05 }}
                         className="glass rounded-3xl p-5 md:p-6 card-lift"
                       >
                         <div className="flex items-start gap-4">
@@ -630,7 +624,7 @@ export default function CourseDetail() {
                             </div>
                           </div>
                         </div>
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
                   )}

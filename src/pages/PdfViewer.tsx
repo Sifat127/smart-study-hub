@@ -319,11 +319,8 @@ export default function PdfViewer() {
           </Button>
         </div>
 
-        <motion.div
+        <div
           ref={shellRef}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25 }}
           className="relative flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-muted/30 shadow-sm data-[fs=true]:bg-background"
           data-fs={isFullscreen}
           style={
@@ -469,7 +466,7 @@ export default function PdfViewer() {
               </div>
             )}
           </div>
-        </motion.div>
+        </div>
       </main>
 
       {!isFullscreen && <Footer />}

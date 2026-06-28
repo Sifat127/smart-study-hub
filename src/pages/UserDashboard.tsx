@@ -181,14 +181,7 @@ export default function UserDashboard() {
                   ? `/departments/${dept.id}`
                   : `/departments/${dept.id}/semester/${semester}`;
                 return (
-                  <motion.div
-                    key={dept.id}
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-40px" }}
-                    transition={{ delay: i * 0.04, duration: 0.35 }}
-                    whileHover={{ y: -4 }}
-                  >
+                  <div key={dept.id}>
                     <Link
                       to={target}
                       className="group relative block bg-card rounded-2xl border border-border p-5 card-shadow transition-all duration-300 hover:border-accent/40 hover:shadow-[0_8px_30px_-8px_hsl(var(--accent)/0.25)] overflow-hidden"
@@ -212,7 +205,7 @@ export default function UserDashboard() {
                         </div>
                       </div>
                     </Link>
-                  </motion.div>
+                  </div>
                 );
               })}
             </div>

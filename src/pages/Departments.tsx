@@ -33,15 +33,7 @@ export default function Departments() {
             {departments.map((dept, i) => {
               const Icon = deptIcons[dept.icon] || Monitor;
               return (
-                <motion.div
-                  key={dept.id}
-                  custom={i}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, margin: "-50px" }}
-                  variants={cardVariants}
-                  whileHover={{ y: -6, transition: { duration: 0.25, ease: "easeOut" } }}
-                >
+                <div key={dept.id}>
                   <Link
                     to={`/departments/${dept.id}`}
                     className="group relative block bg-card rounded-2xl border border-border p-6 card-shadow transition-all duration-300 hover:border-accent/40 hover:shadow-[0_8px_30px_-8px_hsl(var(--accent)/0.25)] overflow-hidden"
@@ -67,7 +59,7 @@ export default function Departments() {
                       </div>
                     </div>
                   </Link>
-                </motion.div>
+                </div>
               );
             })}
           </div>
