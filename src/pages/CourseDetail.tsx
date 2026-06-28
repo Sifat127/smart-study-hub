@@ -141,12 +141,12 @@ export default function CourseDetail() {
     async function fetchData() {
       const baseRequests: Promise<any>[] = [
         Promise.resolve(supabase.from("courses").select("id, code, name").eq("id", courseId!).maybeSingle()),
-        Promise.resolve(supabase.from("chapters").select("id, title, description, pdf_name, pdf_path, pdf_url, notes_name, notes_path, notes_url, uploaded_at").eq("course_id", courseId!).order("uploaded_at")),
+        Promise.resolve(supabase.from("chapters").select("id, title, description, pdf_name, pdf_path, pdf_url, notes_name, notes_path, notes_url, file_id, uploaded_at").eq("course_id", courseId!).order("uploaded_at")),
       ];
       // Student uploads are gated by RLS — only fetch when signed in to avoid 401 noise.
       if (user) {
         baseRequests.push(
-          Promise.resolve(supabase.from("student_uploads").select("id, kind, batch, student_name, title, description, file_name, file_url, created_at").eq("course_id", courseId!).order("created_at", { ascending: false }))
+          Promise.resolve(supabase.from("student_uploads").select("id, kind, batch, student_name, title, description, file_name, file_url, file_id, created_at").eq("course_id", courseId!).order("created_at", { ascending: false }))
         );
       }
       const [courseRes, chaptersRes, uploadsRes] = await Promise.all(baseRequests);
@@ -362,7 +362,7 @@ export default function CourseDetail() {
                               size="sm"
                               className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold"
                               disabled={downloadingId === `pdf-${chapter.id}`}
-                              onClick={() => handleDownload(resolveUrl(chapter.pdf_url, chapter.pdf_path)!, chapter.pdf_name ?? `${chapter.title}.pdf`, `pdf-${chapter.id}`)}
+                              onClick={() => handleDownload(resolveUrl(chapter.pdf_url, chapter.pdf_path), chapter.pdf_name ?? `${chapter.title}.pdf`, `pdf-${chapter.id}`, chapter.file_id)}
                             >
                               {downloadingId === `pdf-${chapter.id}` ? (
                                 <><Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> Downloading...</>
@@ -394,7 +394,7 @@ export default function CourseDetail() {
                               size="sm"
                               className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold"
                               disabled={downloadingId === `notes-${chapter.id}`}
-                              onClick={() => handleDownload(resolveUrl(chapter.notes_url, chapter.notes_path)!, chapter.notes_name ?? `${chapter.title}-notes.pdf`, `notes-${chapter.id}`)}
+                              onClick={() => handleDownload(resolveUrl(chapter.notes_url, chapter.notes_path), chapter.notes_name ?? `${chapter.title}-notes.pdf`, `notes-${chapter.id}`)}
                             >
                               {downloadingId === `notes-${chapter.id}` ? (
                                 <><Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> Downloading...</>
