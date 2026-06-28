@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:rls": "playwright test e2e/rls-regression.spec.ts --project=chromium"
   },
   "dependencies": {
     "@fontsource/raleway": "^5.2.8",
