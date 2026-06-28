@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, LogIn, UserPlus, LogOut, LayoutDashboard, User as UserIcon, Search as SearchIcon } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 
 
@@ -110,10 +110,13 @@ export default function Navbar() {
           <button
             className="p-2 rounded-xl hover:bg-white/5 border border-white/10 hover:border-border"
             onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-menu"
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
+
         </div>
       </div>
 
