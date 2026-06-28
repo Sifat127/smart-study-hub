@@ -198,12 +198,22 @@ export default function CourseDetail() {
 
   // Derive filtered chapter + upload lists once per dependency change so the
   // lazy-render hooks below can slice from a stable array reference.
-  const filteredChapters = useMemo(
-    () => chapters.filter(c => activeTab === "materials"
-      ? (c.pdf_url || c.pdf_path || c.file_id)
-      : (c.notes_url || c.notes_path)),
-    [chapters, activeTab]
-  );
+  const filteredChapters = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return chapters.filter(c => {
+      const hasFile = activeTab === "materials"
+        ? (c.pdf_url || c.pdf_path || c.file_id)
+        : (c.notes_url || c.notes_path);
+      if (!hasFile) return false;
+      if (!q) return true;
+      const haystack = [
+        c.title,
+        c.description ?? "",
+        activeTab === "materials" ? (c.pdf_name ?? "") : (c.notes_name ?? ""),
+      ].join(" ").toLowerCase();
+      return haystack.includes(q);
+    });
+  }, [chapters, activeTab, query]);
   const tabUploads = useMemo(
     () => studentUploads.filter(u => u.kind === (activeTab === "materials" ? "material" : "notes")),
     [studentUploads, activeTab]
