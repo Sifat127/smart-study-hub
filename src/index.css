@@ -364,10 +364,7 @@
   /* Disable hover-only transforms on touch */
   .tilt-3d:hover, .card-lift:hover { transform: none !important; }
 
-  /* Skip rendering off-screen sections — big paint win on long pages */
-  main section {
-    content-visibility: auto;
-    contain-intrinsic-size: 1px 600px;
-  }
+  /* NOTE: content-visibility:auto was removed here — on some mobile Chrome GPUs
+     it caused stale-framebuffer "glitch stripes" in off-screen sections. */
 }
 
