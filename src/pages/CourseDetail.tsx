@@ -418,8 +418,8 @@ export default function CourseDetail() {
           )}
 
           {(() => {
-            const filtered = filteredChapters;
-            const uploads = filteredUploads;
+            const filtered = sortedChapters;
+            const uploads = sortedUploads;
             if (filtered.length === 0 && tabUploads.length === 0) {
               return (
                 <div className="glass-strong rounded-3xl p-12 text-center max-w-2xl mx-auto card-lift">
