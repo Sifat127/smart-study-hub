@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      chapter_audit_log: {
+        Row: {
+          action: string
+          changed_at: string
+          changed_by: string | null
+          chapter_id: string | null
+          chapter_title: string | null
+          course_id: string | null
+          field_name: string | null
+          id: string
+          new_value: string | null
+          old_value: string | null
+        }
+        Insert: {
+          action: string
+          changed_at?: string
+          changed_by?: string | null
+          chapter_id?: string | null
+          chapter_title?: string | null
+          course_id?: string | null
+          field_name?: string | null
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+        }
+        Update: {
+          action?: string
+          changed_at?: string
+          changed_by?: string | null
+          chapter_id?: string | null
+          chapter_title?: string | null
+          course_id?: string | null
+          field_name?: string | null
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+        }
+        Relationships: []
+      }
       chapter_downloads: {
         Row: {
           chapter_id: string
