@@ -61,6 +61,7 @@ export default function CourseDetail() {
   const [uploaderQuery, setUploaderQuery] = useState("");
   const [batchFilter, setBatchFilter] = useState<string>("all");
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "az" | "za">("newest");
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   const requireAuth = (action: string): boolean => {
@@ -214,6 +215,26 @@ export default function CourseDetail() {
       return haystack.includes(q);
     });
   }, [chapters, activeTab, query]);
+
+  // Comparator shared by chapters and uploads — keeps sort behavior identical.
+  const cmp = useMemo(() => {
+    const titleOf = (x: { title: string }) => x.title.toLowerCase();
+    return <T extends { title: string }>(a: T, b: T, aTime: number, bTime: number) => {
+      switch (sortBy) {
+        case "oldest": return aTime - bTime;
+        case "az": return titleOf(a).localeCompare(titleOf(b));
+        case "za": return titleOf(b).localeCompare(titleOf(a));
+        case "newest":
+        default: return bTime - aTime;
+      }
+    };
+  }, [sortBy]);
+
+  const sortedChapters = useMemo(() => {
+    const arr = [...filteredChapters];
+    arr.sort((a, b) => cmp(a, b, new Date(a.uploaded_at).getTime(), new Date(b.uploaded_at).getTime()));
+    return arr;
+  }, [filteredChapters, cmp]);
   const tabUploads = useMemo(
     () => studentUploads.filter(u => u.kind === (activeTab === "materials" ? "material" : "notes")),
     [studentUploads, activeTab]
@@ -238,13 +259,19 @@ export default function CourseDetail() {
     });
   }, [tabUploads, query, uploaderQuery, batchFilter]);
 
+  const sortedUploads = useMemo(() => {
+    const arr = [...filteredUploads];
+    arr.sort((a, b) => cmp(a, b, new Date(a.created_at).getTime(), new Date(b.created_at).getTime()));
+    return arr;
+  }, [filteredUploads, cmp]);
+
   // Lazy-render: only the first ~6 items render immediately; an IntersectionObserver
   // sentinel adds more as the user scrolls. Heavy descriptions/buttons stay off the
   // DOM until needed, keeping initial paint + scroll cost low on mobile.
   const { visible: visibleChapters, sentinelRef: chaptersSentinelRef, hasMore: hasMoreChapters } =
-    useLazyList(filteredChapters, 6, 6);
+    useLazyList(sortedChapters, 6, 6);
   const { visible: visibleUploads, sentinelRef: uploadsSentinelRef, hasMore: hasMoreUploads } =
-    useLazyList(filteredUploads, 6, 6);
+    useLazyList(sortedUploads, 6, 6);
 
 
   const resolveUrl = (url: string | null, path: string | null): string | null => {
@@ -357,28 +384,44 @@ export default function CourseDetail() {
           {/* Instant search — filters chapters AND student uploads as you type. */}
           {(chapters.length > 0 || tabUploads.length > 0) && (
             <div className="max-w-3xl mx-auto mb-6">
-              <div className="relative">
-                <Search aria-hidden="true" className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                <Input
-                  type="search"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder={activeTab === "materials"
-                    ? "Search chapters, files, uploads..."
-                    : "Search notes, files, uploads..."}
-                  aria-label="Search this course"
-                  className={`pl-10 pr-10 min-h-12 rounded-2xl glass border ${query ? "border-accent/60 ring-1 ring-accent/30" : "border-white/10"}`}
-                />
-                {query && (
-                  <button
-                    type="button"
-                    onClick={() => setQuery("")}
-                    aria-label="Clear search"
-                    className="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 w-9 inline-flex items-center justify-center rounded-xl hover:bg-white/10 text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              <div className="flex flex-col sm:flex-row gap-2">
+                <div className="relative flex-1">
+                  <Search aria-hidden="true" className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                  <Input
+                    type="search"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder={activeTab === "materials"
+                      ? "Search chapters, files, uploads..."
+                      : "Search notes, files, uploads..."}
+                    aria-label="Search this course"
+                    className={`pl-10 pr-10 min-h-12 rounded-2xl glass border ${query ? "border-accent/60 ring-1 ring-accent/30" : "border-white/10"}`}
+                  />
+                  {query && (
+                    <button
+                      type="button"
+                      onClick={() => setQuery("")}
+                      aria-label="Clear search"
+                      className="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 w-9 inline-flex items-center justify-center rounded-xl hover:bg-white/10 text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      <X aria-hidden="true" className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+                <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
+                  <SelectTrigger
+                    aria-label="Sort order"
+                    className={`sm:w-48 min-h-12 rounded-2xl glass ${sortBy !== "newest" ? "border-accent/60 ring-1 ring-accent/30" : "border-white/10"}`}
                   >
-                    <X aria-hidden="true" className="h-4 w-4" />
-                  </button>
-                )}
+                    <SelectValue placeholder="Sort" />
+                  </SelectTrigger>
+                  <SelectContent className="glass-strong rounded-xl border-white/10">
+                    <SelectItem value="newest">Newest first</SelectItem>
+                    <SelectItem value="oldest">Oldest first</SelectItem>
+                    <SelectItem value="az">Title A–Z</SelectItem>
+                    <SelectItem value="za">Title Z–A</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               {query && (
                 <p className="mt-2 text-xs text-muted-foreground px-1" aria-live="polite" role="status">
@@ -391,8 +434,8 @@ export default function CourseDetail() {
           )}
 
           {(() => {
-            const filtered = filteredChapters;
-            const uploads = filteredUploads;
+            const filtered = sortedChapters;
+            const uploads = sortedUploads;
             if (filtered.length === 0 && tabUploads.length === 0) {
               return (
                 <div className="glass-strong rounded-3xl p-12 text-center max-w-2xl mx-auto card-lift">
