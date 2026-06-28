@@ -59,6 +59,9 @@ export default function PdfViewer() {
   const canvasContainerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const renderTaskRef = useRef<{ cancel: () => void } | null>(null);
+  // Cached copy of the raw PDF bytes pdf.js is rendering, so the Download
+  // button serves the exact same payload without re-fetching.
+  const bytesRef = useRef<Uint8Array | null>(null);
 
   // -- Load the PDF document ------------------------------------------------
   useEffect(() => {
