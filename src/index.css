@@ -331,5 +331,18 @@
   .typewriter-cursor {
     animation: blink 0.7s step-end infinite !important;
   }
+
+  .aurora-orb,
+  .noise,
+  .animate-float,
+  .animate-float-delayed,
+  .animate-float-slow,
+  .animate-aurora-1,
+  .animate-aurora-2,
+  .animate-aurora-3,
+  .animate-shimmer,
+  .animate-glow-pulse {
+    display: none !important;
+  }
 }
 
