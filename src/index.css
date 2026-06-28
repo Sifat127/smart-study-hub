@@ -368,3 +368,48 @@
      it caused stale-framebuffer "glitch stripes" in off-screen sections. */
 }
 
+/* perf-safe-mode — applied by src/lib/perfGuard.ts when the client is detected
+   as prone to paint / framebuffer artifacts (risky GPU, low memory, save-data,
+   reduced motion, or a failed paint probe). Strips every optimization that has
+   ever been observed to trigger stripes / paste artifacts. */
+html.perf-safe-mode,
+html.perf-safe-mode body {
+  scroll-behavior: auto !important;
+}
+html.perf-safe-mode *,
+html.perf-safe-mode *::before,
+html.perf-safe-mode *::after {
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+  will-change: auto !important;
+  content-visibility: visible !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+html.perf-safe-mode .typewriter-cursor {
+  animation: blink 0.7s step-end infinite !important;
+}
+html.perf-safe-mode .aurora-orb,
+html.perf-safe-mode .noise,
+html.perf-safe-mode .animate-float,
+html.perf-safe-mode .animate-float-delayed,
+html.perf-safe-mode .animate-float-slow,
+html.perf-safe-mode .animate-aurora-1,
+html.perf-safe-mode .animate-aurora-2,
+html.perf-safe-mode .animate-aurora-3,
+html.perf-safe-mode .animate-shimmer,
+html.perf-safe-mode .animate-glow-pulse {
+  display: none !important;
+}
+html.perf-safe-mode .glass,
+html.perf-safe-mode .glass-strong {
+  background: hsl(var(--card) / 0.94) !important;
+}
+html.perf-safe-mode .tilt-3d:hover,
+html.perf-safe-mode .card-lift:hover {
+  transform: none !important;
+}
+
