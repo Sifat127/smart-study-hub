@@ -72,17 +72,26 @@ export default function DepartmentDetail() {
               <Link
                 key={sem.id}
                 to={`/departments/${deptId}/semester/${sem.id}`}
-                className="group block glass rounded-xl md:rounded-2xl p-3 md:p-5 hover:border-accent/30 hover:card-shadow-hover text-center"
+                className="group relative block overflow-hidden text-center bg-card/40 border border-border/40 backdrop-blur-xl rounded-[1.75rem] p-5 active:scale-[0.98] transition-transform md:bg-transparent md:backdrop-blur-none md:glass md:rounded-2xl md:p-5 md:active:scale-100 hover:border-accent/30 hover:card-shadow-hover"
               >
-                <div className="h-10 w-10 md:h-12 md:w-12 mx-auto rounded-lg md:rounded-xl bg-primary/10 flex items-center justify-center mb-2 md:mb-3 group-hover:bg-gradient-primary">
-                  <GraduationCap className="h-5 w-5 md:h-6 md:w-6 text-primary group-hover:text-primary-foreground" />
+                <span
+                  aria-hidden="true"
+                  className="md:hidden pointer-events-none select-none absolute -top-3 -right-1 text-6xl font-extrabold leading-none text-foreground/[0.05]"
+                >
+                  {sem.id}
+                </span>
+                <div className="relative z-10 h-12 w-12 md:h-12 md:w-12 mx-auto rounded-2xl md:rounded-xl bg-primary/10 border border-primary/20 md:border-0 flex items-center justify-center mb-3 group-hover:bg-gradient-primary">
+                  <GraduationCap className="h-6 w-6 text-primary group-hover:text-primary-foreground" />
                 </div>
-                <h3 className="font-display font-semibold text-sm md:text-base">{sem.name}</h3>
-                <p className="text-[11px] md:text-xs text-muted-foreground mt-0.5 md:mt-1 min-h-[1rem]">
+                <h3 className="relative z-10 font-display font-bold text-sm md:text-base md:font-semibold">{sem.name}</h3>
+                <p className="relative z-10 text-[10px] md:text-xs uppercase md:normal-case tracking-widest md:tracking-normal text-muted-foreground mt-1 min-h-[1rem]">
                   {loading ? (
                     <span className="inline-block h-3 w-14 align-middle rounded bg-muted-foreground/15 animate-pulse" />
                   ) : (
-                    `${sem.courseCount} courses`
+                    <>
+                      <span className="md:hidden">{sem.courseCount} Courses</span>
+                      <span className="hidden md:inline">{sem.courseCount} courses</span>
+                    </>
                   )}
                 </p>
               </Link>
