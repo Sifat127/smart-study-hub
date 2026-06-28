@@ -13,8 +13,6 @@ import {
   Maximize2,
   Minimize2,
   RefreshCw,
-  Sparkles,
-  ZapOff,
   ZoomIn,
   ZoomOut,
 } from "lucide-react";
@@ -22,7 +20,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
 import {
   downloadFile,
   getCachedPreviewBytes,
@@ -65,7 +62,6 @@ export default function PdfViewer() {
   const [pageInput, setPageInput] = useState("1");
   const [zoom, setZoom] = useState<Zoom>("fit");
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const { reduceMotion, setReduceMotion } = useReducedMotion();
   // True once the entire PDF byte stream has been pulled into memory. While
   // false, we're in "fast preview" mode — pdf.js is range-fetching pages on
   // demand, so the Download button has to fall back to a fresh signed URL.
@@ -542,32 +538,6 @@ export default function PdfViewer() {
                 <ZoomIn className="h-4 w-4" />
               </Button>
               <div className="mx-1 hidden h-5 w-px bg-border/60 sm:block" />
-              <Button
-                size="icon"
-                variant={reduceMotion ? "secondary" : "ghost"}
-                className="h-8 w-8 rounded-lg"
-                aria-label={reduceMotion ? "Reduce motion: on" : "Reduce motion: off"}
-                aria-pressed={reduceMotion}
-                title={
-                  reduceMotion
-                    ? "Reduce motion is ON — click to restore animations"
-                    : "Reduce motion is OFF — click to disable viewer transitions"
-                }
-                onClick={() => {
-                  const next = !reduceMotion;
-                  setReduceMotion(next);
-                  toast.success(
-                    next ? "Reduced motion enabled" : "Animations restored",
-                    {
-                      description: next
-                        ? "Viewer transitions are off. Your preference is saved."
-                        : "Transitions and subtle animations are back on.",
-                    },
-                  );
-                }}
-              >
-                {reduceMotion ? <ZapOff className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}
-              </Button>
               <Button
                 size="icon"
                 variant="ghost"
