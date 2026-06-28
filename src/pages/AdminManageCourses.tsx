@@ -35,6 +35,7 @@ export default function AdminManageCourses() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Course | null>(null);
   const [form, setForm] = useState(emptyForm);
