@@ -299,3 +299,23 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Explicit user preference (toggle in the PDF viewer). Overrides everything
+   except loading spinners and toast progress so the app still signals work
+   in progress. */
+.reduce-motion *:not(.animate-spin),
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  animation-delay: 0ms !important;
+  transition-duration: 0.001ms !important;
+  transition-delay: 0ms !important;
+}
+
+.reduce-motion .animate-spin {
+  /* Keep the spinner spinning so loading states remain legible. */
+  animation-duration: 1s !important;
+  animation-iteration-count: infinite !important;
+}
+
