@@ -359,7 +359,7 @@ export default function PdfViewer() {
       // Prefer the bytes already rendered on-screen so the download exactly
       // matches what the user is viewing (no second network round-trip, no
       // chance of serving a different signed payload).
-      const bytes = bytesRef.current;
+      const bytes = fullLoaded ? bytesRef.current : null;
       if (bytes) {
         const blob = new Blob([new Uint8Array(bytes)], { type: "application/pdf" });
         const url = URL.createObjectURL(blob);
