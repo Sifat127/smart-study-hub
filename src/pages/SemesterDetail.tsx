@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+
 import { ArrowLeft, BookOpen, ArrowRight, Loader2, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
@@ -78,12 +78,7 @@ export default function SemesterDetail() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               {courses.map((course, i) => (
-                <motion.div
-                  key={course.id}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.08 }}
-                >
+                <div key={course.id}>
                   <Link
                     to={`/departments/${deptId}/semester/${semId}/course/${course.id}`}
                     className="group block glass rounded-2xl p-6 hover:border-accent/30 hover:card-shadow-hover transition-all duration-300 hover:-translate-y-1"
@@ -103,7 +98,7 @@ export default function SemesterDetail() {
                       </div>
                     </div>
                   </Link>
-                </motion.div>
+                </div>
               ))}
             </div>
           )}
