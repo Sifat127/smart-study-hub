@@ -143,6 +143,29 @@ export async function getPreviewObjectUrl(fileId: string): Promise<string> {
   return URL.createObjectURL(blob.type === "application/pdf" ? blob : blob.slice(0, blob.size, "application/pdf"));
 }
 
+/**
+ * Fetches the raw PDF bytes through the edge function. Use this when feeding
+ * the file to a JS renderer (e.g. pdf.js) so the browser is never given a
+ * chance to hand the file off to its native PDF viewer.
+ */
+export async function getPreviewBytes(fileId: string): Promise<Uint8Array> {
+  const auth = await getAuthHeader("preview files");
+  const url = new URL(`${FUNCTIONS_BASE}/storage-download`);
+  url.searchParams.set("file_id", fileId);
+  url.searchParams.set("preview", "1");
+  const res = await fetch(url.toString(), {
+    method: "GET",
+    headers: { Authorization: auth },
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error || `Preview failed (${res.status})`);
+  }
+  const buf = await res.arrayBuffer();
+  if (!buf.byteLength) throw new Error("Preview file is empty.");
+  return new Uint8Array(buf);
+}
+
 /** Trigger a browser download for the given file id. */
 export async function downloadFile(fileId: string, fileName: string): Promise<void> {
   const signed = await getDownloadUrl(fileId, true);
