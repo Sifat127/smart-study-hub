@@ -1,24 +1,33 @@
-## Goal
-Apply the same animation kills and heavy-effect removals to tablet-sized screens so tablets feel as fast as mobile.
+## Mobile redesign — DepartmentDetail semester grid
 
-## Change
-In `src/index.css`, raise the breakpoint of the existing mobile perf block from `max-width: 767px` to `max-width: 1023px`. That single change extends every current mobile optimization to all tablets (iPad portrait + landscape, up to just before desktop):
+Apply the selected "Neon glass grid (big index)" direction to the mobile view of `/departments/:deptId` only. Desktop view (`md:` and up) stays exactly as it is today.
 
-- Zero `animation-duration` / `transition-duration` site-wide (typewriter cursor blink kept as the only exception).
-- Aurora orbs, noise overlay, float / drift / shimmer / glow-pulse layers hidden.
-- Backdrop-blur on `.glass` / `.glass-strong` replaced with a solid surface (no per-frame GPU filter pass).
-- Hover transforms on `.tilt-3d` / `.card-lift` disabled.
-- `content-visibility: auto` on `main section` so off-screen content isn't painted.
-- `scroll-behavior: auto`, iOS momentum scrolling, and `overscroll-behavior-y: none`.
+### Scope
+- File: `src/pages/DepartmentDetail.tsx` only
+- Target: the 12-card semester grid section
+- Viewport: mobile (< `md` breakpoint)
+- No backend, route, data, or desktop changes
 
-Desktop (≥1024px) keeps the full aurora/animation experience.
+### Visual changes (mobile)
+Each semester card becomes:
+- Rounded `rounded-[1.75rem]`, translucent glass surface using existing tokens (`bg-card/40`, `border-border/40`, `backdrop-blur-xl`)
+- Large ghosted index number (`1`–`12`) absolutely positioned top-right, `text-6xl font-extrabold text-foreground/[0.04]`, non-selectable, behind content
+- Centered stack: 48px rounded icon tile (graduation cap, primary-tinted with primary/20 border) → "Semester N" title (`text-sm font-bold`) → "N COURSES" caption (`text-[10px] uppercase tracking-widest text-muted-foreground`)
+- Subtle active-press scale (`active:scale-[0.98]`)
 
-## Why a media-query change is enough
-All animated/heavy elements already use the same class names targeted in the existing mobile block (`aurora-orb`, `noise`, `animate-*`, `glass`, `card-lift`, `tilt-3d`). No component edits are needed — widening the breakpoint propagates the rules automatically.
+Grid:
+- Mobile: `grid-cols-2 gap-3` with slightly tighter outer padding
+- Desktop: keep current `md:` classes untouched (still 4-col layout)
 
-## Files
-- `src/index.css` — change `@media (max-width: 767px)` → `@media (max-width: 1023px)` and update the surrounding comment.
+### Implementation notes
+- Keep all dynamic data (`semester`, `count`) and `<Link>` routing intact
+- Use semantic tokens (`primary`, `card`, `border`, `muted-foreground`, `foreground`) — no hardcoded hex
+- Keep skeleton-in-place for course-count loading (already fixed)
+- No new fonts; continue using project Raleway
+- No new dependencies
 
-## Verification
-- Resize preview to 768px and 1024px viewports: confirm tablet shows the flat/solid look with no orbs or transitions, and desktop still shows aurora + animations.
-- Typecheck (no TS changes expected).
+### Verification
+After implementing, run a quick mobile Playwright check at 390×844 to confirm:
+- All 12 cards render with ghost numbers 1–12
+- Counts populate without layout shift
+- Desktop view at 1280px is visually unchanged
