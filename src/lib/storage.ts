@@ -106,42 +106,28 @@ export function uploadFile(file: File, opts: UploadOptions = {}): Promise<Storag
   });
 }
 
-/** Returns a short-lived signed URL for the file (follows the 302 from the edge function). */
+/** Returns a short-lived signed URL for the file. */
 export async function getDownloadUrl(fileId: string, asAttachment = false): Promise<string> {
   const auth = await getAuthHeader().catch(() => null);
   const url = new URL(`${FUNCTIONS_BASE}/storage-download`);
   url.searchParams.set("file_id", fileId);
+  url.searchParams.set("json", "1");
   if (asAttachment) url.searchParams.set("disposition", "attachment");
-  // Use redirect: "manual" so we can read the Location header without CORS-fetching R2.
   const res = await fetch(url.toString(), {
     method: "GET",
     headers: auth ? { Authorization: auth } : {},
-    redirect: "manual",
   });
-  // Browsers expose 302 as opaqueredirect; in that case we re-issue a normal fetch via the
-  // function URL itself, which the browser will follow transparently as a navigation.
-  if (res.type === "opaqueredirect" || res.status === 0) {
-    return url.toString();
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok || !body.url) {
+    throw new Error(body.error || `Download failed (${res.status})`);
   }
-  if (res.status === 302) {
-    const loc = res.headers.get("Location");
-    if (loc) return loc;
-  }
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new Error(text || `Download failed (${res.status})`);
-  }
-  return url.toString();
+  return body.url as string;
 }
 
 /** Trigger a browser download for the given file id. */
 export async function downloadFile(fileId: string, fileName: string): Promise<void> {
-  const auth = await getAuthHeader();
-  const url = new URL(`${FUNCTIONS_BASE}/storage-download`);
-  url.searchParams.set("file_id", fileId);
-  url.searchParams.set("disposition", "attachment");
-  // Fetch with auth header (function returns 302 to a presigned R2 url which browsers follow).
-  const res = await fetch(url.toString(), { headers: { Authorization: auth } });
+  const signed = await getDownloadUrl(fileId, true);
+  const res = await fetch(signed);
   if (!res.ok) throw new Error(`Download failed (${res.status})`);
   const blob = await res.blob();
   const objectUrl = URL.createObjectURL(blob);
