@@ -4,9 +4,11 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 import {
   AlertCircle,
   ArrowLeft,
+  CheckCircle2,
   ChevronLeft,
   ChevronRight,
   Download,
+  Eye,
   Loader2,
   Maximize2,
   Minimize2,
@@ -60,6 +62,10 @@ export default function PdfViewer() {
   const [pageInput, setPageInput] = useState("1");
   const [zoom, setZoom] = useState<Zoom>("fit");
   const [isFullscreen, setIsFullscreen] = useState(false);
+  // True once the entire PDF byte stream has been pulled into memory. While
+  // false, we're in "fast preview" mode — pdf.js is range-fetching pages on
+  // demand, so the Download button has to fall back to a fresh signed URL.
+  const [fullLoaded, setFullLoaded] = useState(false);
 
   const shellRef = useRef<HTMLDivElement | null>(null);
   const canvasContainerRef = useRef<HTMLDivElement | null>(null);
@@ -87,6 +93,8 @@ export default function PdfViewer() {
     setState({ status: "loading" });
     setPage(1);
     setPageInput("1");
+    setFullLoaded(false);
+    bytesRef.current = null;
 
     (async () => {
       try {
@@ -102,6 +110,8 @@ export default function PdfViewer() {
             disableAutoFetch: true,
             disableStream: true,
           }).promise;
+          // Cached bytes ARE the full file, so we're not in preview mode.
+          setFullLoaded(true);
         } else {
           // First-page-fast preview: pdf.js issues Range requests against the
           // edge function, so it only needs the bytes for page 1 before the
@@ -125,9 +135,11 @@ export default function PdfViewer() {
           void pdf
             .getData()
             .then((data) => {
+              if (cancelled) return;
               const u8 = data instanceof Uint8Array ? data : new Uint8Array(data);
               bytesRef.current = u8;
               setCachedPreviewBytes(fileId, u8);
+              setFullLoaded(true);
             })
             .catch(() => {
               /* prefetch failure is non-fatal */
@@ -347,7 +359,7 @@ export default function PdfViewer() {
       // Prefer the bytes already rendered on-screen so the download exactly
       // matches what the user is viewing (no second network round-trip, no
       // chance of serving a different signed payload).
-      const bytes = bytesRef.current;
+      const bytes = fullLoaded ? bytesRef.current : null;
       if (bytes) {
         const blob = new Blob([new Uint8Array(bytes)], { type: "application/pdf" });
         const url = URL.createObjectURL(blob);
@@ -389,15 +401,59 @@ export default function PdfViewer() {
           </div>
           <Button
             size="sm"
-            variant="outline"
+            variant={fullLoaded ? "outline" : "default"}
             className="rounded-xl font-semibold"
             onClick={onDownload}
             disabled={state.status !== "ready"}
+            title={
+              fullLoaded
+                ? "Download the full PDF"
+                : "You're viewing a fast preview. Click to download the complete PDF."
+            }
           >
-            <Download className="h-4 w-4 sm:mr-1.5" />
-            <span className="hidden sm:inline">Download</span>
+            {state.status === "ready" && !fullLoaded ? (
+              <Loader2 className="h-4 w-4 sm:mr-1.5 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4 sm:mr-1.5" />
+            )}
+            <span className="hidden sm:inline">
+              {fullLoaded ? "Download" : "Download full PDF"}
+            </span>
           </Button>
         </div>
+
+        {/* Preview vs full-load status banner */}
+        {state.status === "ready" && (
+          <div
+            className={`mb-3 flex items-center gap-2 rounded-xl border px-3 py-2 text-xs ${
+              fullLoaded
+                ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-700 dark:text-emerald-300"
+                : "border-accent/30 bg-accent/5 text-accent"
+            }`}
+            role="status"
+            aria-live="polite"
+          >
+            {fullLoaded ? (
+              <>
+                <CheckCircle2 className="h-4 w-4 shrink-0" />
+                <span>
+                  <strong className="font-semibold">Full PDF loaded.</strong> All pages
+                  are available offline in this tab.
+                </span>
+              </>
+            ) : (
+              <>
+                <Eye className="h-4 w-4 shrink-0" />
+                <span className="flex-1">
+                  <strong className="font-semibold">Fast preview mode.</strong> The
+                  first page renders instantly while the rest streams in the
+                  background.
+                </span>
+                <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin opacity-70" />
+              </>
+            )}
+          </div>
+        )}
 
         <div
           ref={shellRef}
