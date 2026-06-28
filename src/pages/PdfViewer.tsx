@@ -13,6 +13,8 @@ import {
   Maximize2,
   Minimize2,
   RefreshCw,
+  Sparkles,
+  ZapOff,
   ZoomIn,
   ZoomOut,
 } from "lucide-react";
@@ -20,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import {
   downloadFile,
   getCachedPreviewBytes,
