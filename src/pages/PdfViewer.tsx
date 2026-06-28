@@ -110,6 +110,8 @@ export default function PdfViewer() {
             disableAutoFetch: true,
             disableStream: true,
           }).promise;
+          // Cached bytes ARE the full file, so we're not in preview mode.
+          setFullLoaded(true);
         } else {
           // First-page-fast preview: pdf.js issues Range requests against the
           // edge function, so it only needs the bytes for page 1 before the
@@ -133,9 +135,11 @@ export default function PdfViewer() {
           void pdf
             .getData()
             .then((data) => {
+              if (cancelled) return;
               const u8 = data instanceof Uint8Array ? data : new Uint8Array(data);
               bytesRef.current = u8;
               setCachedPreviewBytes(fileId, u8);
+              setFullLoaded(true);
             })
             .catch(() => {
               /* prefetch failure is non-fatal */
