@@ -13,7 +13,7 @@ interface Props {
 type State =
   | { status: "idle" }
   | { status: "loading" }
-  | { status: "ready"; url: string }
+  | { status: "ready"; url: string; objectUrl: boolean }
   | { status: "error"; message: string };
 
 function isPdf(name: string) {
@@ -56,11 +56,15 @@ export default function StudentUploadPreview({ fileId, fileName, legacyUrl, canP
       setState({ status: "loading" });
       try {
         if (fileId) {
-          const { getDownloadUrl } = await import("@/lib/storage");
-          const url = await getDownloadUrl(fileId, false);
-          if (!cancelled) setState({ status: "ready", url });
+          const { getPreviewObjectUrl } = await import("@/lib/storage");
+          const url = await getPreviewObjectUrl(fileId);
+          if (cancelled) {
+            URL.revokeObjectURL(url);
+          } else {
+            setState({ status: "ready", url, objectUrl: true });
+          }
         } else if (legacyUrl) {
-          if (!cancelled) setState({ status: "ready", url: legacyUrl });
+          if (!cancelled) setState({ status: "ready", url: legacyUrl, objectUrl: false });
         } else {
           if (!cancelled) setState({ status: "error", message: "No file attached." });
         }
@@ -78,6 +82,12 @@ export default function StudentUploadPreview({ fileId, fileName, legacyUrl, canP
       cancelled = true;
     };
   }, [visible, canPreview, fileId, legacyUrl, attempt]);
+
+  useEffect(() => {
+    return () => {
+      if (state.status === "ready" && state.objectUrl) URL.revokeObjectURL(state.url);
+    };
+  }, [state]);
 
   const pdf = isPdf(fileName);
 

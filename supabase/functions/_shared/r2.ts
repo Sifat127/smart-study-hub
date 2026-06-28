@@ -91,6 +91,16 @@ export async function r2SignedGetUrl(
   return signed.url;
 }
 
+export async function r2GetObject(cfg: R2Config, key: string): Promise<Response> {
+  const client = awsClient(cfg);
+  const res = await client.fetch(endpoint(cfg, key), { method: "GET" });
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`R2 download failed (${res.status}): ${text.slice(0, 300)}`);
+  }
+  return res;
+}
+
 export function r2PublicUrl(cfg: R2Config, key: string): string | null {
   if (!cfg.publicBaseUrl) return null;
   const base = cfg.publicBaseUrl.replace(/\/$/, "");

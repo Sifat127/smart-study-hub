@@ -1,9 +1,9 @@
-// storage-download: authenticated signed-URL generator for files stored in R2.
-// GET /storage-download?file_id=<uuid>[&disposition=attachment]
+// storage-download: authenticated signed-URL/proxy endpoint for files stored in R2.
+// GET /storage-download?file_id=<uuid>[&disposition=attachment][&preview=1]
 // Returns 302 redirect to a short-lived signed URL.
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { readR2Config, r2SignedGetUrl } from "../_shared/r2.ts";
+import { readR2Config, r2GetObject, r2SignedGetUrl } from "../_shared/r2.ts";
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -19,6 +19,7 @@ Deno.serve(async (req) => {
     const url = new URL(req.url);
     const fileId = url.searchParams.get("file_id");
     const disposition = url.searchParams.get("disposition"); // "attachment" forces download
+    const preview = url.searchParams.get("preview") === "1";
     if (!fileId) return json({ error: "Missing file_id" }, 400);
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -55,6 +56,27 @@ Deno.serve(async (req) => {
     }
 
     const cfg = readR2Config();
+
+    // Same-origin blob previews are more reliable than embedding a cross-origin R2 URL.
+    // The client fetches this with auth, converts it to a blob URL, then renders the PDF iframe.
+    if (preview) {
+      const objectRes = await r2GetObject(cfg, file.object_key);
+      const originalName = String(file.original_filename ?? "file.pdf").replace(/[\r\n"]/g, "_");
+      const contentType = String(file.file_type ?? "");
+      const isPdf = /\.pdf$/i.test(originalName) || contentType.toLowerCase().includes("pdf");
+
+      return new Response(objectRes.body, {
+        status: 200,
+        headers: {
+          ...corsHeaders,
+          "Content-Type": isPdf ? "application/pdf" : contentType || "application/octet-stream",
+          "Content-Disposition": `inline; filename="${originalName}"`,
+          "Cache-Control": "no-store",
+          "X-Content-Type-Options": "nosniff",
+        },
+      });
+    }
+
     const signed = await r2SignedGetUrl(
       cfg,
       file.object_key,
