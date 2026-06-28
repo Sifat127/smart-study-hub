@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+
 import {
   LayoutDashboard, Monitor, Zap, Briefcase, Code, Database, Pill,
   BookText, Scale, Shirt, Building2, Radio, Plane, Apple, HeartPulse,

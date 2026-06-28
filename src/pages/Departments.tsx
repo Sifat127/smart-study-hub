@@ -7,15 +7,6 @@ import { departments } from "@/data/mockData";
 
 const deptIcons: Record<string, React.ElementType> = { Monitor, Zap, Briefcase, Code, Database, Pill, BookText, Scale, Shirt, Building2, Radio, Plane, Apple, HeartPulse, Clapperboard };
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.95 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: { delay: i * 0.07, duration: 0.5 } as const,
-  }),
-};
 
 export default function Departments() {
   return (
