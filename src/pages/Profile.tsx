@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { departments } from "@/data/mockData";
+import { useDepartments } from "@/hooks/useDepartments";
 import Layout from "@/components/Layout";
 
 const profileSchema = z.object({
@@ -37,6 +37,7 @@ const profileSchema = z.object({
 
 export default function Profile() {
   const { user, profile, loading: authLoading } = useAuth();
+  const departments = useDepartments();
   const { toast } = useToast();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);

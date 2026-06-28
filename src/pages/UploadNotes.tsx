@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { uploadFile } from "@/lib/storage";
 import { useAuth } from "@/contexts/AuthContext";
-import { departments } from "@/data/mockData";
+import { useDepartments } from "@/hooks/useDepartments";
 
 interface CourseOption {
   id: string;
@@ -23,6 +23,7 @@ interface CourseOption {
 
 export default function UploadNotes() {
   const { toast } = useToast();
+  const departments = useDepartments();
   const { user, profile, loading: authLoading, isAdmin } = useAuth();
   const navigate = useNavigate();
 

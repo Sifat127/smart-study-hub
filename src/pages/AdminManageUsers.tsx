@@ -41,7 +41,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { departments } from "@/data/mockData";
+import { useDepartments } from "@/hooks/useDepartments";
 
 interface UserRow {
   user_id: string;
@@ -71,6 +71,7 @@ interface AuditEntry {
 
 export default function AdminManageUsers() {
   const { toast } = useToast();
+  const departments = useDepartments();
   const { user: currentUser } = useAuth();
   const [users, setUsers] = useState<UserRow[]>([]);
   const [loading, setLoading] = useState(true);

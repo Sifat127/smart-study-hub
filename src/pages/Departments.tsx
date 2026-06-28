@@ -2,12 +2,13 @@ import { Link } from "react-router-dom";
 import { Monitor, Zap, Briefcase, ArrowRight, FolderOpen, Code, Database, Pill, BookText, Scale, Shirt, Building2, Radio, Plane, Apple, HeartPulse, Clapperboard } from "lucide-react";
 import Layout from "@/components/Layout";
 import PageHeader from "@/components/PageHeader";
-import { departments } from "@/data/mockData";
+import { useDepartments } from "@/hooks/useDepartments";
 
 const deptIcons: Record<string, React.ElementType> = { Monitor, Zap, Briefcase, Code, Database, Pill, BookText, Scale, Shirt, Building2, Radio, Plane, Apple, HeartPulse, Clapperboard };
 
 
 export default function Departments() {
+  const departments = useDepartments();
   return (
     <Layout>
       <PageHeader
@@ -38,7 +39,7 @@ export default function Departments() {
                       <h2 className="font-display text-xl font-bold mb-1 group-hover:text-accent">{dept.name}</h2>
                       <p className="text-muted-foreground text-sm font-medium mb-2">{dept.fullName}</p>
                       <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{dept.description}</p>
-                      <p className="text-sm text-muted-foreground mb-4">{dept.totalCourses} courses • 12 semesters</p>
+                      <p className="text-sm text-muted-foreground mb-4">12 semesters</p>
                       <div className="flex items-center text-primary font-semibold text-sm group-hover:text-accent">
                         Explore Department
                         <ArrowRight className="ml-2 h-4 w-4" />

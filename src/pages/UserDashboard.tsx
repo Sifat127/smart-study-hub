@@ -13,7 +13,7 @@ import PageHeader from "@/components/PageHeader";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { departments } from "@/data/mockData";
+import { useDepartments } from "@/hooks/useDepartments";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -48,6 +48,7 @@ interface RecentDownload {
 export default function UserDashboard() {
   const { user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const departments = useDepartments();
 
   const [query, setQuery] = useState("");
   const [semester, setSemester] = useState<string>("all");
@@ -374,6 +375,7 @@ interface ChapterRow {
 const SEMESTERS = Array.from({ length: 12 }, (_, i) => i + 1);
 
 function FilterChaptersSection() {
+  const departments = useDepartments();
   const [dept, setDept] = useState<string>("all");
   const [courseId, setCourseId] = useState<string>("all");
   const [sem, setSem] = useState<string>("all");

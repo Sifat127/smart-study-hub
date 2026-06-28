@@ -5,11 +5,12 @@ import { ArrowLeft, GraduationCap, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
 import PageHeader from "@/components/PageHeader";
-import { departments } from "@/data/mockData";
+import { useDepartments } from "@/hooks/useDepartments";
 import { supabase } from "@/integrations/supabase/client";
 
 export default function DepartmentDetail() {
   const { deptId } = useParams();
+  const departments = useDepartments();
   const dept = departments.find((d) => d.id === deptId);
   const [semesterCounts, setSemesterCounts] = useState<Record<number, number>>({});
   const [loading, setLoading] = useState(true);
