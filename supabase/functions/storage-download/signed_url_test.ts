@@ -22,19 +22,56 @@ import {
   assertStringIncludes,
 } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import "https://deno.land/std@0.224.0/dotenv/load.ts";
-import { readR2Config, r2SignedGetUrl } from "../_shared/r2.ts";
+// aws4fetch via esm.sh so this test file resolves without a project-level
+// deno.json / node_modules. The signing behavior is identical to the npm
+// build the edge function itself uses.
+import { AwsClient } from "https://esm.sh/aws4fetch@1.0.20";
 
 // A real PDF object that exists in the project's R2 bucket. Update this if it
 // is ever removed; the test will fail loudly if R2 returns 404.
 const TEST_OBJECT_KEY = "2026/06/CSE/2/1afab098-6075-4825-bc41-7c291bf4c4c1.pdf";
 const TEST_FILENAME = "Assignment solve.pdf";
 
-function ensureR2() {
-  for (const k of ["R2_ACCOUNT_ID", "R2_ACCESS_KEY_ID", "R2_SECRET_ACCESS_KEY", "R2_BUCKET"]) {
-    if (!Deno.env.get(k)) {
-      throw new Error(`Missing env ${k} — required to verify R2 signed URLs`);
-    }
+interface SignOptions {
+  contentType?: string;
+  inlineFileName?: string;
+  downloadFileName?: string;
+  expiresInSeconds?: number;
+}
+
+function readR2() {
+  const accountId = Deno.env.get("R2_ACCOUNT_ID");
+  const accessKeyId = Deno.env.get("R2_ACCESS_KEY_ID");
+  const secretAccessKey = Deno.env.get("R2_SECRET_ACCESS_KEY");
+  const bucket = Deno.env.get("R2_BUCKET");
+  if (!accountId || !accessKeyId || !secretAccessKey || !bucket) {
+    throw new Error("Missing R2_* env vars — required to verify signed URLs");
   }
+  return { accountId, accessKeyId, secretAccessKey, bucket };
+}
+
+async function r2SignedGetUrl(key: string, opts: SignOptions): Promise<string> {
+  const cfg = readR2();
+  const client = new AwsClient({
+    accessKeyId: cfg.accessKeyId,
+    secretAccessKey: cfg.secretAccessKey,
+    service: "s3",
+    region: "auto",
+  });
+  const encodedKey = key.split("/").map(encodeURIComponent).join("/");
+  const url = new URL(`https://${cfg.accountId}.r2.cloudflarestorage.com/${cfg.bucket}/${encodedKey}`);
+  url.searchParams.set("X-Amz-Expires", String(opts.expiresInSeconds ?? 120));
+  const sanitize = (s: string) => s.replace(/[\r\n"]/g, "_");
+  if (opts.downloadFileName) {
+    url.searchParams.set("response-content-disposition", `attachment; filename="${sanitize(opts.downloadFileName)}"`);
+  } else if (opts.inlineFileName) {
+    url.searchParams.set("response-content-disposition", `inline; filename="${sanitize(opts.inlineFileName)}"`);
+  }
+  if (opts.contentType) url.searchParams.set("response-content-type", opts.contentType);
+  const signed = await client.sign(new Request(url.toString(), { method: "GET" }), {
+    aws: { signQuery: true },
+  });
+  return signed.url;
 }
 
 Deno.test("signed URL for inline preview embeds application/pdf + inline disposition", async () => {
