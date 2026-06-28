@@ -22,7 +22,7 @@ export interface StorageFile {
   course_id: string | null;
   year: string | null;
   tags: string[];
-  visibility: "public" | "authenticated" | "private";
+  visibility: "authenticated" | "private";
   download_count: number;
   public_url: string | null;
   upload_date: string;
@@ -38,7 +38,7 @@ export interface UploadMetadata {
   course_id?: string;
   year?: string;
   tags?: string[];
-  visibility?: "public" | "authenticated" | "private";
+  visibility?: "authenticated" | "private";
   requireAdmin?: boolean;
 }
 
