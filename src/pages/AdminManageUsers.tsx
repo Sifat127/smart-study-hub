@@ -71,6 +71,7 @@ interface AuditEntry {
 
 export default function AdminManageUsers() {
   const { toast } = useToast();
+  const departments = useDepartments();
   const { user: currentUser } = useAuth();
   const [users, setUsers] = useState<UserRow[]>([]);
   const [loading, setLoading] = useState(true);
