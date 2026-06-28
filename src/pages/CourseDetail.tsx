@@ -353,6 +353,43 @@ export default function CourseDetail() {
               })}
             </div>
           </div>
+
+          {/* Instant search — filters chapters AND student uploads as you type. */}
+          {(chapters.length > 0 || tabUploads.length > 0) && (
+            <div className="max-w-3xl mx-auto mb-6">
+              <div className="relative">
+                <Search aria-hidden="true" className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                <Input
+                  type="search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={activeTab === "materials"
+                    ? "Search chapters, files, uploads..."
+                    : "Search notes, files, uploads..."}
+                  aria-label="Search this course"
+                  className={`pl-10 pr-10 min-h-12 rounded-2xl glass border ${query ? "border-accent/60 ring-1 ring-accent/30" : "border-white/10"}`}
+                />
+                {query && (
+                  <button
+                    type="button"
+                    onClick={() => setQuery("")}
+                    aria-label="Clear search"
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 w-9 inline-flex items-center justify-center rounded-xl hover:bg-white/10 text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <X aria-hidden="true" className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+              {query && (
+                <p className="mt-2 text-xs text-muted-foreground px-1" aria-live="polite" role="status">
+                  {filteredChapters.length} {activeTab === "materials" ? "material" : "note"}{filteredChapters.length === 1 ? "" : "s"}
+                  {" · "}
+                  {filteredUploads.length} student upload{filteredUploads.length === 1 ? "" : "s"}
+                </p>
+              )}
+            </div>
+          )}
+
           {(() => {
             const filtered = filteredChapters;
             const uploads = filteredUploads;
