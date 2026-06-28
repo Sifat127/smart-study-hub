@@ -146,17 +146,13 @@ export async function getPreviewObjectUrl(fileId: string): Promise<string> {
 /** Trigger a browser download for the given file id. */
 export async function downloadFile(fileId: string, fileName: string): Promise<void> {
   const signed = await getDownloadUrl(fileId, true);
-  const res = await fetch(signed);
-  if (!res.ok) throw new Error(`Download failed (${res.status})`);
-  const blob = await res.blob();
-  const objectUrl = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  a.href = objectUrl;
+  a.href = signed;
   a.download = fileName;
+  a.rel = "noopener noreferrer";
   document.body.appendChild(a);
   a.click();
   a.remove();
-  setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
 }
 
 /** Delete a file (R2 object + DB row). Only the uploader or an admin may delete. */
