@@ -62,6 +62,11 @@ export default function AdminManageCourses() {
       c.code.toLowerCase().includes(search.toLowerCase())
   );
 
+  useEffect(() => { setPage(1); }, [search]);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const paged = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
   const openAdd = () => {
     setEditing(null);
     setForm(emptyForm);
