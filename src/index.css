@@ -324,8 +324,8 @@
   .tilt-3d:hover, .card-lift:hover { transform: none !important; }
 }
 
-/* Mobile: kill motion + heavy GPU effects for smoother scrolling */
-@media (max-width: 767px) {
+/* Mobile + tablet: kill motion + heavy GPU effects for smoother scrolling */
+@media (max-width: 1023px) {
   html {
     scroll-behavior: auto !important;
     -webkit-text-size-adjust: 100%;
