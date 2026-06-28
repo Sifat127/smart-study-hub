@@ -21,6 +21,7 @@ import Contact from "./pages/Contact";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminUploadPdf from "./pages/AdminUploadPdf";
 import AdminManageCourses from "./pages/AdminManageCourses";
+import AdminManageChapters from "./pages/AdminManageChapters";
 import AdminManageUsers from "./pages/AdminManageUsers";
 import AdminSettings from "./pages/AdminSettings";
 import UploadNotes from "./pages/UploadNotes";
