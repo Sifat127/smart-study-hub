@@ -17,7 +17,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col relative bg-background">
       {/* Aurora ambient background */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 hidden md:block">
         {/* Aurora orbs — drift slowly */}
         <div className="aurora-orb animate-aurora-1 top-[-15%] left-[-10%] w-[55%] h-[55%] bg-[hsl(220_95%_55%/0.22)]" />
         <div className="aurora-orb animate-aurora-2 bottom-[-15%] right-[-12%] w-[55%] h-[55%] bg-[hsl(280_85%_55%/0.2)]" />
