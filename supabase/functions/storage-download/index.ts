@@ -77,12 +77,20 @@ Deno.serve(async (req) => {
       });
     }
 
-    const signed = await r2SignedGetUrl(
-      cfg,
-      file.object_key,
-      300,
-      disposition === "attachment" ? file.original_filename : undefined,
-    );
+    const originalName = String(file.original_filename ?? "file");
+    const fileType = String(file.file_type ?? "");
+    const isPdf = /\.pdf$/i.test(originalName) || fileType.toLowerCase().includes("pdf");
+    const responseContentType = isPdf
+      ? "application/pdf"
+      : fileType || "application/octet-stream";
+
+    const signed = await r2SignedGetUrl(cfg, file.object_key, {
+      expiresInSeconds: 300,
+      contentType: responseContentType,
+      ...(disposition === "attachment"
+        ? { downloadFileName: originalName }
+        : { inlineFileName: originalName }),
+    });
 
     // Increment download count (best effort).
     void admin
