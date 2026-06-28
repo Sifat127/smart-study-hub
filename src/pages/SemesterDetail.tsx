@@ -5,7 +5,7 @@ import { ArrowLeft, BookOpen, ArrowRight, Loader2, GraduationCap } from "lucide-
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
 import PageHeader from "@/components/PageHeader";
-import { departments } from "@/data/mockData";
+import { useDepartments } from "@/hooks/useDepartments";
 import { supabase } from "@/integrations/supabase/client";
 
 interface CourseRow {
@@ -18,6 +18,7 @@ interface CourseRow {
 
 export default function SemesterDetail() {
   const { deptId, semId } = useParams();
+  const departments = useDepartments();
   const dept = departments.find((d) => d.id === deptId);
   const [courses, setCourses] = useState<CourseRow[]>([]);
   const [loading, setLoading] = useState(true);
