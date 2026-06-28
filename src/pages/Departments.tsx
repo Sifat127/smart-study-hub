@@ -27,10 +27,10 @@ export default function Departments() {
                 <div key={dept.id}>
                   <Link
                     to={`/departments/${dept.id}`}
-                    className="group relative block bg-card rounded-2xl border border-border p-6 card-shadow transition-all duration-300 hover:border-accent/40 hover:shadow-[0_8px_30px_-8px_hsl(var(--accent)/0.25)] overflow-hidden"
+                    className="group relative block bg-card rounded-2xl border border-border p-6 card-shadow hover:border-accent/40 hover:shadow-[0_8px_30px_-8px_hsl(var(--accent)/0.25)] overflow-hidden"
                   >
                     {/* Hover glow overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-accent/0 via-accent/0 to-accent/0 group-hover:from-accent/5 group-hover:via-transparent group-hover:to-primary/5 transition-all duration-500 rounded-2xl" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-accent/0 via-accent/0 to-accent/0 group-hover:from-accent/5 group-hover:via-transparent group-hover:to-primary/5 rounded-2xl" />
 
                     <div className="relative z-10">
                       <motion.div
@@ -40,13 +40,13 @@ export default function Departments() {
                       >
                         <Icon className="h-6 w-6 text-primary-foreground" />
                       </motion.div>
-                      <h2 className="font-display text-xl font-bold mb-1 group-hover:text-accent transition-colors duration-300">{dept.name}</h2>
+                      <h2 className="font-display text-xl font-bold mb-1 group-hover:text-accent">{dept.name}</h2>
                       <p className="text-muted-foreground text-sm font-medium mb-2">{dept.fullName}</p>
                       <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{dept.description}</p>
                       <p className="text-sm text-muted-foreground mb-4">{dept.totalCourses} courses • 12 semesters</p>
-                      <div className="flex items-center text-primary font-semibold text-sm group-hover:text-accent transition-colors duration-300">
+                      <div className="flex items-center text-primary font-semibold text-sm group-hover:text-accent">
                         Explore Department
-                        <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-2 transition-transform duration-300" />
+                        <ArrowRight className="ml-2 h-4 w-4" />
                       </div>
                     </div>
                   </Link>

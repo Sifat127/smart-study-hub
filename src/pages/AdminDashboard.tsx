@@ -88,7 +88,7 @@ export default function AdminDashboard() {
             <Link
               key={a.label}
               to={a.to}
-              className="bg-card rounded-xl border border-border p-6 card-shadow hover:card-shadow-hover transition-all duration-300 hover:-translate-y-1 text-left block"
+              className="bg-card rounded-xl border border-border p-6 card-shadow hover:card-shadow-hover text-left block"
             >
               <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
                 <a.icon className="h-5 w-5 text-primary" />

@@ -427,7 +427,7 @@ export default function CourseDetail() {
                         onClick={() => setFiltersOpen(o => !o)}
                         aria-expanded={filtersOpen}
                         aria-controls="uploads-filter-panel"
-                        className="flex-1 glass rounded-2xl px-4 min-h-11 flex items-center justify-between gap-2 text-sm font-semibold active:scale-[0.98] transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        className="flex-1 glass rounded-2xl px-4 min-h-11 flex items-center justify-between gap-2 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       >
                         <span className="flex items-center gap-2">
                           <SlidersHorizontal aria-hidden="true" className="h-4 w-4 text-accent" />
@@ -438,14 +438,14 @@ export default function CourseDetail() {
                             </span>
                           )}
                         </span>
-                        <ChevronDown aria-hidden="true" className={`h-4 w-4 transition-transform ${filtersOpen ? "rotate-180" : ""}`} />
+                        <ChevronDown aria-hidden="true" className={`h-4 w-4 ${filtersOpen ? "rotate-180" : ""}`} />
                       </button>
                       {hasActive && (
                         <button
                           type="button"
                           onClick={() => { setQuery(""); setUploaderQuery(""); setBatchFilter("all"); }}
                           aria-label="Clear all filters"
-                          className="glass rounded-2xl px-3 min-h-11 text-sm font-semibold text-muted-foreground hover:text-foreground active:scale-[0.98] transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          className="glass rounded-2xl px-3 min-h-11 text-sm font-semibold text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                         >
                           Clear
                         </button>
@@ -474,7 +474,7 @@ export default function CourseDetail() {
                           <button
                             type="button"
                             onClick={() => setQuery("")}
-                            className="absolute right-1.5 top-1/2 -translate-y-1/2 h-8 w-8 inline-flex items-center justify-center rounded-lg hover:bg-white/10 active:scale-95 transition-transform text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            className="absolute right-1.5 top-1/2 -translate-y-1/2 h-8 w-8 inline-flex items-center justify-center rounded-lg hover:bg-white/10 text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                             aria-label="Clear title search"
                           >
                             <X aria-hidden="true" className="h-4 w-4" />
@@ -497,7 +497,7 @@ export default function CourseDetail() {
                           <button
                             type="button"
                             onClick={() => setUploaderQuery("")}
-                            className="absolute right-1.5 top-1/2 -translate-y-1/2 h-8 w-8 inline-flex items-center justify-center rounded-lg hover:bg-white/10 active:scale-95 transition-transform text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            className="absolute right-1.5 top-1/2 -translate-y-1/2 h-8 w-8 inline-flex items-center justify-center rounded-lg hover:bg-white/10 text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                             aria-label="Clear uploader filter"
                           >
                             <X aria-hidden="true" className="h-4 w-4" />

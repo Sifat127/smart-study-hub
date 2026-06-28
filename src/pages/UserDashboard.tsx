@@ -184,15 +184,15 @@ export default function UserDashboard() {
                   <div key={dept.id}>
                     <Link
                       to={target}
-                      className="group relative block bg-card rounded-2xl border border-border p-5 card-shadow transition-all duration-300 hover:border-accent/40 hover:shadow-[0_8px_30px_-8px_hsl(var(--accent)/0.25)] overflow-hidden"
+                      className="group relative block bg-card rounded-2xl border border-border p-5 card-shadow hover:border-accent/40 hover:shadow-[0_8px_30px_-8px_hsl(var(--accent)/0.25)] overflow-hidden"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-br from-accent/0 via-transparent to-primary/0 group-hover:from-accent/5 group-hover:to-primary/5 transition-all duration-500 rounded-2xl" />
+                      <div className="absolute inset-0 bg-gradient-to-br from-accent/0 via-transparent to-primary/0 group-hover:from-accent/5 group-hover:to-primary/5 rounded-2xl" />
                       <div className="relative z-10">
                         <div className="flex items-center justify-between mb-3">
                           <div className="h-11 w-11 rounded-xl bg-gradient-primary flex items-center justify-center">
                             <Icon className="h-5 w-5 text-primary-foreground" />
                           </div>
-                          <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-accent group-hover:translate-x-1 transition-all" />
+                          <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-accent" />
                         </div>
                         <h3 className="font-display text-lg font-bold mb-0.5 group-hover:text-accent transition-colors">
                           {dept.name}
@@ -333,7 +333,7 @@ function QuickAction({ to, icon, title, desc }: { to: string; icon: React.ReactN
   return (
     <Link
       to={to}
-      className="group relative block bg-card rounded-2xl border border-border p-5 card-shadow transition-all duration-300 hover:border-accent/40 hover:shadow-[0_8px_30px_-8px_hsl(var(--accent)/0.25)]"
+      className="group relative block bg-card rounded-2xl border border-border p-5 card-shadow hover:border-accent/40 hover:shadow-[0_8px_30px_-8px_hsl(var(--accent)/0.25)]"
     >
       <div className="flex items-start gap-3">
         <div className="h-10 w-10 rounded-xl bg-gradient-primary flex items-center justify-center text-primary-foreground shrink-0">
@@ -343,7 +343,7 @@ function QuickAction({ to, icon, title, desc }: { to: string; icon: React.ReactN
           <h3 className="font-semibold text-sm md:text-base group-hover:text-accent transition-colors">{title}</h3>
           <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>
         </div>
-        <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-accent group-hover:translate-x-1 transition-all" />
+        <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-accent" />
       </div>
     </Link>
   );
@@ -557,7 +557,7 @@ function FilterChaptersSection() {
               <Link
                 key={r.id}
                 to={href}
-                className="group block bg-card rounded-2xl border border-border p-4 md:p-5 card-shadow hover:border-accent/40 hover:shadow-[0_8px_30px_-8px_hsl(var(--accent)/0.25)] transition-all"
+                className="group block bg-card rounded-2xl border border-border p-4 md:p-5 card-shadow hover:border-accent/40 hover:shadow-[0_8px_30px_-8px_hsl(var(--accent)/0.25)]"
               >
                 <h3 className="font-display text-base md:text-lg font-bold mb-2 group-hover:text-accent transition-colors">
                   {r.title}

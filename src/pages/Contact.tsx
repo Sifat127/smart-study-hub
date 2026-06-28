@@ -160,7 +160,7 @@ export default function Contact() {
               ].map((item) => (
                 <div
                   key={item.label}
-                  className="glass rounded-2xl p-5 flex items-center gap-4 hover:border-accent/30 transition-all duration-300"
+                  className="glass rounded-2xl p-5 flex items-center gap-4 hover:border-accent/30"
                 >
                   <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <item.icon className="h-5 w-5 text-primary" />

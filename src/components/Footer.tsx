@@ -44,7 +44,7 @@ export default function Footer() {
                   { label: "About", to: "/about" },
                   { label: "Contact", to: "/contact" },
                 ].map((l) => (
-                  <Link key={l.to} to={l.to} className="block text-sm text-foreground/70 hover:text-accent transition-colors duration-200">
+                  <Link key={l.to} to={l.to} className="block text-sm text-foreground/70 hover:text-accent">
                     {l.label}
                   </Link>
                 ))}
@@ -56,7 +56,7 @@ export default function Footer() {
               <h4 className="font-display font-semibold text-[11px] text-muted-foreground uppercase tracking-[0.18em] mb-5">Departments</h4>
               <div className="space-y-3">
                 {["CSE", "EEE", "BBA", "CIVIL"].map((d) => (
-                  <Link key={d} to={`/departments/${d.toLowerCase()}`} className="block text-sm text-foreground/70 hover:text-accent transition-colors duration-200">
+                  <Link key={d} to={`/departments/${d.toLowerCase()}`} className="block text-sm text-foreground/70 hover:text-accent">
                     {d}
                   </Link>
                 ))}
@@ -109,7 +109,7 @@ export default function Footer() {
                     aria-label={link.label}
                     whileHover={{ scale: 1.15, y: -2 }}
                     whileTap={{ scale: 0.9 }}
-                    className="p-2 rounded-full text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all duration-200"
+                    className="p-2 rounded-full text-muted-foreground hover:text-accent hover:bg-accent/10"
                   >
                     <link.icon className="h-4 w-4" />
                   </motion.a>
