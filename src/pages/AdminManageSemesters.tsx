@@ -42,6 +42,7 @@ export default function AdminManageSemesters() {
   const [rows, setRows] = useState<SemRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
 
   const [editing, setEditing] = useState<SemRow | null>(null);
   const [isNew, setIsNew] = useState(false);
