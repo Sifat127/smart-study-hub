@@ -213,7 +213,7 @@ export default function Index() {
             <p className="text-sm md:text-base text-muted-foreground max-w-lg mx-auto">Choose your department to access semester-wise course materials and chapter PDFs.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            {departments.filter(d => ["cse", "eee", "swe"].includes(d.id)).map((dept, i) => {
+            {departments.filter(d => ["cse", "eee", "swe"].includes(d.id)).map((dept) => {
               const Icon = deptIcons[dept.icon] || Monitor;
               return (
                 <div
@@ -256,7 +256,7 @@ export default function Index() {
             <p className="text-sm md:text-base text-muted-foreground max-w-lg mx-auto">Everything you need for organized, accessible academic resources.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {features.map((f, i) => (
+            {features.map((f) => (
               <div
                 key={f.title}
                 className="group relative glass rounded-3xl p-5 md:p-6 card-lift overflow-hidden"

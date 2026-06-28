@@ -302,7 +302,7 @@ export default function CourseDetail() {
             }
             return (
             <div className="space-y-4 max-w-3xl mx-auto">
-              {filtered.map((chapter, i) => (
+              {filtered.map((chapter) => (
                 <div
                   key={chapter.id}
                   className="glass rounded-3xl p-5 md:p-6 card-lift scroll-mt-32 md:scroll-mt-36"
@@ -541,7 +541,7 @@ export default function CourseDetail() {
                     </div>
                   ) : (
                   <div className="space-y-4">
-                    {uploads.map((u, i) => (
+                    {uploads.map((u) => (
                       <div
                         key={u.id}
                         className="glass rounded-3xl p-5 md:p-6 card-lift"

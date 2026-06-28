@@ -13,12 +13,12 @@ export default function PageHeader({ title, subtitle, badge, badgeIcon, children
     <section className="relative overflow-hidden">
       {/* Aurora gradient layer */}
       <div className="absolute inset-0 bg-gradient-hero opacity-90" />
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 hidden md:block">
         <div className="aurora-orb animate-aurora-1 top-[-20%] left-[10%] w-[40%] h-[60%] bg-[hsl(220_90%_55%/0.25)]" />
         <div className="aurora-orb animate-aurora-2 bottom-[-30%] right-[5%] w-[45%] h-[70%] bg-[hsl(280_80%_55%/0.22)]" />
         <div className="aurora-orb animate-aurora-3 top-[10%] right-[30%] w-[30%] h-[40%] bg-[hsl(170_85%_50%/0.18)]" />
       </div>
-      <div className="noise" />
+      <div className="noise hidden md:block" />
 
       <div className="container mx-auto px-4 py-12 md:py-20 relative z-10">
         <div className="max-w-3xl mx-auto text-center">

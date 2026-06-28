@@ -22,7 +22,7 @@ export default function About() {
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-16">
-            {stats.map((s, i) => (
+            {stats.map((s) => (
               <div
                 key={s.label}
                 className="glass rounded-2xl p-6 text-center hover:border-accent/30"
