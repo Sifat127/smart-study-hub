@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useDepartments } from "@/hooks/useDepartments";
+import { useSemesters } from "@/hooks/useSemesters";
 
 interface Course {
   id: string;
@@ -21,6 +23,8 @@ const emptyForm = { code: "", name: "", department: "", semester: "1" };
 
 export default function AdminManageCourses() {
   const { toast } = useToast();
+  const departments = useDepartments();
+  const semesters = useSemesters();
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
