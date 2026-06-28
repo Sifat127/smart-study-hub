@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { downloadFile, getCachedPreviewBytes, getPreviewBytes } from "@/lib/storage";
+import { downloadFile, getPreviewBytes } from "@/lib/storage";
 import { getDocument, GlobalWorkerOptions, type PDFDocumentProxy } from "pdfjs-dist";
 import pdfWorker from "pdfjs-dist/build/pdf.worker.mjs?url";
 import { toast } from "sonner";
@@ -48,9 +48,7 @@ export default function PdfViewer() {
   const fileName = searchParams.get("name") || "document.pdf";
   const back = searchParams.get("back") || "/";
 
-  const [state, setState] = useState<State>(() =>
-    fileId && getCachedPreviewBytes(fileId) ? { status: "loading" } : { status: "loading" },
-  );
+  const [state, setState] = useState<State>({ status: "loading" });
   const [attempt, setAttempt] = useState(0);
   const [page, setPage] = useState(1);
   const [pageInput, setPageInput] = useState("1");
