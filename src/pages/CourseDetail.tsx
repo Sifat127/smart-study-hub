@@ -406,6 +406,13 @@ export default function CourseDetail() {
             }
             return (
             <div className="space-y-4 max-w-3xl mx-auto">
+              {filtered.length === 0 && query && (
+                <div className="glass rounded-2xl p-6 text-center text-sm text-muted-foreground">
+                  No {activeTab === "materials" ? "materials" : "notes"} match
+                  <span className="text-foreground/90 font-medium"> "{query}"</span>.
+                  {filteredUploads.length > 0 && " Check student uploads below."}
+                </div>
+              )}
               {visibleChapters.map((chapter) => (
                 <div
                   key={chapter.id}
