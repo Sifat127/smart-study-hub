@@ -144,6 +144,43 @@ test.describe("RLS regression — anonymous client", () => {
     await api.dispose();
   });
 
+  test("anon cannot select chapters pdf_path/notes_path columns (column-level grants)", async () => {
+    const api = await request.newContext({ baseURL: SUPABASE_URL });
+
+    // The anon-granted safe columns must still be readable — mirrors the
+    // guest CourseDetail query.
+    const safe = await api.get(
+      "/rest/v1/chapters?select=id,title,description,pdf_name,notes_name,uploaded_at&limit=1",
+      { headers: anonHeaders() },
+    );
+    expect(
+      safe.ok(),
+      `anon read safe chapter columns failed: ${safe.status()} ${await safe.text()}`,
+    ).toBe(true);
+    expect(Array.isArray(await safe.json())).toBe(true);
+
+    // Sensitive file-pointer columns must be blocked at the column-grant
+    // level for anon. PostgREST returns 401/403 with a "permission denied
+    // for ... column" message when SELECT on the column was revoked.
+    for (const col of ["pdf_path", "notes_path", "pdf_url", "notes_url", "file_id"]) {
+      const res = await api.get(`/rest/v1/chapters?select=id,${col}&limit=1`, {
+        headers: anonHeaders(),
+      });
+      const status = res.status();
+      const body = await res.text();
+      expect(
+        status,
+        `anon select chapters.${col}: expected blocked, got ${status} ${body}`,
+      ).toBeGreaterThanOrEqual(400);
+      expect([401, 403]).toContain(status);
+      expect(body.toLowerCase()).toMatch(/permission|denied|not allowed|column/);
+    }
+
+    await api.dispose();
+  });
+
+
+
   test("anon cannot read auth-only tables", async () => {
     const api = await request.newContext({ baseURL: SUPABASE_URL });
 
@@ -167,6 +204,42 @@ test.describe("RLS regression — anonymous client", () => {
     await api.dispose();
   });
 });
+
+test.describe("RLS regression — authenticated user chapter columns", () => {
+  test.skip(!hasUser, "TEST_USER_EMAIL / TEST_USER_PASSWORD not set");
+
+  test("authenticated user CAN select chapters pdf_path/notes_path (CourseDetail signed-in query)", async () => {
+    const api = await request.newContext({ baseURL: SUPABASE_URL });
+    const { access_token } = await signIn(api, USER_EMAIL, USER_PASSWORD);
+    const h = authHeaders(access_token);
+
+    // Mirrors the exact column list CourseDetail.tsx requests when signed in.
+    const res = await api.get(
+      "/rest/v1/chapters?select=id,title,description,pdf_name,pdf_path,pdf_url,notes_name,notes_path,notes_url,file_id,uploaded_at&limit=1",
+      { headers: h },
+    );
+    expect(
+      res.ok(),
+      `authed user read sensitive chapter columns failed: ${res.status()} ${await res.text()}`,
+    ).toBe(true);
+    const rows = (await res.json()) as Record<string, unknown>[];
+    expect(Array.isArray(rows)).toBe(true);
+    if (rows.length > 0) {
+      for (const col of [
+        "id", "title", "description", "pdf_name", "pdf_path", "pdf_url",
+        "notes_name", "notes_path", "notes_url", "file_id", "uploaded_at",
+      ]) {
+        expect(
+          col in rows[0],
+          `authed user chapter row missing column ${col}`,
+        ).toBe(true);
+      }
+    }
+
+    await api.dispose();
+  });
+});
+
 
 test.describe("RLS regression — normal authenticated user", () => {
   test.skip(!hasUser, "TEST_USER_EMAIL / TEST_USER_PASSWORD not set");
