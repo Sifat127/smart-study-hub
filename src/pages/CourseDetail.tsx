@@ -61,6 +61,7 @@ export default function CourseDetail() {
   const [uploaderQuery, setUploaderQuery] = useState("");
   const [batchFilter, setBatchFilter] = useState<string>("all");
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "az" | "za">("newest");
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   const requireAuth = (action: string): boolean => {
