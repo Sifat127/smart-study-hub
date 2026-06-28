@@ -140,45 +140,93 @@ export default function AdminManageCourses() {
           <Button onClick={openAdd}><Plus className="h-4 w-4 mr-1" /> Add Course</Button>
         </div>
 
+        {!loading && (
+          <p className="text-sm text-muted-foreground mb-3">
+            Showing <span className="font-medium text-foreground">{paged.length}</span> of {filtered.length} courses
+          </p>
+        )}
+
         {loading ? (
-          <div className="flex justify-center py-16">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <div className="bg-card rounded-xl border border-border card-shadow overflow-hidden">
+            <div className="p-4 border-b border-border bg-muted/50">
+              <Skeleton className="h-4 w-32" />
+            </div>
+            <div className="divide-y divide-border/50">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-4 p-4">
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-4 flex-1" />
+                  <Skeleton className="h-4 w-24 hidden sm:block" />
+                  <Skeleton className="h-4 w-12 hidden sm:block" />
+                  <Skeleton className="h-8 w-16" />
+                </div>
+              ))}
+            </div>
           </div>
         ) : (
-          <div className="bg-card rounded-xl border border-border card-shadow overflow-hidden">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border bg-muted/50">
-                  <th className="text-left p-4 font-display font-semibold">Code</th>
-                  <th className="text-left p-4 font-display font-semibold">Name</th>
-                  <th className="text-left p-4 font-display font-semibold hidden sm:table-cell">Department</th>
-                  <th className="text-left p-4 font-display font-semibold hidden sm:table-cell">Semester</th>
-                  <th className="text-right p-4 font-display font-semibold">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((c) => (
-                  <tr key={c.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
-                    <td className="p-4 font-mono text-primary font-medium">{c.code}</td>
-                    <td className="p-4">{c.name}</td>
-                    <td className="p-4 hidden sm:table-cell text-muted-foreground">{c.department}</td>
-                    <td className="p-4 hidden sm:table-cell text-muted-foreground">{c.semester}</td>
-                    <td className="p-4 text-right">
-                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(c)}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => handleDelete(c.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </td>
+          <>
+            <div className="bg-card rounded-xl border border-border card-shadow overflow-hidden">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border bg-muted/50">
+                    <th className="text-left p-4 font-display font-semibold">Code</th>
+                    <th className="text-left p-4 font-display font-semibold">Name</th>
+                    <th className="text-left p-4 font-display font-semibold hidden sm:table-cell">Department</th>
+                    <th className="text-left p-4 font-display font-semibold hidden sm:table-cell">Semester</th>
+                    <th className="text-right p-4 font-display font-semibold">Actions</th>
                   </tr>
-                ))}
-                {filtered.length === 0 && (
-                  <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">No courses found</td></tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {paged.map((c) => (
+                    <tr key={c.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
+                      <td className="p-4 font-mono text-primary font-medium">{c.code}</td>
+                      <td className="p-4">{c.name}</td>
+                      <td className="p-4 hidden sm:table-cell text-muted-foreground">{c.department}</td>
+                      <td className="p-4 hidden sm:table-cell text-muted-foreground">{c.semester}</td>
+                      <td className="p-4 text-right">
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(c)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => handleDelete(c.id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                  {filtered.length === 0 && (
+                    <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">No courses found</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+            {totalPages > 1 && (
+              <Pagination className="mt-6">
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={(e) => { e.preventDefault(); setPage(Math.max(1, currentPage - 1)); }}
+                      className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                  {Array.from({ length: totalPages }).map((_, i) => (
+                    <PaginationItem key={i}>
+                      <PaginationLink
+                        isActive={currentPage === i + 1}
+                        onClick={(e) => { e.preventDefault(); setPage(i + 1); }}
+                        className="cursor-pointer"
+                      >{i + 1}</PaginationLink>
+                    </PaginationItem>
+                  ))}
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={(e) => { e.preventDefault(); setPage(Math.min(totalPages, currentPage + 1)); }}
+                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            )}
+          </>
         )}
       </div>
 
