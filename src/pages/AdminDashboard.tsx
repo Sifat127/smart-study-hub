@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const actions = [
   { label: "Upload PDF", icon: Upload, desc: "Add new chapter PDFs", to: "/admin/upload-pdf" },
+  { label: "Manage Departments", icon: Layers, desc: "Add, edit, or remove departments", to: "/admin/manage-departments" },
   { label: "Manage Chapters", icon: FileEdit, desc: "Edit chapter info & linked PDFs", to: "/admin/manage-chapters" },
   { label: "Upload Student Notes", icon: StickyNote, desc: "Submit student notes & materials", to: "/upload-notes" },
   { label: "Manage Courses", icon: BookOpen, desc: "Edit course details", to: "/admin/manage-courses" },
