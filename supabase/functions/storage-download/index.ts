@@ -3,7 +3,19 @@
 // Returns 302 redirect to a short-lived signed URL.
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { readR2Config, r2GetObject, r2SignedGetUrl } from "../_shared/r2.ts";
+import { readR2Config, r2GetObject, r2HeadObject, r2SignedGetUrl } from "../_shared/r2.ts";
+
+// pdf.js progressive loading sends Range / If-Range and reads Content-Length,
+// Content-Range, Accept-Ranges and ETag. CORS preflight must allow those
+// request headers, and we must expose the response headers to JS.
+const previewCors = {
+  ...corsHeaders,
+  "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, range, if-range, if-none-match",
+  "Access-Control-Expose-Headers":
+    "Content-Length, Content-Range, Accept-Ranges, ETag",
+};
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -13,7 +25,8 @@ function json(body: unknown, status = 200) {
 }
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response("ok", { headers: previewCors });
+
 
   try {
     const url = new URL(req.url);
@@ -57,27 +70,51 @@ Deno.serve(async (req) => {
 
     const cfg = readR2Config();
 
-    // Same-origin blob previews are more reliable than embedding a cross-origin R2 URL.
-    // The client fetches this with auth, converts it to a blob URL, then renders the PDF iframe.
+    // Same-origin streaming previews. Forwards the client's Range header to
+    // R2 so pdf.js can do progressive first-page-fast loading; without Range
+    // pdf.js still gets 200 + full bytes (the path prefetch uses).
     if (preview) {
-      const objectRes = await r2GetObject(cfg, file.object_key);
       const originalName = String(file.original_filename ?? "file.pdf").replace(/[\r\n"]/g, "_");
       const contentType = String(file.file_type ?? "");
       const isPdf = /\.pdf$/i.test(originalName) || contentType.toLowerCase().includes("pdf");
+      const baseType = isPdf ? "application/pdf" : contentType || "application/octet-stream";
 
-      return new Response(objectRes.body, {
-        status: 200,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": isPdf ? "application/pdf" : contentType || "application/octet-stream",
+      // HEAD: just surface length + range support. pdf.js (and well-behaved
+      // HTTP caches) use this to size the resource before requesting ranges.
+      if (req.method === "HEAD") {
+        const headRes = await r2HeadObject(cfg, file.object_key);
+        const headers = new Headers({
+          ...previewCors,
+          "Content-Type": baseType,
           "Content-Disposition": `inline; filename="${originalName}"`,
-          // Allow short-lived private browser caching so repeat opens of the
-          // same PDF skip the R2 round-trip entirely. The response is gated
-          // by an Authorization header so it must be `private`.
           "Cache-Control": "private, max-age=300",
           "X-Content-Type-Options": "nosniff",
-        },
+          "Accept-Ranges": "bytes",
+        });
+        const cl = headRes.headers.get("Content-Length");
+        if (cl) headers.set("Content-Length", cl);
+        const etag = headRes.headers.get("ETag");
+        if (etag) headers.set("ETag", etag);
+        return new Response(null, { status: 200, headers });
+      }
+
+      const range = req.headers.get("Range") ?? undefined;
+      const ifRange = req.headers.get("If-Range") ?? undefined;
+      const objectRes = await r2GetObject(cfg, file.object_key, { range, ifRange });
+      const headers = new Headers({
+        ...previewCors,
+        "Content-Type": baseType,
+        "Content-Disposition": `inline; filename="${originalName}"`,
+        "Cache-Control": "private, max-age=300",
+        "X-Content-Type-Options": "nosniff",
+        "Accept-Ranges": "bytes",
       });
+      const passthrough = ["Content-Length", "Content-Range", "ETag", "Last-Modified"];
+      for (const h of passthrough) {
+        const v = objectRes.headers.get(h);
+        if (v) headers.set(h, v);
+      }
+      return new Response(objectRes.body, { status: objectRes.status, headers });
     }
 
     const originalName = String(file.original_filename ?? "file");

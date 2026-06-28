@@ -117,12 +117,30 @@ export async function r2SignedGetUrl(
   return signed.url;
 }
 
-export async function r2GetObject(cfg: R2Config, key: string): Promise<Response> {
+export async function r2GetObject(
+  cfg: R2Config,
+  key: string,
+  opts: { range?: string; ifRange?: string } = {},
+): Promise<Response> {
   const client = awsClient(cfg);
-  const res = await client.fetch(endpoint(cfg, key), { method: "GET" });
-  if (!res.ok) {
+  const headers: Record<string, string> = {};
+  if (opts.range) headers["Range"] = opts.range;
+  if (opts.ifRange) headers["If-Range"] = opts.ifRange;
+  const res = await client.fetch(endpoint(cfg, key), { method: "GET", headers });
+  // 206 Partial Content is the success case for ranged reads.
+  if (!res.ok && res.status !== 206) {
     const text = await res.text().catch(() => "");
     throw new Error(`R2 download failed (${res.status}): ${text.slice(0, 300)}`);
+  }
+  return res;
+}
+
+export async function r2HeadObject(cfg: R2Config, key: string): Promise<Response> {
+  const client = awsClient(cfg);
+  const res = await client.fetch(endpoint(cfg, key), { method: "HEAD" });
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`R2 head failed (${res.status}): ${text.slice(0, 300)}`);
   }
   return res;
 }

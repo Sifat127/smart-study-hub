@@ -160,6 +160,36 @@ export function getCachedPreviewBytes(fileId: string): Uint8Array | undefined {
   return PREVIEW_CACHE.get(fileId);
 }
 
+export function setCachedPreviewBytes(fileId: string, bytes: Uint8Array): void {
+  if (!fileId || !bytes?.byteLength) return;
+  PREVIEW_CACHE.set(fileId, bytes);
+  while (PREVIEW_CACHE.size > PREVIEW_CACHE_MAX) {
+    const oldest = PREVIEW_CACHE.keys().next().value;
+    if (oldest === undefined) break;
+    PREVIEW_CACHE.delete(oldest);
+  }
+}
+
+/**
+ * Build the URL + auth header pdf.js needs to stream a preview progressively.
+ * pdf.js uses Range requests against this URL, so only the bytes required to
+ * paint the first page are fetched up front; the remaining pages are pulled
+ * on demand. Pair with `disableAutoFetch: true` for true first-page-fast mode.
+ */
+export async function getPreviewStreamConfig(
+  fileId: string,
+): Promise<{ url: string; httpHeaders: Record<string, string>; withCredentials: false }> {
+  const auth = await getAuthHeader("preview files");
+  const url = new URL(`${FUNCTIONS_BASE}/storage-download`);
+  url.searchParams.set("file_id", fileId);
+  url.searchParams.set("preview", "1");
+  return {
+    url: url.toString(),
+    httpHeaders: { Authorization: auth },
+    withCredentials: false,
+  };
+}
+
 export async function getPreviewBytes(fileId: string): Promise<Uint8Array> {
   const cached = PREVIEW_CACHE.get(fileId);
   if (cached) {

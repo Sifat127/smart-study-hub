@@ -18,7 +18,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { downloadFile, getPreviewBytes, prefetchPreviewBytes } from "@/lib/storage";
+import {
+  downloadFile,
+  getCachedPreviewBytes,
+  getPreviewStreamConfig,
+  prefetchPreviewBytes,
+  setCachedPreviewBytes,
+} from "@/lib/storage";
 import { getDocument, GlobalWorkerOptions, type PDFDocumentProxy } from "pdfjs-dist";
 import pdfWorker from "pdfjs-dist/build/pdf.worker.mjs?url";
 import { toast } from "sonner";
@@ -84,31 +90,55 @@ export default function PdfViewer() {
 
     (async () => {
       try {
-        // Fetch raw bytes and feed pdf.js directly. We never create a blob URL
-        // for the PDF, so the browser has no way to hand it off to its
-        // built-in viewer — pdf.js is the only renderer in play.
-        const bytes = await getPreviewBytes(fileId);
-        if (cancelled) return;
-        // Keep a pristine copy for the download button. pdf.js may transfer
-        // the buffer it is given, so we hand it a separate clone.
-        bytesRef.current = bytes;
-        const renderCopy = new Uint8Array(bytes);
-        // Hint pdf.js to skip its own range-request / streaming machinery —
-        // we already have all the bytes in memory, so those code paths only
-        // add overhead before the first page paints.
-        const pdf = await getDocument({
-          data: renderCopy,
-          disableAutoFetch: true,
-          disableStream: true,
-        }).promise;
+        // Fast path: bytes are already in memory from a previous view or a
+        // hover-prefetch. Hand them to pdf.js directly so the first page
+        // paints synchronously (no network on the hot path).
+        const cached = getCachedPreviewBytes(fileId);
+        let pdf;
+        if (cached) {
+          bytesRef.current = cached;
+          pdf = await getDocument({
+            data: new Uint8Array(cached),
+            disableAutoFetch: true,
+            disableStream: true,
+          }).promise;
+        } else {
+          // First-page-fast preview: pdf.js issues Range requests against the
+          // edge function, so it only needs the bytes for page 1 before the
+          // first render. Remaining pages are fetched lazily as the user
+          // navigates. The next/prev page warm-up in `renderPage` pulls the
+          // sibling pages in the background once page 1 paints.
+          const stream = await getPreviewStreamConfig(fileId);
+          pdf = await getDocument({
+            url: stream.url,
+            httpHeaders: stream.httpHeaders,
+            withCredentials: stream.withCredentials,
+            // Only fetch ranges that are actually needed — this is what makes
+            // the first page render before the whole PDF is downloaded.
+            disableAutoFetch: true,
+            disableStream: false,
+            rangeChunkSize: 65536,
+          }).promise;
+          // Populate the in-memory cache for next time. pdf.getData() returns
+          // whatever bytes have been pulled so far, and forces the rest, so
+          // this also acts as a low-priority background prefetch of the tail.
+          void pdf
+            .getData()
+            .then((data) => {
+              const u8 = data instanceof Uint8Array ? data : new Uint8Array(data);
+              bytesRef.current = u8;
+              setCachedPreviewBytes(fileId, u8);
+            })
+            .catch(() => {
+              /* prefetch failure is non-fatal */
+            });
+        }
         if (cancelled) {
           pdf.destroy();
           return;
         }
         setState({ status: "ready", pdf });
-        // Once the requested PDF is rendering, warm the cache for the
-        // previous/next siblings the referrer page passed along. This makes
-        // hopping between adjacent uploads feel instant.
+        // Warm sibling uploads in the background.
         const prev = searchParams.get("prev");
         const next = searchParams.get("next");
         prefetchPreviewBytes(prev);
