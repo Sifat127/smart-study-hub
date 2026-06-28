@@ -23,6 +23,7 @@ interface CourseOption {
 
 export default function UploadNotes() {
   const { toast } = useToast();
+  const departments = useDepartments();
   const { user, profile, loading: authLoading, isAdmin } = useAuth();
   const navigate = useNavigate();
 
