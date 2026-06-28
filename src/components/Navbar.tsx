@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, LogIn, UserPlus, LogOut, LayoutDashboard, User as UserIcon, Search as SearchIcon } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 
 
@@ -110,64 +110,64 @@ export default function Navbar() {
           <button
             className="p-2 rounded-xl hover:bg-white/5 border border-white/10 hover:border-border"
             onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-menu"
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
+
         </div>
       </div>
 
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="md:hidden overflow-hidden border-t border-white/[0.06] bg-background/90 backdrop-blur-2xl"
-          >
-            <div className="p-4 flex flex-col gap-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  onClick={() => setMobileOpen(false)}
-                  className={`px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
-                    location.pathname === link.to
-                      ? "bg-white/5 text-foreground border border-white/10"
-                      : "text-muted-foreground hover:text-foreground hover:bg-white/5"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-              <div className="flex gap-2 mt-3 pt-3 border-t border-white/[0.06]">
-                {user ? (
-                  <>
-                    <Button variant="outline" size="sm" className="flex-1 rounded-xl border-white/10" asChild>
-                      <Link to={isAdmin ? "/admin" : "/dashboard"} onClick={() => setMobileOpen(false)}>Dashboard</Link>
-                    </Button>
-                    <Button variant="outline" size="sm" className="flex-1 rounded-xl border-white/10" asChild>
-                      <Link to="/profile" onClick={() => setMobileOpen(false)}>Profile</Link>
-                    </Button>
-                    <Button size="sm" variant="outline" className="flex-1 rounded-xl border-white/10" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
-                      Logout
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button variant="outline" size="sm" className="flex-1 rounded-xl border-white/10" asChild>
-                      <Link to="/login" onClick={() => setMobileOpen(false)}>Login</Link>
-                    </Button>
-                    <Button size="sm" className="flex-1 bg-gradient-primary text-primary-foreground rounded-xl" asChild>
-                      <Link to="/signup" onClick={() => setMobileOpen(false)}>Sign Up</Link>
-                    </Button>
-                  </>
-                )}
-              </div>
+      {mobileOpen && (
+        <div
+          id="mobile-menu"
+          className="md:hidden border-t border-white/[0.06] bg-background/95 backdrop-blur-2xl"
+        >
+          <div className="p-4 flex flex-col gap-1">
+            {navLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                onClick={() => setMobileOpen(false)}
+                className={`px-4 py-3 rounded-xl text-sm font-medium ${
+                  location.pathname === link.to
+                    ? "bg-white/5 text-foreground border border-white/10"
+                    : "text-muted-foreground hover:text-foreground hover:bg-white/5"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+            <div className="flex gap-2 mt-3 pt-3 border-t border-white/[0.06]">
+              {user ? (
+                <>
+                  <Button variant="outline" size="sm" className="flex-1 rounded-xl border-white/10" asChild>
+                    <Link to={isAdmin ? "/admin" : "/dashboard"} onClick={() => setMobileOpen(false)}>Dashboard</Link>
+                  </Button>
+                  <Button variant="outline" size="sm" className="flex-1 rounded-xl border-white/10" asChild>
+                    <Link to="/profile" onClick={() => setMobileOpen(false)}>Profile</Link>
+                  </Button>
+                  <Button size="sm" variant="outline" className="flex-1 rounded-xl border-white/10" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="outline" size="sm" className="flex-1 rounded-xl border-white/10" asChild>
+                    <Link to="/login" onClick={() => setMobileOpen(false)}>Login</Link>
+                  </Button>
+                  <Button size="sm" className="flex-1 bg-gradient-primary text-primary-foreground rounded-xl" asChild>
+                    <Link to="/signup" onClick={() => setMobileOpen(false)}>Sign Up</Link>
+                  </Button>
+                </>
+              )}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
+
