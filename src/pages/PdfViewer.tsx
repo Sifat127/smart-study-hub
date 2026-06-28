@@ -67,25 +67,25 @@ export default function PdfViewer() {
       return;
     }
     let cancelled = false;
-    let createdUrl: string | null = null;
     setState({ status: "loading" });
     setPage(1);
     setPageInput("1");
 
     (async () => {
       try {
-        const url = await getPreviewObjectUrl(fileId);
-        createdUrl = url;
-        const pdf = await getDocument(url).promise;
+        // Fetch raw bytes and feed pdf.js directly. We never create a blob URL
+        // for the PDF, so the browser has no way to hand it off to its
+        // built-in viewer — pdf.js is the only renderer in play.
+        const bytes = await getPreviewBytes(fileId);
+        if (cancelled) return;
+        const pdf = await getDocument({ data: bytes }).promise;
         if (cancelled) {
           pdf.destroy();
-          URL.revokeObjectURL(url);
           return;
         }
-        setState({ status: "ready", pdf, objectUrl: url });
+        setState({ status: "ready", pdf });
       } catch (err) {
         if (cancelled) return;
-        if (createdUrl) URL.revokeObjectURL(createdUrl);
         setState({
           status: "error",
           message: err instanceof Error ? err.message : "Couldn't load this PDF.",
