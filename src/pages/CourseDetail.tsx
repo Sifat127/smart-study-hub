@@ -409,20 +409,79 @@ export default function CourseDetail() {
                     </button>
                   )}
                 </div>
-                <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
-                  <SelectTrigger
-                    aria-label="Sort order"
-                    className={`sm:w-48 min-h-12 rounded-2xl glass ${sortBy !== "newest" ? "border-accent/60 ring-1 ring-accent/30" : "border-white/10"}`}
+                {/* Desktop / tablet: native-style Select */}
+                <div className="hidden sm:block">
+                  <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
+                    <SelectTrigger
+                      aria-label="Sort order"
+                      className={`sm:w-48 min-h-12 rounded-2xl glass ${sortBy !== "newest" ? "border-accent/60 ring-1 ring-accent/30" : "border-white/10"}`}
+                    >
+                      <SelectValue placeholder="Sort" />
+                    </SelectTrigger>
+                    <SelectContent className="glass-strong rounded-xl border-white/10">
+                      <SelectItem value="newest">Newest first</SelectItem>
+                      <SelectItem value="oldest">Oldest first</SelectItem>
+                      <SelectItem value="az">Title A–Z</SelectItem>
+                      <SelectItem value="za">Title Z–A</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Mobile: bottom sheet with large touch targets */}
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <button
+                      type="button"
+                      aria-label="Open sort options"
+                      className={`sm:hidden glass rounded-2xl min-h-12 px-4 flex items-center justify-between gap-2 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${sortBy !== "newest" ? "border border-accent/60 ring-1 ring-accent/30" : "border border-white/10"}`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <ArrowUpDown aria-hidden="true" className="h-4 w-4 text-accent" />
+                        {SORT_LABELS[sortBy]}
+                      </span>
+                      <ChevronDown aria-hidden="true" className="h-4 w-4 text-muted-foreground" />
+                    </button>
+                  </SheetTrigger>
+                  <SheetContent
+                    side="bottom"
+                    className="glass-strong border-t border-white/10 rounded-t-3xl p-0 pb-[env(safe-area-inset-bottom)]"
                   >
-                    <SelectValue placeholder="Sort" />
-                  </SelectTrigger>
-                  <SelectContent className="glass-strong rounded-xl border-white/10">
-                    <SelectItem value="newest">Newest first</SelectItem>
-                    <SelectItem value="oldest">Oldest first</SelectItem>
-                    <SelectItem value="az">Title A–Z</SelectItem>
-                    <SelectItem value="za">Title Z–A</SelectItem>
-                  </SelectContent>
-                </Select>
+                    <div className="mx-auto mt-3 mb-1 h-1.5 w-12 rounded-full bg-white/15" aria-hidden="true" />
+                    <SheetHeader className="px-5 pt-3 pb-2 text-left">
+                      <SheetTitle className="text-base font-display">Sort by</SheetTitle>
+                    </SheetHeader>
+                    <ul role="listbox" aria-label="Sort options" className="px-2 pb-3">
+                      {SORT_OPTIONS.map((opt) => {
+                        const active = sortBy === opt.value;
+                        return (
+                          <li key={opt.value}>
+                            <SheetClose asChild>
+                              <button
+                                type="button"
+                                role="option"
+                                aria-selected={active}
+                                onClick={() => setSortBy(opt.value)}
+                                className={`w-full min-h-14 px-4 rounded-2xl flex items-center justify-between gap-3 text-left text-base font-medium transition-colors ${
+                                  active
+                                    ? "bg-accent/15 text-foreground border border-accent/30"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-white/5 border border-transparent"
+                                }`}
+                              >
+                                <span className="flex items-center gap-3">
+                                  <span className={`h-9 w-9 rounded-xl flex items-center justify-center ${active ? "bg-accent/20 text-accent" : "bg-white/5 text-muted-foreground"}`}>
+                                    <opt.icon aria-hidden="true" className="h-4 w-4" />
+                                  </span>
+                                  {opt.label}
+                                </span>
+                                {active && <Check aria-hidden="true" className="h-5 w-5 text-accent" />}
+                              </button>
+                            </SheetClose>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </SheetContent>
+                </Sheet>
               </div>
               {query && (
                 <p className="mt-2 text-xs text-muted-foreground px-1" aria-live="polite" role="status">
