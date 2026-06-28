@@ -119,6 +119,19 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  *, *::before, *::after {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
+  }
+
+  .typewriter-cursor {
+    animation: blink 0.7s step-end infinite !important;
+  }
+
   /* Sticky-nav-friendly anchors */
   :target { scroll-margin-top: 8rem; }
 
