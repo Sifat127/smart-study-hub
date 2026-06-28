@@ -222,7 +222,7 @@ export type Database = {
           unique_filename: string
           upload_date: string
           uploader_id: string | null
-          visibility: string
+          visibility: Database["public"]["Enums"]["file_visibility"]
           year: string | null
         }
         Insert: {
@@ -247,7 +247,7 @@ export type Database = {
           unique_filename: string
           upload_date?: string
           uploader_id?: string | null
-          visibility?: string
+          visibility?: Database["public"]["Enums"]["file_visibility"]
           year?: string | null
         }
         Update: {
@@ -272,7 +272,7 @@ export type Database = {
           unique_filename?: string
           upload_date?: string
           uploader_id?: string | null
-          visibility?: string
+          visibility?: Database["public"]["Enums"]["file_visibility"]
           year?: string | null
         }
         Relationships: []
@@ -481,6 +481,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      file_visibility: "authenticated" | "private"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -609,6 +610,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      file_visibility: ["authenticated", "private"],
     },
   },
 } as const
