@@ -602,6 +602,33 @@ export default function CourseDetail() {
                               >
                                 <Eye className="h-4 w-4 mr-1.5" /> View
                               </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="rounded-xl font-semibold"
+                                onClick={async () => {
+                                  if (!requireAuth("download this file")) return;
+                                  try {
+                                    if (u.file_id) {
+                                      const { downloadFile } = await import("@/lib/storage");
+                                      await downloadFile(u.file_id, u.file_name);
+                                    } else {
+                                      const a = document.createElement("a");
+                                      a.href = u.file_url;
+                                      a.download = u.file_name;
+                                      a.target = "_blank";
+                                      a.rel = "noopener noreferrer";
+                                      document.body.appendChild(a);
+                                      a.click();
+                                      a.remove();
+                                    }
+                                  } catch (err) {
+                                    toast.error("Couldn't download file", { description: err instanceof Error ? err.message : "Please try again." });
+                                  }
+                                }}
+                              >
+                                <Download className="h-4 w-4 mr-1.5" /> Download
+                              </Button>
                             </div>
                           </div>
                         </div>
