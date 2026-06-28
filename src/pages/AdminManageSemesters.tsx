@@ -73,6 +73,11 @@ export default function AdminManageSemesters() {
     );
   }, [rows, search]);
 
+  useEffect(() => { setPage(1); }, [search]);
+  const totalPages = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const paged = visible.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
   function openNew() {
     const nextNum = rows.length ? Math.max(...rows.map((r) => r.number)) + 1 : 1;
     setForm({ ...emptyForm, number: nextNum, name: `Semester ${nextNum}`, sort_order: nextNum * 10 });
