@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
 import { Search, BookOpen, Layers, FileText, Shield, Users, Download, Monitor, Zap, Briefcase, ArrowRight, Clock, Loader2, Sparkles, GraduationCap, FolderOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,11 +41,6 @@ const floatingElements = [
   { x: "88%", y: "70%", rotate: -20, size: "h-8 w-6 md:h-12 md:w-9", delay: 0, className: "animate-float" },
   { x: "50%", y: "85%", rotate: 5, size: "h-8 w-6 md:h-10 md:w-8", delay: 0, className: "animate-float-delayed" },
 ];
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.5 } }),
-};
 
 export default function Index() {
   const navigate = useNavigate();
@@ -98,18 +92,18 @@ export default function Index() {
       <section className="relative overflow-hidden min-h-[88vh] md:min-h-[92vh] flex items-center">
         {/* Aurora layer */}
         <div className="absolute inset-0 bg-gradient-hero opacity-95" />
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 hidden md:block">
           <div className="aurora-orb animate-aurora-1 top-[-15%] left-[-5%] w-[55%] h-[70%] bg-[hsl(220_95%_55%/0.28)]" />
           <div className="aurora-orb animate-aurora-2 bottom-[-25%] right-[-10%] w-[60%] h-[80%] bg-[hsl(280_85%_60%/0.22)]" />
           <div className="aurora-orb animate-aurora-3 top-[20%] right-[15%] w-[35%] h-[40%] bg-[hsl(170_90%_50%/0.16)]" />
         </div>
-        <div className="noise" />
+        <div className="noise hidden md:block" />
 
         {/* Floating PDF elements */}
         {floatingElements.map((el, i) => (
           <div
             key={i}
-            className={`absolute ${el.className} flex opacity-30 md:opacity-60`}
+            className={`absolute hidden md:flex ${el.className} opacity-60`}
             style={{
               left: el.x,
               top: el.y,
@@ -124,22 +118,12 @@ export default function Index() {
         ))}
 
         <div className="container mx-auto px-5 py-16 md:py-24 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            className="max-w-3xl mx-auto text-center"
-          >
+          <div className="max-w-3xl mx-auto text-center">
             {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="inline-flex items-center gap-2 glass-strong rounded-full px-4 py-1.5 mb-6 md:mb-8 text-xs md:text-sm font-medium text-accent shadow-glow"
-            >
+            <div className="inline-flex items-center gap-2 glass-strong rounded-full px-4 py-1.5 mb-6 md:mb-8 text-xs md:text-sm font-medium text-accent shadow-glow">
               <Sparkles className="h-3.5 w-3.5" />
               Over 10,000+ course materials shared
-            </motion.div>
+            </div>
 
             {/* Heading */}
             <h1 className="font-display text-[1.85rem] sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.05] mb-4 md:mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/50">
@@ -166,13 +150,7 @@ export default function Index() {
             </div>
 
             {/* Search bar */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
-              className="max-w-xl mx-auto relative mb-10 md:mb-14"
-              ref={searchRef}
-            >
+            <div className="max-w-xl mx-auto relative mb-10 md:mb-14" ref={searchRef}>
               <div className="relative group">
                 <div className="absolute -inset-px bg-gradient-primary rounded-2xl opacity-30 blur-sm group-focus-within:opacity-60 transition-opacity" />
                 <div className="relative">
@@ -187,14 +165,8 @@ export default function Index() {
                   />
                 </div>
               </div>
-              <AnimatePresence>
-                {showResults && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    className="absolute top-full mt-2 w-full glass-strong rounded-2xl shadow-elevated overflow-hidden z-50"
-                  >
+              {showResults && (
+                  <div className="absolute top-full mt-2 w-full glass-strong rounded-2xl shadow-elevated overflow-hidden z-50">
                     {results.length > 0 ? results.map((r) => (
                       <button
                         key={r.id}
@@ -210,18 +182,12 @@ export default function Index() {
                     )) : (
                       <div className="px-4 py-3 text-sm text-muted-foreground text-center">কোনো কোর্স পাওয়া যায়নি</div>
                     )}
-                  </motion.div>
+                  </div>
                 )}
-              </AnimatePresence>
-            </motion.div>
+            </div>
 
             {/* Stats Bento */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.5 }}
-              className="grid grid-cols-3 gap-3 md:gap-4 max-w-2xl mx-auto"
-            >
+            <div className="grid grid-cols-3 gap-3 md:gap-4 max-w-2xl mx-auto">
               {stats.map((stat, i) => (
                 <div key={i} className="glass rounded-2xl p-4 md:p-5 card-lift text-left">
                   <div className="flex items-center gap-2 md:gap-3 mb-2">
@@ -233,8 +199,8 @@ export default function Index() {
                   <p className="text-[10px] md:text-xs text-muted-foreground font-medium uppercase tracking-wider mt-1">{stat.label}</p>
                 </div>
               ))}
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -247,17 +213,11 @@ export default function Index() {
             <p className="text-sm md:text-base text-muted-foreground max-w-lg mx-auto">Choose your department to access semester-wise course materials and chapter PDFs.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            {departments.filter(d => ["cse", "eee", "swe"].includes(d.id)).map((dept, i) => {
+            {departments.filter(d => ["cse", "eee", "swe"].includes(d.id)).map((dept) => {
               const Icon = deptIcons[dept.icon] || Monitor;
               return (
-                <motion.div
+                <div
                   key={dept.id}
-                  custom={i}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={fadeUp}
-                  whileHover={{ y: -6, transition: { duration: 0.25, ease: "easeOut" } }}
                 >
                   <Link
                     to={`/departments/${dept.id}`}
@@ -265,13 +225,9 @@ export default function Index() {
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-accent/0 via-accent/0 to-accent/0 group-hover:from-accent/5 group-hover:via-transparent group-hover:to-primary/5 transition-all duration-500 rounded-2xl" />
                     <div className="relative z-10">
-                      <motion.div
-                        className="h-12 w-12 md:h-16 md:w-16 rounded-xl md:rounded-2xl bg-gradient-primary flex items-center justify-center mb-4 md:mb-5"
-                        whileHover={{ scale: 1.15, rotate: 5 }}
-                        transition={{ type: "spring", stiffness: 300, damping: 15 }}
-                      >
+                      <div className="h-12 w-12 md:h-16 md:w-16 rounded-xl md:rounded-2xl bg-gradient-primary flex items-center justify-center mb-4 md:mb-5">
                         <Icon className="h-6 w-6 md:h-8 md:w-8 text-primary-foreground" />
-                      </motion.div>
+                      </div>
                       <h3 className="font-display text-xl font-bold mb-1 group-hover:text-accent transition-colors duration-300">{dept.name}</h3>
                       <p className="text-sm text-muted-foreground mb-1">{dept.fullName}</p>
                       <p className="text-sm text-muted-foreground mb-4">{dept.description}</p>
@@ -280,7 +236,7 @@ export default function Index() {
                       </div>
                     </div>
                   </Link>
-                </motion.div>
+                </div>
               );
             })}
           </div>
@@ -300,30 +256,20 @@ export default function Index() {
             <p className="text-sm md:text-base text-muted-foreground max-w-lg mx-auto">Everything you need for organized, accessible academic resources.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {features.map((f, i) => (
-              <motion.div
+            {features.map((f) => (
+              <div
                 key={f.title}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUp}
-                whileHover={{ y: -6, transition: { duration: 0.25, ease: "easeOut" } }}
                 className="group relative glass rounded-3xl p-5 md:p-6 card-lift overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-accent/0 via-accent/0 to-accent/0 group-hover:from-accent/5 group-hover:via-transparent group-hover:to-primary/5 transition-all duration-500 rounded-2xl" />
                 <div className="relative z-10">
-                  <motion.div
-                    className="h-12 w-12 rounded-2xl bg-accent/15 border border-accent/20 flex items-center justify-center mb-4 shadow-glow"
-                    whileHover={{ scale: 1.15, rotate: 5 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 15 }}
-                  >
+                  <div className="h-12 w-12 rounded-2xl bg-accent/15 border border-accent/20 flex items-center justify-center mb-4 shadow-glow">
                     <f.icon className="h-6 w-6 text-accent" />
-                  </motion.div>
+                  </div>
                   <h3 className="font-display font-semibold text-base md:text-lg mb-1 md:mb-2 group-hover:text-accent transition-colors duration-300">{f.title}</h3>
                   <p className="text-sm text-muted-foreground">{f.desc}</p>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -338,13 +284,8 @@ export default function Index() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
             {recentPDFs.map((pdf, i) => (
-              <motion.div
+              <div
                 key={i}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUp}
                 className="flex items-start gap-3 glass rounded-2xl p-3 md:p-4 card-lift"
               >
                 <div className="h-10 w-10 rounded-xl bg-destructive/15 border border-destructive/20 flex items-center justify-center flex-shrink-0">
@@ -357,7 +298,7 @@ export default function Index() {
                     <Clock className="h-3 w-3" /> {pdf.date}
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -368,11 +309,11 @@ export default function Index() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="glass-strong rounded-[2rem] p-8 md:p-14 text-center relative overflow-hidden max-w-4xl mx-auto card-lift">
             {/* Inner aurora */}
-            <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute inset-0 pointer-events-none hidden md:block">
               <div className="aurora-orb top-[-50%] left-[10%] w-[50%] h-[120%] bg-[hsl(220_90%_55%/0.18)]" />
               <div className="aurora-orb bottom-[-60%] right-[5%] w-[55%] h-[140%] bg-[hsl(280_85%_55%/0.16)]" />
             </div>
-            <div className="noise" />
+            <div className="noise hidden md:block" />
             <div className="relative z-10">
               <div className="inline-flex h-12 w-12 md:h-14 md:w-14 rounded-2xl bg-accent/15 border border-accent/30 items-center justify-center mx-auto mb-5 shadow-glow">
                 <GraduationCap className="h-6 w-6 md:h-7 md:w-7 text-accent" />

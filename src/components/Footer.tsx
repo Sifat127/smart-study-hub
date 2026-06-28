@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { Mail, MapPin, Phone, Github, Linkedin, MessageCircle } from "lucide-react";
-import { motion } from "framer-motion";
 import logo from "@/assets/logo.png";
 
 const socialLinks = [
@@ -101,18 +100,16 @@ export default function Footer() {
               <span className="text-[10px] text-muted-foreground/70">Student of CSE, Daffodil International University</span>
               <div className="flex items-center gap-1">
                 {socialLinks.map((link) => (
-                  <motion.a
+                  <a
                     key={link.label}
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={link.label}
-                    whileHover={{ scale: 1.15, y: -2 }}
-                    whileTap={{ scale: 0.9 }}
                     className="p-2 rounded-full text-muted-foreground hover:text-accent hover:bg-accent/10"
                   >
                     <link.icon className="h-4 w-4" />
-                  </motion.a>
+                  </a>
                 ))}
               </div>
             </div>
