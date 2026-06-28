@@ -264,6 +264,25 @@ export default function PdfViewer() {
 
   const onDownload = async () => {
     try {
+      // Prefer the bytes already rendered on-screen so the download exactly
+      // matches what the user is viewing (no second network round-trip, no
+      // chance of serving a different signed payload).
+      const bytes = bytesRef.current;
+      if (bytes) {
+        const blob = new Blob([new Uint8Array(bytes)], { type: "application/pdf" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        a.rel = "noopener noreferrer";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        return;
+      }
+      // Fallback: the document hasn't finished loading yet — fetch the
+      // signed URL so the user isn't stuck waiting.
       await downloadFile(fileId, fileName);
     } catch (err) {
       toast.error("Couldn't download file", {
