@@ -49,10 +49,10 @@ export interface UploadOptions extends UploadMetadata {
 
 const FUNCTIONS_BASE = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
 
-async function getAuthHeader(): Promise<string> {
+async function getAuthHeader(action = "continue"): Promise<string> {
   const { data } = await supabase.auth.getSession();
   const token = data.session?.access_token;
-  if (!token) throw new Error("You must be signed in to upload files.");
+  if (!token) throw new Error(`You must be signed in to ${action}.`);
   return `Bearer ${token}`;
 }
 
@@ -63,7 +63,7 @@ async function getAuthHeader(): Promise<string> {
 export function uploadFile(file: File, opts: UploadOptions = {}): Promise<StorageFile> {
   return new Promise(async (resolve, reject) => {
     try {
-      const auth = await getAuthHeader();
+      const auth = await getAuthHeader("upload files");
       const form = new FormData();
       form.append("file", file);
       if (opts.title) form.append("title", opts.title);
@@ -108,7 +108,7 @@ export function uploadFile(file: File, opts: UploadOptions = {}): Promise<Storag
 
 /** Returns a short-lived signed URL for the file. */
 export async function getDownloadUrl(fileId: string, asAttachment = false): Promise<string> {
-  const auth = await getAuthHeader().catch(() => null);
+  const auth = await getAuthHeader("download files").catch(() => null);
   const url = new URL(`${FUNCTIONS_BASE}/storage-download`);
   url.searchParams.set("file_id", fileId);
   url.searchParams.set("json", "1");
@@ -122,6 +122,25 @@ export async function getDownloadUrl(fileId: string, asAttachment = false): Prom
     throw new Error(body.error || `Download failed (${res.status})`);
   }
   return body.url as string;
+}
+
+/** Fetches the file through the edge function and returns a same-origin blob URL for inline preview. */
+export async function getPreviewObjectUrl(fileId: string): Promise<string> {
+  const auth = await getAuthHeader("preview files");
+  const url = new URL(`${FUNCTIONS_BASE}/storage-download`);
+  url.searchParams.set("file_id", fileId);
+  url.searchParams.set("preview", "1");
+  const res = await fetch(url.toString(), {
+    method: "GET",
+    headers: { Authorization: auth },
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error || `Preview failed (${res.status})`);
+  }
+  const blob = await res.blob();
+  if (!blob.size) throw new Error("Preview file is empty.");
+  return URL.createObjectURL(blob.type === "application/pdf" ? blob : blob.slice(0, blob.size, "application/pdf"));
 }
 
 /** Trigger a browser download for the given file id. */
@@ -142,7 +161,7 @@ export async function downloadFile(fileId: string, fileName: string): Promise<vo
 
 /** Delete a file (R2 object + DB row). Only the uploader or an admin may delete. */
 export async function deleteFile(fileId: string): Promise<void> {
-  const auth = await getAuthHeader();
+  const auth = await getAuthHeader("delete files");
   const res = await fetch(`${FUNCTIONS_BASE}/storage-delete`, {
     method: "POST",
     headers: { Authorization: auth, "Content-Type": "application/json" },
