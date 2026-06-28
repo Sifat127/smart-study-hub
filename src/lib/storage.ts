@@ -147,24 +147,63 @@ export async function getPreviewObjectUrl(fileId: string): Promise<string> {
  * Fetches the raw PDF bytes through the edge function. Use this when feeding
  * the file to a JS renderer (e.g. pdf.js) so the browser is never given a
  * chance to hand the file off to its native PDF viewer.
+ *
+ * Bytes are cached in-memory per `fileId` for the lifetime of the page so
+ * navigating back into the same document is instant. An LRU bound keeps the
+ * cache from growing without limit.
  */
-export async function getPreviewBytes(fileId: string): Promise<Uint8Array> {
-  const auth = await getAuthHeader("preview files");
-  const url = new URL(`${FUNCTIONS_BASE}/storage-download`);
-  url.searchParams.set("file_id", fileId);
-  url.searchParams.set("preview", "1");
-  const res = await fetch(url.toString(), {
-    method: "GET",
-    headers: { Authorization: auth },
-  });
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error(body.error || `Preview failed (${res.status})`);
-  }
-  const buf = await res.arrayBuffer();
-  if (!buf.byteLength) throw new Error("Preview file is empty.");
-  return new Uint8Array(buf);
+const PREVIEW_CACHE = new Map<string, Uint8Array>();
+const PREVIEW_CACHE_MAX = 6;
+const PREVIEW_INFLIGHT = new Map<string, Promise<Uint8Array>>();
+
+export function getCachedPreviewBytes(fileId: string): Uint8Array | undefined {
+  return PREVIEW_CACHE.get(fileId);
 }
+
+export async function getPreviewBytes(fileId: string): Promise<Uint8Array> {
+  const cached = PREVIEW_CACHE.get(fileId);
+  if (cached) {
+    // Refresh LRU order.
+    PREVIEW_CACHE.delete(fileId);
+    PREVIEW_CACHE.set(fileId, cached);
+    return cached;
+  }
+  const inflight = PREVIEW_INFLIGHT.get(fileId);
+  if (inflight) return inflight;
+
+  const task = (async () => {
+    const auth = await getAuthHeader("preview files");
+    const url = new URL(`${FUNCTIONS_BASE}/storage-download`);
+    url.searchParams.set("file_id", fileId);
+    url.searchParams.set("preview", "1");
+    const res = await fetch(url.toString(), {
+      method: "GET",
+      headers: { Authorization: auth },
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.error || `Preview failed (${res.status})`);
+    }
+    const buf = await res.arrayBuffer();
+    if (!buf.byteLength) throw new Error("Preview file is empty.");
+    const bytes = new Uint8Array(buf);
+    PREVIEW_CACHE.set(fileId, bytes);
+    while (PREVIEW_CACHE.size > PREVIEW_CACHE_MAX) {
+      const oldest = PREVIEW_CACHE.keys().next().value;
+      if (oldest === undefined) break;
+      PREVIEW_CACHE.delete(oldest);
+    }
+    return bytes;
+  })();
+
+  PREVIEW_INFLIGHT.set(fileId, task);
+  try {
+    return await task;
+  } finally {
+    PREVIEW_INFLIGHT.delete(fileId);
+  }
+}
+
 
 /** Trigger a browser download for the given file id. */
 export async function downloadFile(fileId: string, fileName: string): Promise<void> {
