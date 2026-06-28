@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-import { ArrowLeft, GraduationCap, Loader2, Layers } from "lucide-react";
+import { ArrowLeft, GraduationCap, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
 import PageHeader from "@/components/PageHeader";
@@ -67,27 +67,27 @@ export default function DepartmentDetail() {
 
       <section className="py-8 md:py-16">
         <div className="container mx-auto px-4">
-          {loading ? (
-            <div className="flex justify-center py-16">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4 max-w-4xl mx-auto">
-              {semesters.map((sem) => (
-                <Link
-                  key={sem.id}
-                  to={`/departments/${deptId}/semester/${sem.id}`}
-                  className="group block glass rounded-xl md:rounded-2xl p-3 md:p-5 hover:border-accent/30 hover:card-shadow-hover text-center"
-                >
-                  <div className="h-10 w-10 md:h-12 md:w-12 mx-auto rounded-lg md:rounded-xl bg-primary/10 flex items-center justify-center mb-2 md:mb-3 group-hover:bg-gradient-primary">
-                    <GraduationCap className="h-5 w-5 md:h-6 md:w-6 text-primary group-hover:text-primary-foreground" />
-                  </div>
-                  <h3 className="font-display font-semibold text-sm md:text-base">{sem.name}</h3>
-                  <p className="text-[11px] md:text-xs text-muted-foreground mt-0.5 md:mt-1">{sem.courseCount} courses</p>
-                </Link>
-              ))}
-            </div>
-          )}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4 max-w-4xl mx-auto">
+            {semesters.map((sem) => (
+              <Link
+                key={sem.id}
+                to={`/departments/${deptId}/semester/${sem.id}`}
+                className="group block glass rounded-xl md:rounded-2xl p-3 md:p-5 hover:border-accent/30 hover:card-shadow-hover text-center"
+              >
+                <div className="h-10 w-10 md:h-12 md:w-12 mx-auto rounded-lg md:rounded-xl bg-primary/10 flex items-center justify-center mb-2 md:mb-3 group-hover:bg-gradient-primary">
+                  <GraduationCap className="h-5 w-5 md:h-6 md:w-6 text-primary group-hover:text-primary-foreground" />
+                </div>
+                <h3 className="font-display font-semibold text-sm md:text-base">{sem.name}</h3>
+                <p className="text-[11px] md:text-xs text-muted-foreground mt-0.5 md:mt-1 min-h-[1rem]">
+                  {loading ? (
+                    <span className="inline-block h-3 w-14 align-middle rounded bg-muted-foreground/15 animate-pulse" />
+                  ) : (
+                    `${sem.courseCount} courses`
+                  )}
+                </p>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
     </Layout>
