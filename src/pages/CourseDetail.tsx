@@ -458,6 +458,11 @@ export default function CourseDetail() {
                   </div>
                 </div>
               ))}
+              {hasMoreChapters && (
+                <div ref={chaptersSentinelRef} aria-hidden="true" className="h-8" />
+              )}
+
+
 
               {tabUploads.length > 0 && (
                 <div className="pt-6">
