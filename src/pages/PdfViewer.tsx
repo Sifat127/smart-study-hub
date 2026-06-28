@@ -98,6 +98,13 @@ export default function PdfViewer() {
           return;
         }
         setState({ status: "ready", pdf });
+        // Once the requested PDF is rendering, warm the cache for the
+        // previous/next siblings the referrer page passed along. This makes
+        // hopping between adjacent uploads feel instant.
+        const prev = searchParams.get("prev");
+        const next = searchParams.get("next");
+        prefetchPreviewBytes(prev);
+        prefetchPreviewBytes(next);
       } catch (err) {
         if (cancelled) return;
         setState({
