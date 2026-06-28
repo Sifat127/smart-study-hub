@@ -11,7 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { downloadFile as downloadFileFromStorage } from "@/lib/storage";
-import StudentUploadPreview from "@/components/StudentUploadPreview";
+
 
 
 interface CourseData {
