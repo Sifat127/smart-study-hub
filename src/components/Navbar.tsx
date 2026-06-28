@@ -3,7 +3,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, LogIn, UserPlus, LogOut, LayoutDashboard, User as UserIcon, Search as SearchIcon } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 
 
@@ -55,10 +54,8 @@ export default function Navbar() {
                 }`}
               >
                 {active && (
-                  <motion.span
-                    layoutId="nav-pill"
+                  <span
                     className="absolute inset-0 bg-white/[0.06] border border-white/10 rounded-xl shadow-[0_0_20px_-4px_hsl(var(--accent)/0.4)]"
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
 

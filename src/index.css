@@ -106,7 +106,7 @@
 
   html {
     color-scheme: dark;
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -302,12 +302,21 @@
 
 /* Mobile: disable all motion for smoother, faster experience */
 @media (max-width: 767px) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
   *, *::before, *::after {
     animation-duration: 0s !important;
     animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0s !important;
     transition-delay: 0s !important;
+    scroll-behavior: auto !important;
+  }
+
+  .typewriter-cursor {
+    animation: blink 0.7s step-end infinite !important;
   }
 }
 

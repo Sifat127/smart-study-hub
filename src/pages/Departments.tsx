@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import { Monitor, Zap, Briefcase, ArrowRight, FolderOpen, Code, Database, Pill, BookText, Scale, Shirt, Building2, Radio, Plane, Apple, HeartPulse, Clapperboard } from "lucide-react";
 import Layout from "@/components/Layout";
 import PageHeader from "@/components/PageHeader";
@@ -33,13 +32,9 @@ export default function Departments() {
                     <div className="absolute inset-0 bg-gradient-to-br from-accent/0 via-accent/0 to-accent/0 group-hover:from-accent/5 group-hover:via-transparent group-hover:to-primary/5 rounded-2xl" />
 
                     <div className="relative z-10">
-                      <motion.div
-                        className="h-12 w-12 rounded-xl bg-gradient-primary flex items-center justify-center mb-4"
-                        whileHover={{ scale: 1.15, rotate: 5 }}
-                        transition={{ type: "spring", stiffness: 300, damping: 15 }}
-                      >
+                      <div className="h-12 w-12 rounded-xl bg-gradient-primary flex items-center justify-center mb-4">
                         <Icon className="h-6 w-6 text-primary-foreground" />
-                      </motion.div>
+                      </div>
                       <h2 className="font-display text-xl font-bold mb-1 group-hover:text-accent">{dept.name}</h2>
                       <p className="text-muted-foreground text-sm font-medium mb-2">{dept.fullName}</p>
                       <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{dept.description}</p>

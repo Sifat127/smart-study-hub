@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { ReactNode } from "react";
 
 interface PageHeaderProps {
@@ -22,22 +21,12 @@ export default function PageHeader({ title, subtitle, badge, badgeIcon, children
       <div className="noise" />
 
       <div className="container mx-auto px-4 py-12 md:py-20 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="max-w-3xl mx-auto text-center"
-        >
+        <div className="max-w-3xl mx-auto text-center">
           {badge && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.15, duration: 0.4 }}
-              className="inline-flex items-center gap-2 glass-strong rounded-full px-4 py-1.5 mb-5 text-sm font-medium text-accent shadow-glow"
-            >
+            <div className="inline-flex items-center gap-2 glass-strong rounded-full px-4 py-1.5 mb-5 text-sm font-medium text-accent shadow-glow">
               {badgeIcon}
               {badge}
-            </motion.div>
+            </div>
           )}
           <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-extrabold leading-[1.1] mb-3 tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/50">
             {title}
@@ -48,7 +37,7 @@ export default function PageHeader({ title, subtitle, badge, badgeIcon, children
             </p>
           )}
           {children}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
