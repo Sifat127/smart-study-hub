@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { AlertCircle, FileText, Loader2, Lock, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getDocument, GlobalWorkerOptions } from "pdfjs-dist";
+import pdfWorker from "pdfjs-dist/build/pdf.worker.mjs?url";
+
+GlobalWorkerOptions.workerSrc = pdfWorker;
 
 interface Props {
   fileId: string | null;
@@ -13,7 +17,7 @@ interface Props {
 type State =
   | { status: "idle" }
   | { status: "loading" }
-  | { status: "ready"; url: string; objectUrl: boolean }
+  | { status: "ready"; url: string; objectUrl: boolean; pages: number }
   | { status: "error"; message: string };
 
 function isPdf(name: string) {
@@ -27,6 +31,7 @@ function isPdf(name: string) {
  */
 export default function StudentUploadPreview({ fileId, fileName, legacyUrl, canPreview }: Props) {
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [visible, setVisible] = useState(false);
   const [state, setState] = useState<State>({ status: "idle" });
   const [attempt, setAttempt] = useState(0);
@@ -58,13 +63,15 @@ export default function StudentUploadPreview({ fileId, fileName, legacyUrl, canP
         if (fileId) {
           const { getPreviewObjectUrl } = await import("@/lib/storage");
           const url = await getPreviewObjectUrl(fileId);
+          const pdf = await getDocument(url).promise;
           if (cancelled) {
             URL.revokeObjectURL(url);
           } else {
-            setState({ status: "ready", url, objectUrl: true });
+            setState({ status: "ready", url, objectUrl: true, pages: pdf.numPages });
           }
         } else if (legacyUrl) {
-          if (!cancelled) setState({ status: "ready", url: legacyUrl, objectUrl: false });
+          const pdf = await getDocument(legacyUrl).promise;
+          if (!cancelled) setState({ status: "ready", url: legacyUrl, objectUrl: false, pages: pdf.numPages });
         } else {
           if (!cancelled) setState({ status: "error", message: "No file attached." });
         }
@@ -86,6 +93,41 @@ export default function StudentUploadPreview({ fileId, fileName, legacyUrl, canP
   useEffect(() => {
     return () => {
       if (state.status === "ready" && state.objectUrl) URL.revokeObjectURL(state.url);
+    };
+  }, [state]);
+
+  useEffect(() => {
+    if (state.status !== "ready") return;
+    let cancelled = false;
+
+    async function renderFirstPage() {
+      try {
+        const loadingTask = getDocument(state.url);
+        const pdf = await loadingTask.promise;
+        const page = await pdf.getPage(1);
+        const canvas = canvasRef.current;
+        if (!canvas || cancelled) return;
+
+        const containerWidth = rootRef.current?.clientWidth || 720;
+        const baseViewport = page.getViewport({ scale: 1 });
+        const scale = Math.min(2, Math.max(1, containerWidth / baseViewport.width));
+        const viewport = page.getViewport({ scale });
+        const context = canvas.getContext("2d");
+        if (!context) throw new Error("Canvas preview is unavailable.");
+
+        canvas.width = Math.floor(viewport.width);
+        canvas.height = Math.floor(viewport.height);
+        await page.render({ canvasContext: context, viewport }).promise;
+      } catch (err) {
+        if (!cancelled) {
+          setState({ status: "error", message: err instanceof Error ? err.message : "The PDF failed to render." });
+        }
+      }
+    }
+
+    renderFirstPage();
+    return () => {
+      cancelled = true;
     };
   }, [state]);
 
@@ -133,15 +175,16 @@ export default function StudentUploadPreview({ fileId, fileName, legacyUrl, canP
       )}
 
       {canPreview && pdf && state.status === "ready" && (
-        <iframe
-          src={`${state.url}#toolbar=0&navpanes=0&view=FitH`}
-          title={fileName}
-          className="absolute inset-0 h-full w-full"
-          loading="lazy"
-          onError={() =>
-            setState({ status: "error", message: "The PDF failed to render in this browser." })
-          }
-        />
+        <div className="absolute inset-0 overflow-hidden bg-background/70">
+          <div className="absolute left-2 top-2 z-10 rounded-lg border border-border/60 bg-background/85 px-2 py-1 text-[10px] font-semibold text-muted-foreground backdrop-blur-sm">
+            Page 1 of {state.pages}
+          </div>
+          <canvas
+            ref={canvasRef}
+            aria-label={`${fileName} preview`}
+            className="mx-auto block h-full max-w-full bg-background object-contain"
+          />
+        </div>
       )}
     </div>
   );
