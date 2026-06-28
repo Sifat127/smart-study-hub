@@ -68,22 +68,48 @@ export async function r2Delete(cfg: R2Config, key: string) {
   }
 }
 
+export interface SignedGetOptions {
+  expiresInSeconds?: number;
+  /** When set, forces `attachment; filename="..."` so the browser downloads. */
+  downloadFileName?: string;
+  /** When set (and no downloadFileName), forces `inline; filename="..."` so the browser renders it. */
+  inlineFileName?: string;
+  /** Override the Content-Type returned by R2 (e.g. "application/pdf"). */
+  contentType?: string;
+}
+
 export async function r2SignedGetUrl(
   cfg: R2Config,
   key: string,
-  expiresInSeconds = 300,
-  downloadFileName?: string,
+  optsOrExpires: SignedGetOptions | number = 300,
+  downloadFileNameLegacy?: string,
 ): Promise<string> {
+  // Back-compat: r2SignedGetUrl(cfg, key, 300, "file.pdf")
+  const opts: SignedGetOptions =
+    typeof optsOrExpires === "number"
+      ? { expiresInSeconds: optsOrExpires, downloadFileName: downloadFileNameLegacy }
+      : optsOrExpires;
+
   const client = awsClient(cfg);
   const url = new URL(endpoint(cfg, key));
-  url.searchParams.set("X-Amz-Expires", String(expiresInSeconds));
-  if (downloadFileName) {
-    const safe = downloadFileName.replace(/[\r\n"]/g, "_");
+  url.searchParams.set("X-Amz-Expires", String(opts.expiresInSeconds ?? 300));
+
+  const sanitize = (s: string) => s.replace(/[\r\n"]/g, "_");
+  if (opts.downloadFileName) {
     url.searchParams.set(
       "response-content-disposition",
-      `attachment; filename="${safe}"`,
+      `attachment; filename="${sanitize(opts.downloadFileName)}"`,
+    );
+  } else if (opts.inlineFileName) {
+    url.searchParams.set(
+      "response-content-disposition",
+      `inline; filename="${sanitize(opts.inlineFileName)}"`,
     );
   }
+  if (opts.contentType) {
+    url.searchParams.set("response-content-type", opts.contentType);
+  }
+
   const signed = await client.sign(
     new Request(url.toString(), { method: "GET" }),
     { aws: { signQuery: true } },
