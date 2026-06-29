@@ -14,6 +14,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useDepartments } from "@/hooks/useDepartments";
 import Layout from "@/components/Layout";
+import RoleStatusCard from "@/components/RoleStatusCard";
 
 const settingsSchema = z.object({
   full_name: z.string().trim().min(1, "Name is required").max(80),
@@ -251,6 +252,9 @@ export default function Settings() {
             <p className="text-muted-foreground text-sm">Update your profile information and password.</p>
           </div>
         </header>
+
+
+        <RoleStatusCard />
 
         <Tabs defaultValue="profile" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
