@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import GoogleAuthButton from "@/components/GoogleAuthButton";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Login() {
   const [showPass, setShowPass] = useState(false);
@@ -41,9 +42,17 @@ export default function Login() {
       toast({ title: "Login failed", description: error, variant: "destructive" });
     } else {
       toast({ title: "Welcome back!" });
-      setTimeout(() => {
-        navigate("/");
-      }, 300);
+      // Look up role directly to route admins to the admin dashboard
+      const { data: { user } } = await supabase.auth.getUser();
+      let dest = "/";
+      if (user) {
+        const { data: roles } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", user.id);
+        if (roles?.some((r) => r.role === "admin")) dest = "/admin";
+      }
+      setTimeout(() => navigate(dest), 200);
     }
   };
 
