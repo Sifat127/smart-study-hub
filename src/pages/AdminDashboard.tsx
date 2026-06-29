@@ -20,6 +20,7 @@ const actions = [
 ];
 
 export default function AdminDashboard() {
+  const { profile, user } = useAuth();
   const [counts, setCounts] = useState({ depts: 0, courses: 0, chapters: 0 });
   const [loading, setLoading] = useState(true);
 
