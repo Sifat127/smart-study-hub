@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, Layers, FileText, Users, Upload, Settings, GraduationCap, Loader2, StickyNote, FileEdit, History } from "lucide-react";
+import { BookOpen, Layers, FileText, Users, Upload, Settings, GraduationCap, Loader2, StickyNote, FileEdit, History, ShieldCheck } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 const actions = [
   { label: "Upload PDF", icon: Upload, desc: "Add new chapter PDFs", to: "/admin/upload-pdf" },
