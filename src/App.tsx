@@ -29,6 +29,7 @@ import AdminManageUsers from "./pages/AdminManageUsers";
 import AdminSettings from "./pages/AdminSettings";
 import UploadNotes from "./pages/UploadNotes";
 import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 import CompleteProfile from "./pages/CompleteProfile";
 import UserDashboard from "./pages/UserDashboard";
 import Search from "./pages/Search";
@@ -69,6 +70,7 @@ const App = () => (
             <Route path="/admin/settings" element={<ProtectedRoute requireAdmin><AdminSettings /></ProtectedRoute>} />
             <Route path="/upload-notes" element={<ProtectedRoute><UploadNotes /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="/complete-profile" element={<CompleteProfile />} />
             <Route path="/dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
             <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
