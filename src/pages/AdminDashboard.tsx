@@ -52,11 +52,21 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 glass border-b border-border/50">
+      {/* Admin-only accent bar */}
+      <div className="h-1 w-full bg-gradient-to-r from-accent via-primary to-accent" />
+      <header className="sticky top-0 z-50 glass border-b-2 border-accent/30">
         <div className="container mx-auto flex items-center justify-between h-16 px-4">
-          <Link to="/" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-3">
             <img src={logo} alt="DIU StudyBank" className="h-11 w-11 rounded-lg object-contain" />
-            <span className="font-display font-bold text-xl">Admin Dashboard</span>
+            <div className="flex flex-col leading-tight">
+              <span className="font-display font-bold text-xl flex items-center gap-2">
+                Admin Console
+                <Badge variant="default" className="gap-1 text-[10px] uppercase tracking-wider">
+                  <ShieldCheck className="h-3 w-3" /> Admin
+                </Badge>
+              </span>
+              <span className="text-xs text-muted-foreground">Staff-only control panel</span>
+            </div>
           </Link>
           <Button variant="ghost" size="sm" asChild>
             <Link to="/">← Back to Site</Link>
@@ -65,7 +75,21 @@ export default function AdminDashboard() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        <h1 className="font-display text-2xl font-bold mb-6">Dashboard Overview</h1>
+        {/* Admin welcome banner */}
+        <div className="mb-8 rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/10 via-primary/5 to-transparent p-6 relative overflow-hidden">
+          <div className="absolute -top-12 -right-12 h-40 w-40 rounded-full bg-accent/10 blur-3xl" aria-hidden />
+          <div className="flex items-center gap-2 mb-2">
+            <ShieldCheck className="h-5 w-5 text-accent" />
+            <span className="text-xs font-semibold uppercase tracking-widest text-accent">Administrator Area</span>
+          </div>
+          <h1 className="font-display text-3xl font-bold">
+            Welcome back, {profile?.full_name || user?.email?.split("@")[0] || "Admin"}
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            You have elevated permissions. Changes here affect every student on the platform.
+          </p>
+        </div>
+
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
