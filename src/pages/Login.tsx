@@ -41,9 +41,17 @@ export default function Login() {
       toast({ title: "Login failed", description: error, variant: "destructive" });
     } else {
       toast({ title: "Welcome back!" });
-      setTimeout(() => {
-        navigate("/");
-      }, 300);
+      // Look up role directly to route admins to the admin dashboard
+      const { data: { user } } = await supabase.auth.getUser();
+      let dest = "/";
+      if (user) {
+        const { data: roles } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", user.id);
+        if (roles?.some((r) => r.role === "admin")) dest = "/admin";
+      }
+      setTimeout(() => navigate(dest), 200);
     }
   };
 
