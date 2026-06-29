@@ -94,7 +94,11 @@ export default function AdminDashboard() {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {stats.map((s) => (
-            <div key={s.label} className="bg-card rounded-xl border border-border p-5 card-shadow">
+            <div
+              key={s.label}
+              className="bg-card rounded-xl border border-border p-5 card-shadow"
+              title={s.label === "Semesters" ? "Read-only overview — no management controls" : undefined}
+            >
               <div className="flex items-center gap-3">
                 <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${s.color}`}>
                   <s.icon className="h-5 w-5" />
@@ -105,7 +109,14 @@ export default function AdminDashboard() {
                   ) : (
                     <p className="font-display text-2xl font-bold">{s.value}</p>
                   )}
-                  <p className="text-xs text-muted-foreground">{s.label}</p>
+                  <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                    {s.label}
+                    {s.label === "Semesters" && (
+                      <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-muted text-muted-foreground/80 font-medium">
+                        Read-only
+                      </span>
+                    )}
+                  </p>
                 </div>
               </div>
             </div>
