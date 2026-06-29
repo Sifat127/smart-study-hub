@@ -392,6 +392,7 @@ export type Database = {
           batch: string | null
           bio: string | null
           created_at: string
+          current_semester: string | null
           department: string | null
           full_name: string | null
           id: string
@@ -406,6 +407,7 @@ export type Database = {
           batch?: string | null
           bio?: string | null
           created_at?: string
+          current_semester?: string | null
           department?: string | null
           full_name?: string | null
           id?: string
@@ -420,6 +422,7 @@ export type Database = {
           batch?: string | null
           bio?: string | null
           created_at?: string
+          current_semester?: string | null
           department?: string | null
           full_name?: string | null
           id?: string
