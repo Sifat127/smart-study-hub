@@ -20,6 +20,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import ReactionButtons from "@/components/ReactionButtons";
+import { supabase } from "@/integrations/supabase/client";
 import {
   downloadFile,
   getCachedPreviewBytes,
@@ -421,6 +423,13 @@ export default function PdfViewer() {
             </span>
           </Button>
         </div>
+
+        {fileId && (
+          <div className="flex items-center justify-end mb-3">
+            <ReactionButtons fileId={fileId} size="sm" />
+          </div>
+        )}
+
 
         {/* Preview vs full-load status banner */}
         {state.status === "ready" && (
