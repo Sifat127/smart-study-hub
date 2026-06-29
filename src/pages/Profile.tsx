@@ -13,6 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useDepartments } from "@/hooks/useDepartments";
 import Layout from "@/components/Layout";
+import ContributionStats from "@/components/ContributionStats";
 
 const profileSchema = z.object({
   full_name: z.string().trim().min(1, "Name is required").max(80),
@@ -206,6 +207,8 @@ export default function Profile() {
           <h1 className="font-display text-3xl md:text-4xl font-bold mb-2">My Profile</h1>
           <p className="text-muted-foreground text-sm">Manage your information and account settings.</p>
         </header>
+
+        {user && <ContributionStats userId={user.id} className="mb-6" />}
 
         <div className="rounded-2xl border border-border bg-card/50 p-6 md:p-8 mb-6">
           <div className="flex items-center gap-5 mb-6">

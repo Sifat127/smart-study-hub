@@ -171,6 +171,13 @@ export default function PdfViewer() {
     };
   }, [fileId, attempt]);
 
+  // Record a (deduped) view once we have a fileId. Auth-gated server-side;
+  // anon viewers are silently ignored.
+  useEffect(() => {
+    if (!fileId) return;
+    void supabase.rpc("record_pdf_view", { _file_id: fileId });
+  }, [fileId]);
+
   // Tear down the pdf document when it changes or the page unmounts.
   useEffect(() => {
     if (state.status !== "ready") return;
