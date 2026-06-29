@@ -115,25 +115,54 @@ export default function Settings() {
       return;
     }
     setSaving(true);
-    const { error } = await supabase
+    const payload = {
+      full_name: parsed.data.full_name,
+      roll_number: parsed.data.roll_number,
+      phone_number: parsed.data.phone_number || null,
+      section: parsed.data.section || null,
+      department: parsed.data.department || null,
+      current_semester: parsed.data.current_semester || null,
+      batch: parsed.data.batch || null,
+      bio: parsed.data.bio || null,
+    };
+    const { data: updated, error } = await supabase
       .from("profiles")
-      .update({
-        full_name: parsed.data.full_name,
-        roll_number: parsed.data.roll_number,
-        phone_number: parsed.data.phone_number || null,
-        section: parsed.data.section || null,
-        department: parsed.data.department || null,
-        current_semester: parsed.data.current_semester || null,
-        batch: parsed.data.batch || null,
-        bio: parsed.data.bio || null,
-      } as never)
-      .eq("user_id", user.id);
+      .update(payload as never)
+      .eq("user_id", user.id)
+      .select("full_name, roll_number, phone_number, section, department, current_semester, batch, bio")
+      .maybeSingle();
     setSaving(false);
     if (error) {
-      toast({ title: "Couldn't save settings", description: error.message, variant: "destructive" });
+      toast({
+        title: "Couldn't save your profile",
+        description: error.message,
+        variant: "destructive",
+      });
       return;
     }
-    toast({ title: "Settings saved" });
+    if (!updated) {
+      toast({
+        title: "Save didn't apply",
+        description: "No profile row was updated. Please reload and try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+    const mismatched = (Object.keys(payload) as Array<keyof typeof payload>).some(
+      (k) => (updated as Record<string, unknown>)[k] !== payload[k],
+    );
+    if (mismatched) {
+      toast({
+        title: "Saved, but values look off",
+        description: "The server returned different values than expected. Please refresh to verify.",
+        variant: "destructive",
+      });
+      return;
+    }
+    toast({
+      title: "Profile saved",
+      description: "Your changes were saved and confirmed.",
+    });
   };
 
   const handleAvatarPick = () => fileInputRef.current?.click();
