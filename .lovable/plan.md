@@ -1,33 +1,18 @@
-## Mobile redesign — DepartmentDetail semester grid
+## Bug
+Profile load and save both 403 with `permission denied for function has_role`.
 
-Apply the selected "Neon glass grid (big index)" direction to the mobile view of `/departments/:deptId` only. Desktop view (`md:` and up) stays exactly as it is today.
+The `has_role(uuid, app_role)` security-definer function lost `EXECUTE` for `authenticated` and `anon` (current `proacl` shows only `postgres`, `service_role`, `sandbox_exec`). Since every profile RLS policy ("Admins can view all profiles", "Admins can update all profiles") calls `has_role`, Postgres evaluates the policy, the function rejects the caller, and the whole query fails — even for the user's own row. Same failure surface exists on every other table whose policies call `has_role` (courses, departments, semesters, chapters, student_uploads, user_roles, files).
 
-### Scope
-- File: `src/pages/DepartmentDetail.tsx` only
-- Target: the 12-card semester grid section
-- Viewport: mobile (< `md` breakpoint)
-- No backend, route, data, or desktop changes
+## Fix (single migration)
 
-### Visual changes (mobile)
-Each semester card becomes:
-- Rounded `rounded-[1.75rem]`, translucent glass surface using existing tokens (`bg-card/40`, `border-border/40`, `backdrop-blur-xl`)
-- Large ghosted index number (`1`–`12`) absolutely positioned top-right, `text-6xl font-extrabold text-foreground/[0.04]`, non-selectable, behind content
-- Centered stack: 48px rounded icon tile (graduation cap, primary-tinted with primary/20 border) → "Semester N" title (`text-sm font-bold`) → "N COURSES" caption (`text-[10px] uppercase tracking-widest text-muted-foreground`)
-- Subtle active-press scale (`active:scale-[0.98]`)
+1. `GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO authenticated, anon;`
+2. Re-grant execute on the other policy-referenced functions to be safe: `admin_list_users()` to `authenticated`.
+3. Verify with `pg_proc.proacl` that `authenticated=X` is present.
 
-Grid:
-- Mobile: `grid-cols-2 gap-3` with slightly tighter outer padding
-- Desktop: keep current `md:` classes untouched (still 4-col layout)
+No schema, policy, or app code changes. After the migration, Profile load + save, Admin dashboards, and any admin-gated query start working again.
 
-### Implementation notes
-- Keep all dynamic data (`semester`, `count`) and `<Link>` routing intact
-- Use semantic tokens (`primary`, `card`, `border`, `muted-foreground`, `foreground`) — no hardcoded hex
-- Keep skeleton-in-place for course-count loading (already fixed)
-- No new fonts; continue using project Raleway
-- No new dependencies
-
-### Verification
-After implementing, run a quick mobile Playwright check at 390×844 to confirm:
-- All 12 cards render with ghost numbers 1–12
-- Counts populate without layout shift
-- Desktop view at 1280px is visually unchanged
+## Verification
+- Reload `/profile` → profile fields populate.
+- Edit a field → "Profile updated" toast, row updated.
+- Admin pages (`/admin/manage-users`, courses, etc.) still load.
+- Re-run security scan + linter; expect no regressions.
