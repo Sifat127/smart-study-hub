@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import GoogleAuthButton from "@/components/GoogleAuthButton";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Login() {
   const [showPass, setShowPass] = useState(false);
