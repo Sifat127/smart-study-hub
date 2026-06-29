@@ -606,6 +606,24 @@ export type Database = {
     }
     Functions: {
       _test_profile_audit_log_scenarios: { Args: never; Returns: Json }
+      _test_profiles_rls_cleanup: {
+        Args: { _alice: string; _bob: string }
+        Returns: undefined
+      }
+      _test_profiles_rls_read_bob: {
+        Args: { _bob: string }
+        Returns: {
+          bio: string
+        }[]
+      }
+      _test_profiles_rls_scenarios: { Args: never; Returns: Json }
+      _test_profiles_rls_setup: {
+        Args: never
+        Returns: {
+          alice_id: string
+          bob_id: string
+        }[]
+      }
       admin_list_users: {
         Args: never
         Returns: {
