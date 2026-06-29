@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, LogIn, UserPlus, LogOut, LayoutDashboard, User as UserIcon, Search as SearchIcon } from "lucide-react";
+import { Menu, X, LogIn, UserPlus, LogOut, LayoutDashboard, User as UserIcon, Search as SearchIcon, Settings as SettingsIcon } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -87,6 +87,9 @@ export default function Navbar() {
                   <span className="max-w-[140px] truncate">{profile?.full_name || user.email}</span>
                 </Link>
               </Button>
+              <Button variant="ghost" size="icon" className="rounded-xl" asChild aria-label="Account settings">
+                <Link to="/settings"><SettingsIcon className="h-4 w-4" /></Link>
+              </Button>
               <Button variant="outline" size="sm" className="rounded-xl border-white/10" onClick={handleSignOut}>
                 <LogOut className="h-4 w-4 mr-1.5" /> Logout
               </Button>
@@ -145,6 +148,9 @@ export default function Navbar() {
                   </Button>
                   <Button variant="outline" size="sm" className="flex-1 rounded-xl border-white/10" asChild>
                     <Link to="/profile" onClick={() => setMobileOpen(false)}>Profile</Link>
+                  </Button>
+                  <Button variant="outline" size="sm" className="flex-1 rounded-xl border-white/10" asChild>
+                    <Link to="/settings" onClick={() => setMobileOpen(false)}>Settings</Link>
                   </Button>
                   <Button size="sm" variant="outline" className="flex-1 rounded-xl border-white/10" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
                     Logout
