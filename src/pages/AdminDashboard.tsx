@@ -10,7 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 const actions = [
   { label: "Upload PDF", icon: Upload, desc: "Add new chapter PDFs", to: "/admin/upload-pdf" },
   { label: "Manage Departments", icon: Layers, desc: "Add, edit, or remove departments", to: "/admin/manage-departments" },
-  { label: "Manage Semesters", icon: GraduationCap, desc: "Add, edit, or remove semesters", to: "/admin/manage-semesters" },
+  
   { label: "Manage Chapters", icon: FileEdit, desc: "Edit chapter info & linked PDFs", to: "/admin/manage-chapters" },
   { label: "Audit Log", icon: History, desc: "All chapter changes with timestamps", to: "/admin/audit-log" },
   { label: "Upload Student Notes", icon: StickyNote, desc: "Submit student notes & materials", to: "/upload-notes" },
