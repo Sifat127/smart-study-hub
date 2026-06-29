@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useDepartments } from "@/hooks/useDepartments";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import FilterChaptersSection from "@/components/FilterChaptersSection";
 
 const deptIcons: Record<string, React.ElementType> = {
   Monitor, Zap, Briefcase, Code, Database, Pill, BookText, Scale,
