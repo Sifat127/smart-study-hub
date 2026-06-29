@@ -153,6 +153,20 @@ export type Database = {
             referencedRelation: "files"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "chapters_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "pdf_reaction_counts"
+            referencedColumns: ["file_id"]
+          },
+          {
+            foreignKeyName: "chapters_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "pdf_view_counts"
+            referencedColumns: ["file_id"]
+          },
         ]
       }
       contact_submissions: {
@@ -356,6 +370,98 @@ export type Database = {
         }
         Relationships: []
       }
+      pdf_reactions: {
+        Row: {
+          file_id: string
+          id: string
+          reacted_at: string
+          reaction_type: string
+          user_id: string
+        }
+        Insert: {
+          file_id: string
+          id?: string
+          reacted_at?: string
+          reaction_type: string
+          user_id: string
+        }
+        Update: {
+          file_id?: string
+          id?: string
+          reacted_at?: string
+          reaction_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pdf_reactions_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "files"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pdf_reactions_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "pdf_reaction_counts"
+            referencedColumns: ["file_id"]
+          },
+          {
+            foreignKeyName: "pdf_reactions_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "pdf_view_counts"
+            referencedColumns: ["file_id"]
+          },
+        ]
+      }
+      pdf_views: {
+        Row: {
+          file_id: string
+          id: string
+          viewed_at: string
+          viewed_day: string
+          viewer_id: string | null
+        }
+        Insert: {
+          file_id: string
+          id?: string
+          viewed_at?: string
+          viewed_day?: string
+          viewer_id?: string | null
+        }
+        Update: {
+          file_id?: string
+          id?: string
+          viewed_at?: string
+          viewed_day?: string
+          viewer_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pdf_views_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "files"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pdf_views_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "pdf_reaction_counts"
+            referencedColumns: ["file_id"]
+          },
+          {
+            foreignKeyName: "pdf_views_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "pdf_view_counts"
+            referencedColumns: ["file_id"]
+          },
+        ]
+      }
       profile_audit_log: {
         Row: {
           changed_at: string
@@ -522,6 +628,20 @@ export type Database = {
             referencedRelation: "files"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "student_uploads_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "pdf_reaction_counts"
+            referencedColumns: ["file_id"]
+          },
+          {
+            foreignKeyName: "student_uploads_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "pdf_view_counts"
+            referencedColumns: ["file_id"]
+          },
         ]
       }
       user_roles: {
@@ -582,6 +702,37 @@ export type Database = {
           },
         ]
       }
+      contributor_stats: {
+        Row: {
+          avatar_url: string | null
+          batch: string | null
+          department: string | null
+          dislikes_received: number | null
+          full_name: string | null
+          likes_received: number | null
+          rank: number | null
+          roll_number: string | null
+          uploads: number | null
+          user_id: string | null
+          views: number | null
+        }
+        Relationships: []
+      }
+      pdf_reaction_counts: {
+        Row: {
+          dislikes: number | null
+          file_id: string | null
+          likes: number | null
+        }
+        Relationships: []
+      }
+      pdf_view_counts: {
+        Row: {
+          file_id: string | null
+          views: number | null
+        }
+        Relationships: []
+      }
       profiles_public: {
         Row: {
           avatar_url: string | null
@@ -629,6 +780,11 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      record_pdf_view: { Args: { _file_id: string }; Returns: undefined }
+      set_pdf_reaction: {
+        Args: { _file_id: string; _reaction: string }
+        Returns: undefined
       }
     }
     Enums: {

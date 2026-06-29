@@ -36,6 +36,8 @@ import Search from "./pages/Search";
 import PdfViewer from "./pages/PdfViewer";
 import NotFound from "./pages/NotFound";
 import QaChecklist from "./pages/QaChecklist";
+import Contribution from "./pages/Contribution";
+import ContributorProfile from "./pages/ContributorProfile";
 
 const queryClient = new QueryClient();
 
@@ -76,6 +78,8 @@ const App = () => (
             <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
             <Route path="/pdf/:fileId" element={<ProtectedRoute><PdfViewer /></ProtectedRoute>} />
             <Route path="/qa-checklist" element={<QaChecklist />} />
+            <Route path="/contribution" element={<Contribution />} />
+            <Route path="/contribution/:userId" element={<ContributorProfile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
