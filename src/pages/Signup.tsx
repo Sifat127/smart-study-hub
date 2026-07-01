@@ -54,7 +54,36 @@ export default function Signup() {
     const { error } = await signUp(normalizedEmail, password, fullName.trim(), normalizedRoll);
     setSubmitting(false);
     if (error) {
-      toast({ title: "Sign up failed", description: error, variant: "destructive" });
+      const raw = error.toLowerCase();
+      let title = "Sign up failed";
+      let description = error;
+      if (raw.includes("roll number is already registered") || (raw.includes("roll") && (raw.includes("exist") || raw.includes("duplicate") || raw.includes("unique")))) {
+        title = "Roll number already registered";
+        description = "This roll number is already linked to another account. Please double-check or contact an admin if you think this is a mistake.";
+      } else if (raw.includes("user already registered") || raw.includes("already registered") || raw.includes("already exists")) {
+        title = "Email already registered";
+        description = "An account with this DIU email already exists. Try logging in or resetting your password.";
+      } else if (raw.includes("@diu.edu.bd")) {
+        title = "DIU email required";
+        description = "Only @diu.edu.bd email addresses can register.";
+      } else if (raw.includes("roll number must be")) {
+        title = "Invalid roll number";
+        description = "Roll number must be 3–20 characters using letters, numbers or dashes only.";
+      } else if (raw.includes("password")) {
+        title = "Weak password";
+      } else if (raw.includes("rate") || raw.includes("too many")) {
+        title = "Too many attempts";
+        description = "Please wait a moment before trying again.";
+      } else if (raw.includes("network") || raw.includes("failed to fetch")) {
+        title = "Network error";
+        description = "Please check your internet connection and try again.";
+      } else if (raw.includes("database error") || raw.includes("unexpected_failure") || raw.includes("500")) {
+        title = "Could not create account";
+        description = `Something went wrong while saving your account. Try a different roll number or email. (Details: ${error})`;
+      }
+      // Log the raw error for developer diagnostics (safe: no secrets involved).
+      console.error("[signup] failed:", error);
+      toast({ title, description, variant: "destructive" });
     } else {
       toast({
         title: "Check your DIU email",
