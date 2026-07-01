@@ -48,6 +48,13 @@ describe("Signup page — DIU email gate", () => {
     toastMock.mockReset();
   });
 
+  it("does not render a Google sign-up button", () => {
+    renderSignup();
+    expect(screen.queryByRole("button", { name: /google/i })).toBeNull();
+    expect(screen.queryByText(/sign up with google/i)).toBeNull();
+  });
+
+
   it("rejects a non-@diu.edu.bd email without calling signUp", async () => {
     renderSignup();
     await fillForm("student@gmail.com");
