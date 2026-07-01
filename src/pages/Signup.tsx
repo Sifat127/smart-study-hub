@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import GoogleAuthButton from "@/components/GoogleAuthButton";
+
 
 const ROLL_REGEX = /^[A-Za-z0-9-]{3,20}$/;
 
@@ -139,14 +139,6 @@ export default function Signup() {
           <h1 className="font-display text-2xl font-bold mb-1">Create Account</h1>
           <p className="text-muted-foreground mb-8">Fill in your details to get started</p>
 
-          <div className="space-y-4 mb-4">
-            <GoogleAuthButton label="Sign up with Google" />
-            <div className="flex items-center gap-3">
-              <div className="h-px flex-1 bg-border" />
-              <span className="text-xs text-muted-foreground uppercase tracking-wider">or sign up with email</span>
-              <div className="h-px flex-1 bg-border" />
-            </div>
-          </div>
 
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-2">
