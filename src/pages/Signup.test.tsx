@@ -138,8 +138,7 @@ describe("Signup page — DIU email gate", () => {
     await waitFor(() =>
       expect(toastMock).toHaveBeenCalledWith(
         expect.objectContaining({
-          title: expect.stringMatching(/sign up failed/i),
-          description: "User already registered",
+          title: expect.stringMatching(/email already registered/i),
           variant: "destructive",
         }),
       ),
