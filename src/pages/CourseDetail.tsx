@@ -15,6 +15,8 @@ import { readCache, writeCache } from "@/lib/listCache";
 import { useLazyList } from "@/lib/useLazyList";
 import Highlight from "@/components/Highlight";
 import { ArrowDown, ArrowUp, ArrowDownAZ, ArrowUpAZ } from "lucide-react";
+import MaterialStats from "@/components/MaterialStats";
+
 
 type SortValue = "newest" | "oldest" | "az" | "za";
 const SORT_OPTIONS: { value: SortValue; label: string; icon: typeof ArrowDown }[] = [
@@ -46,6 +48,8 @@ interface ChapterData {
   notes_path: string | null;
   notes_url: string | null;
   file_id: string | null;
+  notes_file_id: string | null;
+
   uploaded_at: string;
 }
 
@@ -179,8 +183,9 @@ export default function CourseDetail() {
       // unavailable, not just blocked by column grants.
       const chapterTable = user ? "chapters" : "chapters_public";
       const chapterColumns = user
-        ? "id, title, description, pdf_name, pdf_path, pdf_url, notes_name, notes_path, notes_url, file_id, uploaded_at"
+        ? "id, title, description, pdf_name, pdf_path, pdf_url, notes_name, notes_path, notes_url, file_id, notes_file_id, uploaded_at"
         : "id, title, description, pdf_name, notes_name, uploaded_at";
+
       const baseRequests: Promise<any>[] = [
         Promise.resolve(supabase.from("courses").select("id, code, name").eq("id", courseId!).maybeSingle()),
         Promise.resolve(supabase.from(chapterTable as any).select(chapterColumns).eq("course_id", courseId!).order("uploaded_at")),
@@ -645,9 +650,16 @@ export default function CourseDetail() {
                           )}
                         </div>
                       )}
+                      <div className="mt-3">
+                        <MaterialStats
+                          fileId={activeTab === "materials" ? chapter.file_id : chapter.notes_file_id}
+                          size="sm"
+                        />
+                      </div>
 
                     </div>
                   </div>
+
                 </div>
               ))}
               {hasMoreChapters && (
@@ -892,7 +904,9 @@ export default function CourseDetail() {
                               >
                                 <Download className="h-4 w-4 mr-1.5" /> Download
                               </Button>
+                              <MaterialStats fileId={u.file_id} size="sm" className="ml-auto" />
                             </div>
+
                           </div>
                         </div>
                       </div>

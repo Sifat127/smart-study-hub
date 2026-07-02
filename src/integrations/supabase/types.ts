@@ -101,6 +101,7 @@ export type Database = {
           description: string | null
           file_id: string | null
           id: string
+          notes_file_id: string | null
           notes_name: string | null
           notes_path: string | null
           notes_url: string | null
@@ -115,6 +116,7 @@ export type Database = {
           description?: string | null
           file_id?: string | null
           id?: string
+          notes_file_id?: string | null
           notes_name?: string | null
           notes_path?: string | null
           notes_url?: string | null
@@ -129,6 +131,7 @@ export type Database = {
           description?: string | null
           file_id?: string | null
           id?: string
+          notes_file_id?: string | null
           notes_name?: string | null
           notes_path?: string | null
           notes_url?: string | null
@@ -163,6 +166,27 @@ export type Database = {
           {
             foreignKeyName: "chapters_file_id_fkey"
             columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "pdf_view_counts"
+            referencedColumns: ["file_id"]
+          },
+          {
+            foreignKeyName: "chapters_notes_file_id_fkey"
+            columns: ["notes_file_id"]
+            isOneToOne: false
+            referencedRelation: "files"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chapters_notes_file_id_fkey"
+            columns: ["notes_file_id"]
+            isOneToOne: false
+            referencedRelation: "pdf_reaction_counts"
+            referencedColumns: ["file_id"]
+          },
+          {
+            foreignKeyName: "chapters_notes_file_id_fkey"
+            columns: ["notes_file_id"]
             isOneToOne: false
             referencedRelation: "pdf_view_counts"
             referencedColumns: ["file_id"]

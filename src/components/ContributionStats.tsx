@@ -26,30 +26,53 @@ export default function ContributionStats({ userId, className }: Props) {
 
   useEffect(() => {
     let active = true;
+    let refreshTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const load = () => {
+      supabase
+        .from("contributor_stats")
+        .select("uploads, likes_received, views, rank")
+        .eq("user_id", userId)
+        .maybeSingle()
+        .then(({ data }) => {
+          if (!active) return;
+          setStats(
+            data
+              ? {
+                  uploads: Number(data.uploads ?? 0),
+                  likes_received: Number(data.likes_received ?? 0),
+                  views: Number(data.views ?? 0),
+                  rank: data.rank ? Number(data.rank) : null,
+                }
+              : { uploads: 0, likes_received: 0, views: 0, rank: null },
+          );
+          setLoading(false);
+        });
+    };
+
     setLoading(true);
-    supabase
-      .from("contributor_stats")
-      .select("uploads, likes_received, views, rank")
-      .eq("user_id", userId)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (!active) return;
-        setStats(
-          data
-            ? {
-                uploads: Number(data.uploads ?? 0),
-                likes_received: Number(data.likes_received ?? 0),
-                views: Number(data.views ?? 0),
-                rank: data.rank ? Number(data.rank) : null,
-              }
-            : { uploads: 0, likes_received: 0, views: 0, rank: null },
-        );
-        setLoading(false);
-      });
+    load();
+
+    // Reactions / views / new uploads anywhere in the system can change this
+    // user's rank, so we listen broadly and debounce refreshes.
+    const scheduleRefresh = () => {
+      if (refreshTimer) clearTimeout(refreshTimer);
+      refreshTimer = setTimeout(load, 1000);
+    };
+    const channel = supabase
+      .channel(`contribution-stats:${userId}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "pdf_reactions" }, scheduleRefresh)
+      .on("postgres_changes", { event: "*", schema: "public", table: "pdf_views" }, scheduleRefresh)
+      .on("postgres_changes", { event: "*", schema: "public", table: "files" }, scheduleRefresh)
+      .subscribe();
+
     return () => {
       active = false;
+      if (refreshTimer) clearTimeout(refreshTimer);
+      supabase.removeChannel(channel);
     };
   }, [userId]);
+
 
   if (loading) {
     return (
