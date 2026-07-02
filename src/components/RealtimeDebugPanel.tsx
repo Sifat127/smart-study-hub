@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 import { Radio } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import {
+  clearRealtimeLog,
+  subscribeRealtimeLog,
+  type RealtimeLogEntry,
+} from "@/lib/realtimeEventLog";
 
 interface Props {
   /** Labels for context (e.g. current userId / fileIds this page cares about). */
@@ -23,6 +28,7 @@ export default function RealtimeDebugPanel({ watching, className }: Props) {
     import.meta.env.DEV ||
     (typeof window !== "undefined" && new URLSearchParams(window.location.search).has("debug"));
   const [channels, setChannels] = useState<Array<{ topic: string; state: string }>>([]);
+  const [events, setEvents] = useState<RealtimeLogEntry[]>([]);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -36,7 +42,11 @@ export default function RealtimeDebugPanel({ watching, className }: Props) {
     };
     tick();
     const id = window.setInterval(tick, 1000);
-    return () => window.clearInterval(id);
+    const unsub = subscribeRealtimeLog(setEvents);
+    return () => {
+      window.clearInterval(id);
+      unsub();
+    };
   }, [enabled]);
 
   if (!enabled) return null;
@@ -61,7 +71,9 @@ export default function RealtimeDebugPanel({ watching, className }: Props) {
         </span>
         <Radio className="h-3 w-3 text-emerald-400" />
         <span className="font-semibold">Realtime</span>
-        <span className="ml-auto text-muted-foreground">{channels.length} ch</span>
+        <span className="ml-auto text-muted-foreground">
+          {channels.length} ch · {events.length} evt
+        </span>
       </button>
       {open && (
         <div className="border-t border-white/10 px-3 py-2 space-y-2 max-h-72 overflow-auto">
@@ -98,6 +110,55 @@ export default function RealtimeDebugPanel({ watching, className }: Props) {
                   </span>
                 </div>
               ))
+            )}
+          </div>
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-muted-foreground uppercase tracking-wide">
+                Events ({events.length})
+              </span>
+              <button
+                type="button"
+                onClick={clearRealtimeLog}
+                className="text-[10px] text-muted-foreground hover:text-foreground underline"
+              >
+                clear
+              </button>
+            </div>
+            {events.length === 0 ? (
+              <div className="text-muted-foreground">no events yet</div>
+            ) : (
+              <div className="space-y-1">
+                {events.slice(0, 12).map((e) => (
+                  <div
+                    key={e.id}
+                    className={cn(
+                      "rounded border border-white/5 px-1.5 py-1",
+                      e.applied ? "bg-emerald-500/5" : "bg-amber-500/5",
+                    )}
+                    title={new Date(e.at).toLocaleTimeString()}
+                  >
+                    <div className="flex justify-between gap-2">
+                      <span className="font-semibold truncate">
+                        {e.table}·{e.event}
+                      </span>
+                      <span
+                        className={cn(
+                          "shrink-0",
+                          e.applied ? "text-emerald-400" : "text-amber-400",
+                        )}
+                      >
+                        {e.applied ? "applied" : "skipped"}
+                      </span>
+                    </div>
+                    <div className="text-muted-foreground truncate">
+                      f:{e.fileId ? e.fileId.slice(0, 8) : "—"} · u:
+                      {e.userId ? e.userId.slice(0, 8) : "—"}
+                      {e.extra ? ` · ${e.extra}` : ""}
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>

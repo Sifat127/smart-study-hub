@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { publishStatsSnapshot, clearStatsSnapshot } from "@/lib/statsConsistency";
+import { logRealtimeEvent } from "@/lib/realtimeEventLog";
 
 export interface ContributionStatsData {
   uploads: number;
@@ -61,16 +62,31 @@ export default function ContributionStats({ userId, className, surface }: Props)
 
     // Reactions / views / new uploads anywhere in the system can change this
     // user's rank, so we listen broadly and debounce refreshes.
-    const scheduleRefresh = () => {
+    const scheduleRefresh = (table: string) => (payload: any) => {
+      const row = payload?.new ?? payload?.old ?? {};
+      const rowUser =
+        row?.user_id ?? row?.uploader_id ?? row?.viewer_id ?? row?.uploaded_by ?? null;
+      // Applied = this event actually contributes to the stats for `userId`.
+      // Reactions/views apply when the file's uploader is `userId`, but we
+      // don't have that mapping client-side, so we mark uploads directly and
+      // treat reactions/views as "potentially applied" — refresh either way.
+      const applied =
+        table === "files" || table === "student_uploads"
+          ? rowUser === userId
+          : true;
+      logRealtimeEvent(surface ?? "contribution-stats", table, payload, {
+        applied,
+        extra: `for=${userId.slice(0, 8)}`,
+      });
       if (refreshTimer) clearTimeout(refreshTimer);
       refreshTimer = setTimeout(load, 1000);
     };
     const channel = supabase
       .channel(`contribution-stats:${userId}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "pdf_reactions" }, scheduleRefresh)
-      .on("postgres_changes", { event: "*", schema: "public", table: "pdf_views" }, scheduleRefresh)
-      .on("postgres_changes", { event: "*", schema: "public", table: "files" }, scheduleRefresh)
-      .on("postgres_changes", { event: "*", schema: "public", table: "student_uploads" }, scheduleRefresh)
+      .on("postgres_changes", { event: "*", schema: "public", table: "pdf_reactions" }, scheduleRefresh("pdf_reactions"))
+      .on("postgres_changes", { event: "*", schema: "public", table: "pdf_views" }, scheduleRefresh("pdf_views"))
+      .on("postgres_changes", { event: "*", schema: "public", table: "files" }, scheduleRefresh("files"))
+      .on("postgres_changes", { event: "*", schema: "public", table: "student_uploads" }, scheduleRefresh("student_uploads"))
       .subscribe();
 
     return () => {

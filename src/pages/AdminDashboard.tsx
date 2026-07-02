@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import RealtimeDebugPanel from "@/components/RealtimeDebugPanel";
+import { logRealtimeEvent } from "@/lib/realtimeEventLog";
 
 const actions = [
   { label: "Upload PDF", icon: Upload, desc: "Add new chapter PDFs", to: "/admin/upload-pdf" },
@@ -41,6 +43,24 @@ export default function AdminDashboard() {
       setLoading(false);
     }
     fetchStats();
+  }, []);
+
+  // Admin-side realtime probe so the debug panel shows every stat-affecting
+  // event (uploads, reactions, views) with the incoming user_id / file_id.
+  useEffect(() => {
+    const forward = (table: string) => (payload: any) => {
+      logRealtimeEvent("admin-dashboard", table, payload, { applied: true });
+    };
+    const channel = supabase
+      .channel("admin-realtime-probe")
+      .on("postgres_changes", { event: "*", schema: "public", table: "pdf_reactions" }, forward("pdf_reactions"))
+      .on("postgres_changes", { event: "*", schema: "public", table: "pdf_views" }, forward("pdf_views"))
+      .on("postgres_changes", { event: "*", schema: "public", table: "files" }, forward("files"))
+      .on("postgres_changes", { event: "*", schema: "public", table: "student_uploads" }, forward("student_uploads"))
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const stats = [
@@ -141,6 +161,7 @@ export default function AdminDashboard() {
           ))}
         </div>
       </div>
+      <RealtimeDebugPanel watching={{ role: "admin", user: user?.id ?? null }} />
     </div>
   );
 }
