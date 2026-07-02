@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { publishStatsSnapshot, clearStatsSnapshot } from "@/lib/statsConsistency";
+import { logRealtimeEvent } from "@/lib/realtimeEventLog";
 
 export interface ContributionStatsData {
   uploads: number;
