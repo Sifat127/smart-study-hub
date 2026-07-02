@@ -31,7 +31,9 @@ interface ChapterRow {
   notes_path: string | null;
   notes_url: string | null;
   file_id: string | null;
+  notes_file_id: string | null;
   uploaded_at: string;
+
   course_id: string;
 }
 
