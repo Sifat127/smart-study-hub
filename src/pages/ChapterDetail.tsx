@@ -276,51 +276,57 @@ export default function ChapterDetail() {
                 return (
                   <li
                     key={item.key}
-                    className="glass rounded-2xl p-4 md:p-5 flex items-center gap-4 card-lift"
+                    className="glass rounded-2xl p-4 md:p-5 card-lift"
                   >
-                    <div
-                      className={`h-12 w-12 rounded-2xl flex items-center justify-center flex-shrink-0 border ${
-                        isMaterial
-                          ? "bg-destructive/10 border-destructive/20 text-destructive"
-                          : "bg-accent/15 border-accent/25 text-accent"
-                      }`}
-                    >
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-[10px] uppercase tracking-[0.18em] font-semibold text-muted-foreground mb-0.5">
-                        {label}
+                    <div className="flex items-center gap-4">
+                      <div
+                        className={`h-12 w-12 rounded-2xl flex items-center justify-center flex-shrink-0 border ${
+                          isMaterial
+                            ? "bg-destructive/10 border-destructive/20 text-destructive"
+                            : "bg-accent/15 border-accent/25 text-accent"
+                        }`}
+                      >
+                        <Icon className="h-5 w-5" />
                       </div>
-                      <div className="font-semibold text-sm md:text-base truncate">{item.name}</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[10px] uppercase tracking-[0.18em] font-semibold text-muted-foreground mb-0.5">
+                          {label}
+                        </div>
+                        <div className="font-semibold text-sm md:text-base truncate">{item.name}</div>
+                      </div>
+                      {!user ? (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="rounded-xl font-semibold border-white/15 bg-white/5 text-muted-foreground hover:bg-white/5 hover:text-muted-foreground"
+                          onClick={() => navigate("/login", { state: { from: location.pathname } })}
+                        >
+                          <Lock className="h-4 w-4 mr-1.5" /> Sign in
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold"
+                          disabled={isDownloading}
+                          onClick={() => handleDownload(item)}
+                        >
+                          {isDownloading ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> Downloading...
+                            </>
+                          ) : (
+                            <>
+                              <Download className="h-4 w-4 mr-1.5" /> Download
+                            </>
+                          )}
+                        </Button>
+                      )}
                     </div>
-                    {!user ? (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="rounded-xl font-semibold border-white/15 bg-white/5 text-muted-foreground hover:bg-white/5 hover:text-muted-foreground"
-                        onClick={() => navigate("/login", { state: { from: location.pathname } })}
-                      >
-                        <Lock className="h-4 w-4 mr-1.5" /> Sign in
-                      </Button>
-                    ) : (
-                      <Button
-                        size="sm"
-                        className="bg-gradient-primary text-primary-foreground btn-glow rounded-xl font-semibold"
-                        disabled={isDownloading}
-                        onClick={() => handleDownload(item)}
-                      >
-                        {isDownloading ? (
-                          <>
-                            <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> Downloading...
-                          </>
-                        ) : (
-                          <>
-                            <Download className="h-4 w-4 mr-1.5" /> Download
-                          </>
-                        )}
-                      </Button>
-                    )}
+                    <div className="mt-3 pl-16">
+                      <MaterialStats fileId={item.fileId} size="sm" />
+                    </div>
                   </li>
+
                 );
               })}
             </ul>
