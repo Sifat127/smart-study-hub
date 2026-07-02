@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Loader2, CheckCircle2, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
  */
 export default function AuthCallback() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const [status, setStatus] = useState<"working" | "ok" | "error">("working");
   const [message, setMessage] = useState("Verifying your account…");
@@ -39,17 +40,20 @@ export default function AuthCallback() {
     };
 
     (async () => {
-      const url = new URL(window.location.href);
-      const errParam = url.searchParams.get("error_description") ||
-        url.hash.match(/error_description=([^&]+)/)?.[1];
+      const search = new URLSearchParams(location.search);
+      const hash = location.hash.startsWith("#")
+        ? location.hash.slice(1)
+        : location.hash;
+      const hashParams = new URLSearchParams(hash);
+      const errParam =
+        search.get("error_description") || hashParams.get("error_description");
       if (errParam) {
         fail("Verification failed", decodeURIComponent(errParam));
         return;
       }
 
-      const code = url.searchParams.get("code");
-      const type = url.searchParams.get("type") ||
-        url.hash.match(/type=([^&]+)/)?.[1] || "";
+      const code = search.get("code");
+      const type = search.get("type") || hashParams.get("type") || "";
 
       try {
         if (code) {
@@ -110,7 +114,7 @@ export default function AuthCallback() {
     })();
 
     return () => { cancelled = true; };
-  }, [navigate, toast]);
+  }, [navigate, toast, location.search, location.hash]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-6">
