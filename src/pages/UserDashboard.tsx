@@ -156,7 +156,7 @@ export default function UserDashboard() {
                   View leaderboard →
                 </Link>
               </div>
-              <ContributionStats userId={user.id} />
+              <ContributionStats userId={user.id} surface="UserDashboard" />
             </div>
           )}
 
