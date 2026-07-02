@@ -160,6 +160,13 @@ export type Database = {
             foreignKeyName: "chapters_file_id_fkey"
             columns: ["file_id"]
             isOneToOne: false
+            referencedRelation: "files_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chapters_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
             referencedRelation: "pdf_reaction_counts"
             referencedColumns: ["file_id"]
           },
@@ -175,6 +182,13 @@ export type Database = {
             columns: ["notes_file_id"]
             isOneToOne: false
             referencedRelation: "files"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chapters_notes_file_id_fkey"
+            columns: ["notes_file_id"]
+            isOneToOne: false
+            referencedRelation: "files_public"
             referencedColumns: ["id"]
           },
           {
@@ -428,6 +442,13 @@ export type Database = {
             foreignKeyName: "pdf_reactions_file_id_fkey"
             columns: ["file_id"]
             isOneToOne: false
+            referencedRelation: "files_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pdf_reactions_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
             referencedRelation: "pdf_reaction_counts"
             referencedColumns: ["file_id"]
           },
@@ -468,6 +489,13 @@ export type Database = {
             columns: ["file_id"]
             isOneToOne: false
             referencedRelation: "files"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pdf_views_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "files_public"
             referencedColumns: ["id"]
           },
           {
@@ -656,6 +684,13 @@ export type Database = {
             foreignKeyName: "student_uploads_file_id_fkey"
             columns: ["file_id"]
             isOneToOne: false
+            referencedRelation: "files_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_uploads_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
             referencedRelation: "pdf_reaction_counts"
             referencedColumns: ["file_id"]
           },
@@ -739,6 +774,33 @@ export type Database = {
           uploads: number | null
           user_id: string | null
           views: number | null
+        }
+        Relationships: []
+      }
+      files_public: {
+        Row: {
+          id: string | null
+          original_filename: string | null
+          title: string | null
+          upload_date: string | null
+          uploader_id: string | null
+          visibility: Database["public"]["Enums"]["file_visibility"] | null
+        }
+        Insert: {
+          id?: string | null
+          original_filename?: string | null
+          title?: string | null
+          upload_date?: string | null
+          uploader_id?: string | null
+          visibility?: Database["public"]["Enums"]["file_visibility"] | null
+        }
+        Update: {
+          id?: string | null
+          original_filename?: string | null
+          title?: string | null
+          upload_date?: string | null
+          uploader_id?: string | null
+          visibility?: Database["public"]["Enums"]["file_visibility"] | null
         }
         Relationships: []
       }

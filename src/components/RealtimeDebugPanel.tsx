@@ -12,9 +12,8 @@ interface Props {
 /**
  * Dev-only floating panel that lists every active Supabase Realtime channel
  * plus the identifiers the surrounding page is subscribed to. Handy when
- * verifying that UserDashboard and ContributorProfile listen to the same
- * `contributor_stats` / `pdf_reaction_counts` / `pdf_view_counts` streams and
- * therefore render matching totals.
+   * verifying that UserDashboard and ContributorProfile listen to the same
+   * upload / reaction / view streams and therefore render matching totals.
  *
  * Rendered only when `import.meta.env.DEV` is true or the URL contains
  * `?debug=1`, so production builds never ship the overlay.
