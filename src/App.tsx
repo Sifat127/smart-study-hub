@@ -78,7 +78,7 @@ const App = () => (
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="/complete-profile" element={<CompleteProfile />} />
-            <Route path="/dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
+            <Route path="/dashboard" element={<ProtectedRoute><RequireCompleteProfile><UserDashboard /></RequireCompleteProfile></ProtectedRoute>} />
             <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
             <Route path="/pdf/:fileId" element={<ProtectedRoute><PdfViewer /></ProtectedRoute>} />
             <Route path="/qa-checklist" element={<QaChecklist />} />
