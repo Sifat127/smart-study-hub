@@ -17,6 +17,8 @@ import { useDepartments } from "@/hooks/useDepartments";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import FilterChaptersSection from "@/components/FilterChaptersSection";
+import ContributionStats from "@/components/ContributionStats";
+
 
 const deptIcons: Record<string, React.ElementType> = {
   Monitor, Zap, Briefcase, Code, Database, Pill, BookText, Scale,
