@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 import { Radio } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import {
+  clearRealtimeLog,
+  subscribeRealtimeLog,
+  type RealtimeLogEntry,
+} from "@/lib/realtimeEventLog";
 
 interface Props {
   /** Labels for context (e.g. current userId / fileIds this page cares about). */
