@@ -351,6 +351,9 @@ export default function UserDashboard() {
           </div>
         </div>
       </section>
+      <RealtimeDebugPanel
+        watching={{ page: "UserDashboard", userId: user?.id ?? null }}
+      />
     </Layout>
   );
 }
