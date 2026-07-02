@@ -41,10 +41,9 @@ export default function ContributorProfile() {
 
     const loadFiles = () => {
       supabase
-        .from("files")
+        .from("files_public")
         .select("id, title, original_filename, upload_date")
         .eq("uploader_id", userId)
-        .eq("visibility", "authenticated")
         .order("upload_date", { ascending: false })
         .then(({ data }) => {
           if (!active) return;

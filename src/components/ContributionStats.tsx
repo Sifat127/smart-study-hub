@@ -8,6 +8,7 @@ import { publishStatsSnapshot, clearStatsSnapshot } from "@/lib/statsConsistency
 export interface ContributionStatsData {
   uploads: number;
   likes_received: number;
+  dislikes_received?: number;
   views: number;
   rank: number | null;
 }
@@ -34,7 +35,7 @@ export default function ContributionStats({ userId, className, surface }: Props)
     const load = () => {
       supabase
         .from("contributor_stats")
-        .select("uploads, likes_received, views, rank")
+        .select("uploads, likes_received, dislikes_received, views, rank")
         .eq("user_id", userId)
         .maybeSingle()
         .then(({ data }) => {
@@ -43,10 +44,11 @@ export default function ContributionStats({ userId, className, surface }: Props)
             ? {
                 uploads: Number(data.uploads ?? 0),
                 likes_received: Number(data.likes_received ?? 0),
+                dislikes_received: Number(data.dislikes_received ?? 0),
                 views: Number(data.views ?? 0),
                 rank: data.rank ? Number(data.rank) : null,
               }
-            : { uploads: 0, likes_received: 0, views: 0, rank: null };
+            : { uploads: 0, likes_received: 0, dislikes_received: 0, views: 0, rank: null };
           setStats(next);
           setLoading(false);
           if (surface) publishStatsSnapshot(surface, userId, next);

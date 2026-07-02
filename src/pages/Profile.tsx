@@ -208,7 +208,7 @@ export default function Profile() {
           <p className="text-muted-foreground text-sm">Manage your information and account settings.</p>
         </header>
 
-        {user && <ContributionStats userId={user.id} className="mb-6" />}
+        {user && <ContributionStats userId={user.id} className="mb-6" surface="Profile" />}
 
         <div className="rounded-2xl border border-border bg-card/50 p-6 md:p-8 mb-6">
           <div className="flex items-center gap-5 mb-6">
