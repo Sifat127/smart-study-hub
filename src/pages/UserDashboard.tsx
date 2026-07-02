@@ -18,6 +18,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import FilterChaptersSection from "@/components/FilterChaptersSection";
 import ContributionStats from "@/components/ContributionStats";
+import RealtimeDebugPanel from "@/components/RealtimeDebugPanel";
 
 
 const deptIcons: Record<string, React.ElementType> = {
@@ -350,6 +351,9 @@ export default function UserDashboard() {
           </div>
         </div>
       </section>
+      <RealtimeDebugPanel
+        watching={{ page: "UserDashboard", userId: user?.id ?? null }}
+      />
     </Layout>
   );
 }

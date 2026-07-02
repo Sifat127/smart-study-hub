@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import ContributionStats from "@/components/ContributionStats";
+import RealtimeDebugPanel from "@/components/RealtimeDebugPanel";
 import PdfCard, { type PdfCardData } from "@/components/PdfCard";
 
 interface Contributor {
@@ -164,6 +165,14 @@ export default function ContributorProfile() {
           </div>
         )}
       </section>
+      <RealtimeDebugPanel
+        watching={{
+          page: "ContributorProfile",
+          userId,
+          files: files ? String(files.length) : "loading",
+          firstFileId: files?.[0]?.id ?? null,
+        }}
+      />
     </Layout>
   );
 }
