@@ -366,6 +366,9 @@ export default function PdfViewer() {
   const zoomLabel = useMemo(() => (zoom === "fit" ? "Fit" : `${Math.round(zoom * 100)}%`), [zoom]);
 
   const onDownload = async () => {
+    if (downloading) return;
+    setDownloading(true);
+    const toastId = toast.loading("Preparing download…", { description: fileName });
     try {
       // Prefer the bytes already rendered on-screen so the download exactly
       // matches what the user is viewing (no second network round-trip, no
@@ -382,17 +385,22 @@ export default function PdfViewer() {
         a.click();
         a.remove();
         setTimeout(() => URL.revokeObjectURL(url), 1000);
-        return;
+      } else {
+        // Fallback: the document hasn't finished loading yet — fetch the
+        // signed URL so the user isn't stuck waiting.
+        await downloadFile(fileId, fileName);
       }
-      // Fallback: the document hasn't finished loading yet — fetch the
-      // signed URL so the user isn't stuck waiting.
-      await downloadFile(fileId, fileName);
+      toast.success("Download started", { id: toastId, description: fileName });
     } catch (err) {
       toast.error("Couldn't download file", {
+        id: toastId,
         description: err instanceof Error ? err.message : "Please try again.",
       });
+    } finally {
+      setDownloading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
