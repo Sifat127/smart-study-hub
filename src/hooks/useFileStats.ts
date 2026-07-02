@@ -75,12 +75,24 @@ export function useFileStats(fileId: string | null | undefined) {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "pdf_reactions", filter: `file_id=eq.${fileId}` },
-        () => load(),
+        (payload) => {
+          logRealtimeEvent("file-stats", "pdf_reactions", payload, {
+            applied: true,
+            extra: `file=${fileId.slice(0, 8)}`,
+          });
+          load();
+        },
       )
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "pdf_views", filter: `file_id=eq.${fileId}` },
-        () => load(),
+        (payload) => {
+          logRealtimeEvent("file-stats", "pdf_views", payload, {
+            applied: true,
+            extra: `file=${fileId.slice(0, 8)}`,
+          });
+          load();
+        },
       )
       .subscribe();
     return () => {
