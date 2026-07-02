@@ -106,6 +106,9 @@ function fireRealtime() {
 
 beforeEach(() => {
   channelCallbacks.length = 0;
+  store.contributor = { uploads: 3, likes_received: 5, views: 12, rank: 2 };
+  store.reactions = { likes: 5, dislikes: 1 };
+  store.views = { views: 12 };
 });
 
 function readNumbers(container: HTMLElement) {
