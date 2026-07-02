@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import RealtimeDebugPanel from "@/components/RealtimeDebugPanel";
+import RealtimeHealthIndicator from "@/components/RealtimeHealthIndicator";
 import { logRealtimeEvent } from "@/lib/realtimeEventLog";
 
 const actions = [
