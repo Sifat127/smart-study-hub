@@ -17,6 +17,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { downloadFile as downloadFileFromStorage } from "@/lib/storage";
+import MaterialStats from "@/components/MaterialStats";
+
 
 interface ChapterRow {
   id: string;
