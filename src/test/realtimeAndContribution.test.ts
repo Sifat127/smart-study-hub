@@ -246,8 +246,6 @@ d("realtime payloads + contribution stats", () => {
     } catch {
       /* ignore */
     }
-      /* ignore */
-    }
     await Promise.allSettled([
       student && deleteUser(student.email),
       admin && deleteUser(admin.email),
