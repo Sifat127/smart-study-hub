@@ -121,11 +121,8 @@ export default function Index() {
 
         <div className="container mx-auto px-5 py-16 md:py-24 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 glass-strong rounded-full px-4 py-1.5 mb-6 md:mb-8 text-xs md:text-sm font-medium text-accent shadow-glow">
-              <Sparkles className="h-3.5 w-3.5" />
-              Over 10,000+ course materials shared
-            </div>
+
+
 
             {/* Heading */}
             <h1 className="font-display text-[1.85rem] sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.05] mb-4 md:mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/50">
