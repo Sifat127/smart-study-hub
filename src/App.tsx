@@ -11,6 +11,7 @@ import Departments from "./pages/Departments";
 import DepartmentDetail from "./pages/DepartmentDetail";
 import SemesterDetail from "./pages/SemesterDetail";
 import CourseDetail from "./pages/CourseDetail";
+import ChapterDetail from "./pages/ChapterDetail";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import VerifyEmail from "./pages/VerifyEmail";
