@@ -64,17 +64,19 @@ export default function ContributorProfile() {
       refreshTimer = setTimeout(loadFiles, 1000);
     };
 
-    // Any reaction/view change to this contributor's files or newly uploaded
-    // files should refresh the list & downstream stat components live.
+    // Only refresh the file list when this contributor's own files change
+    // (new upload, deletion, visibility flip). Per-file like/view counts are
+    // handled live by <MaterialStats /> inside each <PdfCard />, and the
+    // aggregate strip is handled by <ContributionStats />. Reloading the
+    // whole list on every global reaction would remount cards and reset
+    // their subscriptions, causing visible flicker.
     const channel = supabase
-      .channel(`contributor:${userId}`)
+      .channel(`contributor-files:${userId}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "files", filter: `uploader_id=eq.${userId}` },
         scheduleRefresh,
       )
-      .on("postgres_changes", { event: "*", schema: "public", table: "pdf_reactions" }, scheduleRefresh)
-      .on("postgres_changes", { event: "*", schema: "public", table: "pdf_views" }, scheduleRefresh)
       .subscribe();
 
     return () => {
