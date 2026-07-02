@@ -20,6 +20,7 @@ import { MemoryRouter, Routes, Route } from "react-router-dom";
 
 type Role = "admin" | "user";
 interface ProfileRow {
+  roll_number: string | null;
   department: string | null;
   batch: string | null;
   section: string | null;
