@@ -89,9 +89,15 @@ export default function AdminDashboard() {
               <span className="text-xs text-muted-foreground">Staff-only control panel</span>
             </div>
           </Link>
-          <Button variant="ghost" size="sm" asChild>
-            <Link to="/">← Back to Site</Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            <RealtimeHealthIndicator
+              topicPrefixes={["pdf_reactions", "pdf_views", "files", "student_uploads", "admin-realtime"]}
+              className="hidden sm:inline-flex"
+            />
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/">← Back to Site</Link>
+            </Button>
+          </div>
         </div>
       </header>
 
