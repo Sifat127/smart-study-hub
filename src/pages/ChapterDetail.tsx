@@ -113,8 +113,9 @@ export default function ChapterDetail() {
         name: chapter.notes_name ?? `${chapter.title}-notes.pdf`,
         url: chapter.notes_url ?? null,
         path: chapter.notes_path ?? null,
-        fileId: null,
+        fileId: chapter.notes_file_id ?? null,
       });
+
     }
   }
 
