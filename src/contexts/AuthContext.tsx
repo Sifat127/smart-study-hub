@@ -81,7 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       password,
       options: {
         data: { full_name: fullName, roll_number: rollNumber },
-        emailRedirectTo: `${getAuthRedirectOrigin()}/auth/callback`,
+        emailRedirectTo: `${getAuthRedirectOrigin()}/`,
       },
     });
     return { error: error?.message ?? null };
