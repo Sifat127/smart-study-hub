@@ -74,8 +74,10 @@ export default function ContributionStats({ userId, className, surface }: Props)
       active = false;
       if (refreshTimer) clearTimeout(refreshTimer);
       supabase.removeChannel(channel);
+      if (surface) clearStatsSnapshot(surface, userId);
     };
-  }, [userId]);
+  }, [userId, surface]);
+
 
 
   if (loading) {
