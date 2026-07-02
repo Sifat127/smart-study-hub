@@ -161,6 +161,7 @@ export default function AdminDashboard() {
           ))}
         </div>
       </div>
+      <RealtimeDebugPanel watching={{ role: "admin", user: user?.id ?? null }} />
     </div>
   );
 }
