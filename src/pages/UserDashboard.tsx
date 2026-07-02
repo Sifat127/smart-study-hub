@@ -145,16 +145,21 @@ export default function UserDashboard() {
               like, view, or download this student's uploads. */}
           {user && (
             <div className="mb-10">
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-3 gap-3 flex-wrap">
                 <h2 className="font-display text-lg md:text-xl font-semibold tracking-tight">
                   Your contribution
                 </h2>
-                <Link
-                  to="/contribution"
-                  className="text-xs md:text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  View leaderboard →
-                </Link>
+                <div className="flex items-center gap-3">
+                  <RealtimeHealthIndicator
+                    topicPrefixes={["pdf_reactions", "pdf_views", "files", "student_uploads", "contribution-stats"]}
+                  />
+                  <Link
+                    to="/contribution"
+                    className="text-xs md:text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    View leaderboard →
+                  </Link>
+                </div>
               </div>
               <ContributionStats userId={user.id} surface="UserDashboard" />
             </div>
