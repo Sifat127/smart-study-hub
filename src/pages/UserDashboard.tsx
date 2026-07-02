@@ -140,6 +140,27 @@ export default function UserDashboard() {
             />
           </div>
 
+          {/* Live contribution stats — updates automatically as other users
+              like, view, or download this student's uploads. */}
+          {user && (
+            <div className="mb-10">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="font-display text-lg md:text-xl font-semibold tracking-tight">
+                  Your contribution
+                </h2>
+                <Link
+                  to="/contribution"
+                  className="text-xs md:text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  View leaderboard →
+                </Link>
+              </div>
+              <ContributionStats userId={user.id} />
+            </div>
+          )}
+
+
+
           {/* Filters */}
           <div className="bg-card rounded-2xl border border-border p-4 md:p-5 card-shadow mb-6 flex flex-col md:flex-row gap-3">
             <div className="relative flex-1">
