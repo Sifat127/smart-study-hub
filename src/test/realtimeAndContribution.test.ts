@@ -238,9 +238,14 @@ d("realtime payloads + contribution stats", () => {
   afterAll(async () => {
     try {
       if (fileId) {
-        await admin.client.from("files").delete().eq("id", fileId);
+        await admin.client.rpc(
+          "_test_delete_rls_file" as never,
+          { _file_id: fileId } as never,
+        );
       }
     } catch {
+      /* ignore */
+    }
       /* ignore */
     }
     await Promise.allSettled([
