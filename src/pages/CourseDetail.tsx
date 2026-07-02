@@ -15,6 +15,8 @@ import { readCache, writeCache } from "@/lib/listCache";
 import { useLazyList } from "@/lib/useLazyList";
 import Highlight from "@/components/Highlight";
 import { ArrowDown, ArrowUp, ArrowDownAZ, ArrowUpAZ } from "lucide-react";
+import MaterialStats from "@/components/MaterialStats";
+
 
 type SortValue = "newest" | "oldest" | "az" | "za";
 const SORT_OPTIONS: { value: SortValue; label: string; icon: typeof ArrowDown }[] = [
