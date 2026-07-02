@@ -68,6 +68,8 @@ export default function PdfViewer() {
   // false, we're in "fast preview" mode — pdf.js is range-fetching pages on
   // demand, so the Download button has to fall back to a fresh signed URL.
   const [fullLoaded, setFullLoaded] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+
 
   const shellRef = useRef<HTMLDivElement | null>(null);
   const canvasContainerRef = useRef<HTMLDivElement | null>(null);
@@ -364,6 +366,9 @@ export default function PdfViewer() {
   const zoomLabel = useMemo(() => (zoom === "fit" ? "Fit" : `${Math.round(zoom * 100)}%`), [zoom]);
 
   const onDownload = async () => {
+    if (downloading) return;
+    setDownloading(true);
+    const toastId = toast.loading("Preparing download…", { description: fileName });
     try {
       // Prefer the bytes already rendered on-screen so the download exactly
       // matches what the user is viewing (no second network round-trip, no
@@ -380,17 +385,22 @@ export default function PdfViewer() {
         a.click();
         a.remove();
         setTimeout(() => URL.revokeObjectURL(url), 1000);
-        return;
+      } else {
+        // Fallback: the document hasn't finished loading yet — fetch the
+        // signed URL so the user isn't stuck waiting.
+        await downloadFile(fileId, fileName);
       }
-      // Fallback: the document hasn't finished loading yet — fetch the
-      // signed URL so the user isn't stuck waiting.
-      await downloadFile(fileId, fileName);
+      toast.success("Download started", { id: toastId, description: fileName });
     } catch (err) {
       toast.error("Couldn't download file", {
+        id: toastId,
         description: err instanceof Error ? err.message : "Please try again.",
       });
+    } finally {
+      setDownloading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -413,22 +423,23 @@ export default function PdfViewer() {
             variant={fullLoaded ? "outline" : "default"}
             className="rounded-xl font-semibold"
             onClick={onDownload}
-            disabled={state.status !== "ready"}
+            disabled={state.status !== "ready" || downloading}
             title={
               fullLoaded
                 ? "Download the full PDF"
                 : "You're viewing a fast preview. Click to download the complete PDF."
             }
           >
-            {state.status === "ready" && !fullLoaded ? (
+            {downloading || (state.status === "ready" && !fullLoaded) ? (
               <Loader2 className="h-4 w-4 sm:mr-1.5 animate-spin" />
             ) : (
               <Download className="h-4 w-4 sm:mr-1.5" />
             )}
             <span className="hidden sm:inline">
-              {fullLoaded ? "Download" : "Download full PDF"}
+              {downloading ? "Downloading…" : fullLoaded ? "Download" : "Download full PDF"}
             </span>
           </Button>
+
         </div>
 
         {fileId && (
