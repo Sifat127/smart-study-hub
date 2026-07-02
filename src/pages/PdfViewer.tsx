@@ -68,6 +68,8 @@ export default function PdfViewer() {
   // false, we're in "fast preview" mode — pdf.js is range-fetching pages on
   // demand, so the Download button has to fall back to a fresh signed URL.
   const [fullLoaded, setFullLoaded] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+
 
   const shellRef = useRef<HTMLDivElement | null>(null);
   const canvasContainerRef = useRef<HTMLDivElement | null>(null);
