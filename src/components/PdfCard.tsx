@@ -1,10 +1,9 @@
 import { Link } from "react-router-dom";
 import { Download, Eye, FileText, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import ReactionButtons from "@/components/ReactionButtons";
-import { supabase } from "@/integrations/supabase/client";
+import MaterialStats from "@/components/MaterialStats";
 import { downloadFile } from "@/lib/storage";
 import { toast } from "sonner";
 
@@ -21,23 +20,7 @@ interface Props {
 }
 
 export default function PdfCard({ pdf }: Props) {
-  const [views, setViews] = useState<number>(0);
   const [downloading, setDownloading] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-    supabase
-      .from("pdf_view_counts")
-      .select("views")
-      .eq("file_id", pdf.id)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (active) setViews(Number(data?.views ?? 0));
-      });
-    return () => {
-      active = false;
-    };
-  }, [pdf.id]);
 
   const handleDownload = async () => {
     if (downloading) return;
@@ -75,16 +58,11 @@ export default function PdfCard({ pdf }: Props) {
           <p className="text-[11px] text-muted-foreground mt-0.5">
             {new Date(pdf.upload_date).toLocaleDateString()}
           </p>
-          <div className="flex items-center gap-1 mt-1 text-[11px] text-muted-foreground">
-            <Eye className="h-3 w-3" />
-            <span className="tabular-nums">{views}</span>
-            <span>views</span>
-          </div>
         </div>
       </div>
 
       <div className="flex items-center justify-between gap-2 pt-2 border-t border-white/[0.06]">
-        <ReactionButtons fileId={pdf.id} size="sm" />
+        <MaterialStats fileId={pdf.id} size="sm" />
         <div className="flex items-center gap-1.5">
           <Button asChild size="sm" variant="outline" className="rounded-full h-8 px-3 text-xs border-white/10">
             <Link to={viewerHref}>
