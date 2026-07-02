@@ -843,7 +843,9 @@ export type Database = {
     }
     Functions: {
       _test_confirm_rls_user: { Args: { _email: string }; Returns: undefined }
+      _test_delete_rls_file: { Args: { _file_id: string }; Returns: undefined }
       _test_delete_rls_user: { Args: { _email: string }; Returns: undefined }
+      _test_insert_rls_file: { Args: { _uploader: string }; Returns: string }
       _test_profile_audit_log_scenarios: { Args: never; Returns: Json }
       admin_list_users: {
         Args: never
