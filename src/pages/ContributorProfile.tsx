@@ -141,7 +141,7 @@ export default function ContributorProfile() {
           )}
         </div>
 
-        <ContributionStats userId={userId} className="mb-8" />
+        <ContributionStats userId={userId} className="mb-8" surface="ContributorProfile" />
 
         <h2 className="font-display text-xl md:text-2xl font-bold mb-4">Uploaded notes</h2>
         {files === null ? (
