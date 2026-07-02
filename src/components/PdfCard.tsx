@@ -1,10 +1,9 @@
 import { Link } from "react-router-dom";
 import { Download, Eye, FileText, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import ReactionButtons from "@/components/ReactionButtons";
-import { supabase } from "@/integrations/supabase/client";
+import MaterialStats from "@/components/MaterialStats";
 import { downloadFile } from "@/lib/storage";
 import { toast } from "sonner";
 
@@ -21,23 +20,7 @@ interface Props {
 }
 
 export default function PdfCard({ pdf }: Props) {
-  const [views, setViews] = useState<number>(0);
   const [downloading, setDownloading] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-    supabase
-      .from("pdf_view_counts")
-      .select("views")
-      .eq("file_id", pdf.id)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (active) setViews(Number(data?.views ?? 0));
-      });
-    return () => {
-      active = false;
-    };
-  }, [pdf.id]);
 
   const handleDownload = async () => {
     if (downloading) return;
