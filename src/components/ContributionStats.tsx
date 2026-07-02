@@ -39,19 +39,20 @@ export default function ContributionStats({ userId, className, surface }: Props)
         .maybeSingle()
         .then(({ data }) => {
           if (!active) return;
-          setStats(
-            data
-              ? {
-                  uploads: Number(data.uploads ?? 0),
-                  likes_received: Number(data.likes_received ?? 0),
-                  views: Number(data.views ?? 0),
-                  rank: data.rank ? Number(data.rank) : null,
-                }
-              : { uploads: 0, likes_received: 0, views: 0, rank: null },
-          );
+          const next = data
+            ? {
+                uploads: Number(data.uploads ?? 0),
+                likes_received: Number(data.likes_received ?? 0),
+                views: Number(data.views ?? 0),
+                rank: data.rank ? Number(data.rank) : null,
+              }
+            : { uploads: 0, likes_received: 0, views: 0, rank: null };
+          setStats(next);
           setLoading(false);
+          if (surface) publishStatsSnapshot(surface, userId, next);
         });
     };
+
 
     setLoading(true);
     load();
