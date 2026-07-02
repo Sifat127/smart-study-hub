@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 
 import ProtectedRoute from "@/components/ProtectedRoute";
+import RequireCompleteProfile from "@/components/RequireCompleteProfile";
 import Index from "./pages/Index";
 import Departments from "./pages/Departments";
 import DepartmentDetail from "./pages/DepartmentDetail";
@@ -78,7 +79,7 @@ const App = () => (
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="/complete-profile" element={<CompleteProfile />} />
-            <Route path="/dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
+            <Route path="/dashboard" element={<ProtectedRoute><RequireCompleteProfile><UserDashboard /></RequireCompleteProfile></ProtectedRoute>} />
             <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
             <Route path="/pdf/:fileId" element={<ProtectedRoute><PdfViewer /></ProtectedRoute>} />
             <Route path="/qa-checklist" element={<QaChecklist />} />

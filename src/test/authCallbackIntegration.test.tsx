@@ -20,6 +20,7 @@ import { MemoryRouter, Routes, Route } from "react-router-dom";
 
 type Role = "admin" | "user";
 interface ProfileRow {
+  roll_number: string | null;
   department: string | null;
   batch: string | null;
   section: string | null;
@@ -32,7 +33,7 @@ const state: {
   exchangeError: { message: string } | null;
 } = {
   role: "user",
-  profile: { department: "CSE", batch: "60th", section: "A" },
+  profile: { roll_number: "221-15-1234", department: "CSE", batch: "60th", section: "A" },
   session: null,
   exchangeError: null,
 };
@@ -110,7 +111,7 @@ beforeEach(() => {
   getSessionMock.mockClear();
   toastMock.mockClear();
   state.role = "user";
-  state.profile = { department: "CSE", batch: "60th", section: "A" };
+  state.profile = { roll_number: "221-15-1234", department: "CSE", batch: "60th", section: "A" };
   state.session = null;
   state.exchangeError = null;
   window.history.replaceState({}, "", "/");
@@ -139,7 +140,7 @@ describe("AuthCallback — email verification PKCE flow", () => {
 
   it("routes normal verified users with a complete profile to /dashboard", async () => {
     state.role = "user";
-    state.profile = { department: "CSE", batch: "60th", section: "A" };
+    state.profile = { roll_number: "221-15-1234", department: "CSE", batch: "60th", section: "A" };
     renderCallback("/auth/callback?code=pkce-user-token");
 
     await waitFor(() =>
@@ -154,7 +155,7 @@ describe("AuthCallback — email verification PKCE flow", () => {
 
   it("routes normal users with an incomplete profile to /complete-profile", async () => {
     state.role = "user";
-    state.profile = { department: null, batch: null, section: null };
+    state.profile = { roll_number: null, department: null, batch: null, section: null };
     renderCallback("/auth/callback?code=pkce-fresh-signup");
 
     await waitFor(
