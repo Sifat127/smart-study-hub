@@ -69,8 +69,9 @@ export default function ChapterDetail() {
       setLoading(true);
       const chapterTable = user ? "chapters" : "chapters_public";
       const cols = user
-        ? "id, title, description, pdf_name, pdf_path, pdf_url, notes_name, notes_path, notes_url, file_id, uploaded_at, course_id"
+        ? "id, title, description, pdf_name, pdf_path, pdf_url, notes_name, notes_path, notes_url, file_id, notes_file_id, uploaded_at, course_id"
         : "id, title, description, pdf_name, notes_name, uploaded_at, course_id";
+
       const [chapterRes, courseRes] = await Promise.all([
         (supabase.from(chapterTable as any) as any).select(cols).eq("id", chapterId).maybeSingle(),
         courseId
