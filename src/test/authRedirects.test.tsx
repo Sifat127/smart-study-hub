@@ -68,9 +68,10 @@ const PROD = "https://diu-study-bank.vercel.app";
 
 beforeEach(() => {
   signUpMock.mockReset();
+  signUpMock.mockResolvedValue({ error: null });
   resetPasswordMock.mockReset();
   exchangeMock.mockReset();
-  getSessionMock.mockReset();
+  getSessionMock.mockResolvedValue({ data: { session: null } });
   signInMock.mockReset();
   fromMock.mockClear();
 });
