@@ -272,10 +272,20 @@ d("realtime payloads + contribution stats", () => {
 
     // The admin proxy uploads a student_upload row (represents any user
     // publishing new material — the leaderboard subscribes to this table).
+    // `course_id` is NOT NULL, so borrow any existing course.
+    const { data: anyCourse, error: courseErr } = await admin.client
+      .from("courses")
+      .select("id")
+      .limit(1)
+      .maybeSingle();
+    expect(courseErr).toBeNull();
+    expect(anyCourse?.id).toBeTruthy();
+
     const uploadTitle = `rt-upload-${rand()}`;
     const { data: uploadRow, error: upErr } = await admin.client
       .from("student_uploads")
       .insert({
+        course_id: (anyCourse as { id: string }).id,
         kind: "notes",
         title: uploadTitle,
         student_name: admin.fullName,
