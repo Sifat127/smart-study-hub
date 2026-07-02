@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Loader2, CheckCircle2, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { isProfileComplete } from "@/lib/profileCompleteness";
 
 /**
  * Handles the redirect from Supabase auth emails (signup verification,
@@ -96,11 +97,11 @@ export default function AuthCallback() {
 
         const { data: profile } = await supabase
           .from("profiles")
-          .select("department, batch, section")
+          .select("roll_number, department, batch")
           .eq("user_id", session.user.id)
           .maybeSingle();
 
-        if (!profile?.department || !profile?.batch) {
+        if (!isProfileComplete(profile)) {
           finish("/complete-profile", "Email verified", "Finish your profile to get started.");
         } else {
           finish("/dashboard", "Email verified", "Welcome to DIU StudyBank!");
