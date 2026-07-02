@@ -68,14 +68,14 @@ export default function ChapterDetail() {
         ? "id, title, description, pdf_name, pdf_path, pdf_url, notes_name, notes_path, notes_url, file_id, uploaded_at, course_id"
         : "id, title, description, pdf_name, notes_name, uploaded_at, course_id";
       const [chapterRes, courseRes] = await Promise.all([
-        supabase.from(chapterTable as any).select(cols).eq("id", chapterId).maybeSingle(),
+        (supabase.from(chapterTable as any) as any).select(cols).eq("id", chapterId).maybeSingle(),
         courseId
           ? supabase.from("courses").select("id, code, name").eq("id", courseId).maybeSingle()
           : Promise.resolve({ data: null } as any),
       ]);
       if (cancelled) return;
-      setChapter((chapterRes?.data ?? null) as ChapterRow | null);
-      setCourse((courseRes?.data ?? null) as CourseRow | null);
+      setChapter((chapterRes?.data ?? null) as unknown as ChapterRow | null);
+      setCourse((courseRes?.data ?? null) as unknown as CourseRow | null);
       setLoading(false);
     })();
     return () => {
