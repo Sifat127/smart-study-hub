@@ -151,6 +151,10 @@ export default function ChapterDetail() {
         setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
       }
       toast.success("Download started", { id: toastId, description: item.name });
+      // Record a view so uploader stats reflect real activity, not only PdfViewer opens.
+      if (item.fileId) {
+        void supabase.rpc("record_pdf_view", { _file_id: item.fileId });
+      }
       if (chapter) {
         void supabase.from("chapter_downloads").insert({
           user_id: user.id,
