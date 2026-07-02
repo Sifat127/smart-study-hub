@@ -423,22 +423,23 @@ export default function PdfViewer() {
             variant={fullLoaded ? "outline" : "default"}
             className="rounded-xl font-semibold"
             onClick={onDownload}
-            disabled={state.status !== "ready"}
+            disabled={state.status !== "ready" || downloading}
             title={
               fullLoaded
                 ? "Download the full PDF"
                 : "You're viewing a fast preview. Click to download the complete PDF."
             }
           >
-            {state.status === "ready" && !fullLoaded ? (
+            {downloading || (state.status === "ready" && !fullLoaded) ? (
               <Loader2 className="h-4 w-4 sm:mr-1.5 animate-spin" />
             ) : (
               <Download className="h-4 w-4 sm:mr-1.5" />
             )}
             <span className="hidden sm:inline">
-              {fullLoaded ? "Download" : "Download full PDF"}
+              {downloading ? "Downloading…" : fullLoaded ? "Download" : "Download full PDF"}
             </span>
           </Button>
+
         </div>
 
         {fileId && (
