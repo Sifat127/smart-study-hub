@@ -288,6 +288,7 @@ d("realtime payloads + contribution stats", () => {
         course_id: (anyCourse as { id: string }).id,
         kind: "notes",
         title: uploadTitle,
+        batch: "60th",
         student_name: admin.fullName,
         file_name: "n.pdf",
         file_url: "https://example.com/n.pdf",
