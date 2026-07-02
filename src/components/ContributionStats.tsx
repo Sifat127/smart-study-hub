@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { publishStatsSnapshot, clearStatsSnapshot } from "@/lib/statsConsistency";
 
 export interface ContributionStatsData {
   uploads: number;
@@ -14,13 +15,15 @@ export interface ContributionStatsData {
 interface Props {
   userId: string;
   className?: string;
+  /** Surface tag used for cross-page consistency checking. */
+  surface?: string;
 }
 
 /**
  * Compact stat strip showing a user's contribution metrics.
  * Always reads live from the `contributor_stats` view — no manual counters.
  */
-export default function ContributionStats({ userId, className }: Props) {
+export default function ContributionStats({ userId, className, surface }: Props) {
   const [stats, setStats] = useState<ContributionStatsData | null>(null);
   const [loading, setLoading] = useState(true);
 
