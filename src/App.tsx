@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 
 import ProtectedRoute from "@/components/ProtectedRoute";
+import RequireCompleteProfile from "@/components/RequireCompleteProfile";
 import Index from "./pages/Index";
 import Departments from "./pages/Departments";
 import DepartmentDetail from "./pages/DepartmentDetail";
