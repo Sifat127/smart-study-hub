@@ -71,7 +71,9 @@ export default function RealtimeDebugPanel({ watching, className }: Props) {
         </span>
         <Radio className="h-3 w-3 text-emerald-400" />
         <span className="font-semibold">Realtime</span>
-        <span className="ml-auto text-muted-foreground">{channels.length} ch</span>
+        <span className="ml-auto text-muted-foreground">
+          {channels.length} ch · {events.length} evt
+        </span>
       </button>
       {open && (
         <div className="border-t border-white/10 px-3 py-2 space-y-2 max-h-72 overflow-auto">
