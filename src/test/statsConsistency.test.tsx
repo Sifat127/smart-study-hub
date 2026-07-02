@@ -80,10 +80,12 @@ vi.mock("@/integrations/supabase/client", () => ({
   },
 }));
 
+const STABLE_USER = { id: USER_ID, email: "t@diu.edu.bd" };
+const STABLE_PROFILE = { full_name: "Tester", avatar_url: null };
 vi.mock("@/contexts/AuthContext", () => ({
   useAuth: () => ({
-    user: { id: USER_ID, email: "t@diu.edu.bd" },
-    profile: { full_name: "Tester", avatar_url: null },
+    user: STABLE_USER,
+    profile: STABLE_PROFILE,
     loading: false,
   }),
 }));
