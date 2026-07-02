@@ -165,6 +165,14 @@ export default function ContributorProfile() {
           </div>
         )}
       </section>
+      <RealtimeDebugPanel
+        watching={{
+          page: "ContributorProfile",
+          userId,
+          files: files ? String(files.length) : "loading",
+          firstFileId: files?.[0]?.id ?? null,
+        }}
+      />
     </Layout>
   );
 }
