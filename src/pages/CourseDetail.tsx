@@ -183,8 +183,9 @@ export default function CourseDetail() {
       // unavailable, not just blocked by column grants.
       const chapterTable = user ? "chapters" : "chapters_public";
       const chapterColumns = user
-        ? "id, title, description, pdf_name, pdf_path, pdf_url, notes_name, notes_path, notes_url, file_id, uploaded_at"
+        ? "id, title, description, pdf_name, pdf_path, pdf_url, notes_name, notes_path, notes_url, file_id, notes_file_id, uploaded_at"
         : "id, title, description, pdf_name, notes_name, uploaded_at";
+
       const baseRequests: Promise<any>[] = [
         Promise.resolve(supabase.from("courses").select("id, code, name").eq("id", courseId!).maybeSingle()),
         Promise.resolve(supabase.from(chapterTable as any).select(chapterColumns).eq("course_id", courseId!).order("uploaded_at")),
