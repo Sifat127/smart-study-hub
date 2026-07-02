@@ -223,24 +223,16 @@ d("realtime payloads + contribution stats", () => {
     if (profErr) throw new Error(`seed profile: ${profErr.message}`);
 
     // Insert a real file owned by the admin proxy so FK constraints on
-    // pdf_reactions / pdf_views are satisfied.
-    const { data: fileRow, error: fileErr } = await admin.client
-      .from("files")
-      .insert({
-        title: `rt-test-${rand()}`,
-        original_filename: "rt.pdf",
-        unique_filename: `rt-${rand()}.pdf`,
-        object_key: `test/rt-${rand()}.pdf`,
-        bucket_name: "pdfs",
-        file_size: 1,
-        file_type: "application/pdf",
-        uploader_id: admin.userId,
-        visibility: "authenticated",
-      })
-      .select("id")
-      .single();
+    // pdf_reactions / pdf_views are satisfied. Direct writes to `public.files`
+    // are not exposed to the client (uploads happen via an edge function),
+    // so we use the `_test_insert_rls_file` helper which is restricted to
+    // `rls_test_*` accounts.
+    const { data: fid, error: fileErr } = await admin.client.rpc(
+      "_test_insert_rls_file" as never,
+      { _uploader: admin.userId } as never,
+    );
     if (fileErr) throw new Error(`insert file: ${fileErr.message}`);
-    fileId = fileRow.id as string;
+    fileId = fid as unknown as string;
   }, 60_000);
 
   afterAll(async () => {
