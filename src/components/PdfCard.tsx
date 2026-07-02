@@ -29,6 +29,9 @@ export default function PdfCard({ pdf }: Props) {
     const toastId = toast.loading("Preparing download…", { description: pdf.original_filename });
     try {
       await downloadFile(pdf.id, pdf.original_filename);
+      // Count downloads as a view so contributor stats stay in sync even when
+      // users grab the file without opening the in-app PDF viewer.
+      void supabase.rpc("record_pdf_view", { _file_id: pdf.id });
       toast.success("Download started", { id: toastId, description: pdf.original_filename });
     } catch (e) {
       toast.error("Download failed", {
