@@ -11,6 +11,7 @@ import Departments from "./pages/Departments";
 import DepartmentDetail from "./pages/DepartmentDetail";
 import SemesterDetail from "./pages/SemesterDetail";
 import CourseDetail from "./pages/CourseDetail";
+import ChapterDetail from "./pages/ChapterDetail";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import VerifyEmail from "./pages/VerifyEmail";
@@ -54,6 +55,7 @@ const App = () => (
             <Route path="/departments/:deptId" element={<DepartmentDetail />} />
             <Route path="/departments/:deptId/semester/:semId" element={<SemesterDetail />} />
             <Route path="/departments/:deptId/semester/:semId/course/:courseId" element={<CourseDetail />} />
+            <Route path="/departments/:deptId/semester/:semId/course/:courseId/chapter/:chapterId" element={<ChapterDetail />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/verify-email" element={<VerifyEmail />} />

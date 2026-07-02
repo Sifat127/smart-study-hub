@@ -551,7 +551,12 @@ export default function CourseDetail() {
                     <div className="flex-1 min-w-0">
 
                       <h3 className="font-display font-semibold text-lg mb-1 tracking-tight">
-                        <Highlight text={chapter.title} query={query} />
+                        <Link
+                          to={`/departments/${deptId}/semester/${semId}/course/${courseId}/chapter/${chapter.id}`}
+                          className="hover:text-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+                        >
+                          <Highlight text={chapter.title} query={query} />
+                        </Link>
                       </h3>
                       {chapter.description && (
                         <p className="text-sm text-muted-foreground mb-3">
