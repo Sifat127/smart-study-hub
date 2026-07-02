@@ -91,6 +91,7 @@ export default function AdminUploadPdf() {
         file_id: pdf.id,
         notes_name: notesName,
         notes_url: notesUrl,
+        notes_file_id: notesFileId,
       });
       if (insertError) throw insertError;
 
@@ -101,7 +102,7 @@ export default function AdminUploadPdf() {
       setTitle("");
       setDescription("");
       setCourseId("");
-      void notesFileId; // notes file_id is tracked separately if schema gains a notes_file_id column later
+
     } catch (err: any) {
       toast({ title: "আপলোড ব্যর্থ হয়েছে", description: err.message, variant: "destructive" });
     } finally {
