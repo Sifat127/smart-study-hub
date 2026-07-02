@@ -40,15 +40,22 @@ export default function PdfCard({ pdf }: Props) {
   }, [pdf.id]);
 
   const handleDownload = async () => {
+    if (downloading) return;
     setDownloading(true);
+    const toastId = toast.loading("Preparing download…", { description: pdf.original_filename });
     try {
       await downloadFile(pdf.id, pdf.original_filename);
+      toast.success("Download started", { id: toastId, description: pdf.original_filename });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Download failed");
+      toast.error("Download failed", {
+        id: toastId,
+        description: e instanceof Error ? e.message : "Please try again.",
+      });
     } finally {
       setDownloading(false);
     }
   };
+
 
   const viewerHref = `/pdf/${pdf.id}?name=${encodeURIComponent(pdf.original_filename)}`;
 
