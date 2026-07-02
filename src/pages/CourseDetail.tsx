@@ -650,9 +650,16 @@ export default function CourseDetail() {
                           )}
                         </div>
                       )}
+                      <div className="mt-3">
+                        <MaterialStats
+                          fileId={activeTab === "materials" ? chapter.file_id : chapter.notes_file_id}
+                          size="sm"
+                        />
+                      </div>
 
                     </div>
                   </div>
+
                 </div>
               ))}
               {hasMoreChapters && (
