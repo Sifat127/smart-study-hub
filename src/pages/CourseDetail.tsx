@@ -892,7 +892,9 @@ export default function CourseDetail() {
                               >
                                 <Download className="h-4 w-4 mr-1.5" /> Download
                               </Button>
+                              <MaterialStats fileId={u.file_id} size="sm" className="ml-auto" />
                             </div>
+
                           </div>
                         </div>
                       </div>
