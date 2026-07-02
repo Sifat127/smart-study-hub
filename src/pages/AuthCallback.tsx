@@ -114,7 +114,7 @@ export default function AuthCallback() {
     })();
 
     return () => { cancelled = true; };
-  }, [navigate, toast]);
+  }, [navigate, toast, location.search, location.hash]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-6">
