@@ -45,6 +45,24 @@ export default function AdminDashboard() {
     fetchStats();
   }, []);
 
+  // Admin-side realtime probe so the debug panel shows every stat-affecting
+  // event (uploads, reactions, views) with the incoming user_id / file_id.
+  useEffect(() => {
+    const forward = (table: string) => (payload: any) => {
+      logRealtimeEvent("admin-dashboard", table, payload, { applied: true });
+    };
+    const channel = supabase
+      .channel("admin-realtime-probe")
+      .on("postgres_changes", { event: "*", schema: "public", table: "pdf_reactions" }, forward("pdf_reactions"))
+      .on("postgres_changes", { event: "*", schema: "public", table: "pdf_views" }, forward("pdf_views"))
+      .on("postgres_changes", { event: "*", schema: "public", table: "files" }, forward("files"))
+      .on("postgres_changes", { event: "*", schema: "public", table: "student_uploads" }, forward("student_uploads"))
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
   const stats = [
     { label: "Departments", value: String(counts.depts), icon: Layers, color: "bg-primary/10 text-primary" },
     { label: "Semesters", value: String(counts.depts * 12), icon: GraduationCap, color: "bg-cyan/10 text-cyan" },
