@@ -112,6 +112,55 @@ export default function RealtimeDebugPanel({ watching, className }: Props) {
               ))
             )}
           </div>
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-muted-foreground uppercase tracking-wide">
+                Events ({events.length})
+              </span>
+              <button
+                type="button"
+                onClick={clearRealtimeLog}
+                className="text-[10px] text-muted-foreground hover:text-foreground underline"
+              >
+                clear
+              </button>
+            </div>
+            {events.length === 0 ? (
+              <div className="text-muted-foreground">no events yet</div>
+            ) : (
+              <div className="space-y-1">
+                {events.slice(0, 12).map((e) => (
+                  <div
+                    key={e.id}
+                    className={cn(
+                      "rounded border border-white/5 px-1.5 py-1",
+                      e.applied ? "bg-emerald-500/5" : "bg-amber-500/5",
+                    )}
+                    title={new Date(e.at).toLocaleTimeString()}
+                  >
+                    <div className="flex justify-between gap-2">
+                      <span className="font-semibold truncate">
+                        {e.table}·{e.event}
+                      </span>
+                      <span
+                        className={cn(
+                          "shrink-0",
+                          e.applied ? "text-emerald-400" : "text-amber-400",
+                        )}
+                      >
+                        {e.applied ? "applied" : "skipped"}
+                      </span>
+                    </div>
+                    <div className="text-muted-foreground truncate">
+                      f:{e.fileId ? e.fileId.slice(0, 8) : "—"} · u:
+                      {e.userId ? e.userId.slice(0, 8) : "—"}
+                      {e.extra ? ` · ${e.extra}` : ""}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
