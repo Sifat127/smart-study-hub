@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import ContributionStats from "@/components/ContributionStats";
+import RealtimeDebugPanel from "@/components/RealtimeDebugPanel";
 import PdfCard, { type PdfCardData } from "@/components/PdfCard";
 
 interface Contributor {
