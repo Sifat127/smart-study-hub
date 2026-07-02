@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { logRealtimeEvent } from "@/lib/realtimeEventLog";
 
 export type ReactionType = "like" | "dislike" | null;
 
