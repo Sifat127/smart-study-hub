@@ -70,6 +70,7 @@ export default function ContributionStats({ userId, className, surface }: Props)
       .on("postgres_changes", { event: "*", schema: "public", table: "pdf_reactions" }, scheduleRefresh)
       .on("postgres_changes", { event: "*", schema: "public", table: "pdf_views" }, scheduleRefresh)
       .on("postgres_changes", { event: "*", schema: "public", table: "files" }, scheduleRefresh)
+      .on("postgres_changes", { event: "*", schema: "public", table: "student_uploads" }, scheduleRefresh)
       .subscribe();
 
     return () => {
