@@ -28,6 +28,7 @@ export default function RealtimeDebugPanel({ watching, className }: Props) {
     import.meta.env.DEV ||
     (typeof window !== "undefined" && new URLSearchParams(window.location.search).has("debug"));
   const [channels, setChannels] = useState<Array<{ topic: string; state: string }>>([]);
+  const [events, setEvents] = useState<RealtimeLogEntry[]>([]);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -41,7 +42,11 @@ export default function RealtimeDebugPanel({ watching, className }: Props) {
     };
     tick();
     const id = window.setInterval(tick, 1000);
-    return () => window.clearInterval(id);
+    const unsub = subscribeRealtimeLog(setEvents);
+    return () => {
+      window.clearInterval(id);
+      unsub();
+    };
   }, [enabled]);
 
   if (!enabled) return null;
