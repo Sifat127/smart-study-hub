@@ -37,33 +37,60 @@ export default function Contribution() {
   const [sort, setSort] = useState<SortKey>("uploads");
   const [page, setPage] = useState(1);
 
+  // Load the leaderboard once and then keep it fresh with a debounced
+  // real-time refresh whenever reactions/views/files change anywhere.
   useEffect(() => {
     let active = true;
+    let refreshTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const load = () => {
+      supabase
+        .from("contributor_stats")
+        .select(
+          "user_id, full_name, roll_number, department, batch, avatar_url, uploads, likes_received, views, rank",
+        )
+        .gt("uploads", 0)
+        .order(sort, { ascending: false })
+        .order("likes_received", { ascending: false })
+        .order("views", { ascending: false })
+        .limit(500)
+        .then(({ data }) => {
+          if (!active) return;
+          setRows(
+            (data ?? []).map((r) => ({
+              ...r,
+              uploads: Number(r.uploads ?? 0),
+              likes_received: Number(r.likes_received ?? 0),
+              views: Number(r.views ?? 0),
+              rank: Number(r.rank ?? 0),
+            })),
+          );
+        });
+    };
+
     setRows(null);
-    supabase
-      .from("contributor_stats")
-      .select("user_id, full_name, roll_number, department, batch, avatar_url, uploads, likes_received, views, rank")
-      .gt("uploads", 0)
-      .order(sort, { ascending: false })
-      .order("likes_received", { ascending: false })
-      .order("views", { ascending: false })
-      .limit(500)
-      .then(({ data }) => {
-        if (!active) return;
-        setRows(
-          (data ?? []).map((r) => ({
-            ...r,
-            uploads: Number(r.uploads ?? 0),
-            likes_received: Number(r.likes_received ?? 0),
-            views: Number(r.views ?? 0),
-            rank: Number(r.rank ?? 0),
-          })),
-        );
-      });
+    load();
+
+    const scheduleRefresh = () => {
+      if (refreshTimer) clearTimeout(refreshTimer);
+      // Coalesce bursts of events into a single reload to keep the UI smooth.
+      refreshTimer = setTimeout(load, 1200);
+    };
+
+    const channel = supabase
+      .channel("contribution-leaderboard")
+      .on("postgres_changes", { event: "*", schema: "public", table: "pdf_reactions" }, scheduleRefresh)
+      .on("postgres_changes", { event: "*", schema: "public", table: "pdf_views" }, scheduleRefresh)
+      .on("postgres_changes", { event: "*", schema: "public", table: "files" }, scheduleRefresh)
+      .subscribe();
+
     return () => {
       active = false;
+      if (refreshTimer) clearTimeout(refreshTimer);
+      supabase.removeChannel(channel);
     };
   }, [sort]);
+
 
   const filtered = useMemo(() => {
     if (!rows) return null;
