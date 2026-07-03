@@ -96,20 +96,31 @@ export default function CompleteProfile() {
     }
 
     setSubmitting(true);
-    const { error } = await supabase
-      .from("profiles")
-      .update({
-        roll_number: normalizedRoll,
-        department: normalizedDept,
-        batch: normalizedBatch,
-      })
-      .eq("user_id", user.id);
+    // Server-side validation lives in the `complete_profile` RPC — even if a
+    // caller bypasses the disabled button (devtools, direct API call), the
+    // database rejects missing/blank roll_number, department, or batch.
+    const { error } = await supabase.rpc("complete_profile", {
+      _roll_number: normalizedRoll,
+      _department: normalizedDept,
+      _batch: normalizedBatch,
+    });
     setSubmitting(false);
 
     if (error) {
-      const msg = /duplicate|unique/i.test(error.message)
-        ? "This roll number is already registered."
-        : error.message;
+      const raw = error.message || "";
+      let msg = raw;
+      if (/Missing required fields/i.test(raw)) {
+        const hint = (error as { hint?: string }).hint;
+        const fields = (hint || raw.split(":")[1] || "")
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
+          .map((f) => FIELD_LABELS[f as RequiredProfileField] ?? f)
+          .join(", ");
+        msg = `Server rejected the request. Missing: ${fields}.`;
+      } else if (/duplicate|unique|already registered/i.test(raw)) {
+        msg = "This roll number is already registered.";
+      }
       toast({ title: "Could not save", description: msg, variant: "destructive" });
       return;
     }
