@@ -862,6 +862,30 @@ export type Database = {
           user_id: string
         }[]
       }
+      complete_profile: {
+        Args: { _batch: string; _department: string; _roll_number: string }
+        Returns: {
+          avatar_url: string | null
+          batch: string | null
+          bio: string | null
+          created_at: string
+          current_semester: string | null
+          department: string | null
+          full_name: string | null
+          id: string
+          phone_number: string | null
+          roll_number: string | null
+          section: string | null
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "profiles"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
