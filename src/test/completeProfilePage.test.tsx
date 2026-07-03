@@ -39,7 +39,7 @@ vi.mock("@/hooks/useDepartments", () => ({
   ],
 }));
 
-const updateMock = vi.fn(async () => ({ error: null }));
+const updateMock = vi.fn((_payload: unknown) => undefined);
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
     from: () => ({
