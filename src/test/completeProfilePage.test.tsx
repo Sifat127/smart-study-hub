@@ -155,12 +155,36 @@ describe("/complete-profile — submit button gating", () => {
     expect(screen.queryByTestId("still-missing-hint")).not.toBeInTheDocument();
 
     fireEvent.click(btn);
-    await waitFor(() => expect(updateMock).toHaveBeenCalledTimes(1));
-    expect(updateMock).toHaveBeenCalledWith({
+    await waitFor(() => expect(rpcMock).toHaveBeenCalledTimes(1));
+    expect(rpcMock).toHaveBeenCalledWith("complete_profile", {
+      _roll_number: "221-15-1234",
+      _department: "Computer Science & Engineering",
+      _batch: "60th",
+    });
+  });
+
+  it("surfaces the server-side rejection when the RPC reports missing fields", async () => {
+    fakeAuth.profile = {
       roll_number: "221-15-1234",
       department: "Computer Science & Engineering",
       batch: "60th",
-    });
+    };
+    rpcMock.mockImplementationOnce(() =>
+      Promise.resolve({
+        error: {
+          message: "Missing required fields: department, batch",
+          hint: "department,batch",
+        },
+      }),
+    );
+    renderPage();
+    const btn = screen.getByRole("button", { name: /save and continue/i });
+    await waitFor(() => expect(btn).not.toBeDisabled());
+    fireEvent.click(btn);
+    await waitFor(() => expect(rpcMock).toHaveBeenCalledTimes(1));
+    // We only need to confirm the RPC was invoked and the client did not
+    // silently navigate away on a server rejection.
+    expect(replaceSpy).not.toHaveBeenCalled();
   });
 
   it("re-enables submit after the user types the missing values", async () => {
