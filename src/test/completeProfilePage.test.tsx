@@ -67,7 +67,8 @@ function renderPage() {
 }
 
 beforeEach(() => {
-  updateMock.mockClear();
+  rpcMock.mockClear();
+  rpcMock.mockImplementation(() => Promise.resolve({ error: null }));
   replaceSpy.mockClear();
   fakeAuth.user = { id: "user-1" };
   fakeAuth.loading = false;
