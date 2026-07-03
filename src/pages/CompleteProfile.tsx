@@ -329,7 +329,7 @@ export default function CompleteProfile() {
           <Button
             type="submit"
             className="w-full bg-gradient-primary text-primary-foreground hover:opacity-90 min-h-11"
-            disabled={submitting || (attemptedSubmit && missing.length > 0)}
+            disabled={submitting || missing.length > 0}
             aria-describedby={missing.length > 0 ? "still-missing-live" : undefined}
           >
             {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" aria-hidden="true" /> : null}
