@@ -39,17 +39,13 @@ vi.mock("@/hooks/useDepartments", () => ({
   ],
 }));
 
-const updateMock = vi.fn((_payload: unknown) => undefined);
+const rpcMock = vi.fn(
+  (_fn: string, _args: unknown): Promise<{ error: unknown | null }> =>
+    Promise.resolve({ error: null }),
+);
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
-    from: () => ({
-      update: (payload: unknown) => ({
-        eq: (_c: string, _v: string) => {
-          updateMock(payload);
-          return Promise.resolve({ error: null });
-        },
-      }),
-    }),
+    rpc: (fn: string, args: unknown) => rpcMock(fn, args),
   },
 }));
 
