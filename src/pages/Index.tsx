@@ -262,7 +262,7 @@ export default function Index() {
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-accent/0 via-accent/0 to-accent/0 group-hover:from-accent/5 group-hover:via-transparent group-hover:to-primary/5 transition-all duration-500 rounded-2xl" />
                 <div className="relative z-10">
-                  <div className="h-12 w-12 rounded-2xl bg-accent/15 border border-accent/20 flex items-center justify-center mb-4 shadow-glow">
+                  <div className="h-12 w-12 rounded-2xl bg-accent/15 border border-accent/20 flex items-center justify-center mb-4">
                     <f.icon className="h-6 w-6 text-accent" />
                   </div>
                   <h3 className="font-display font-semibold text-base md:text-lg mb-1 md:mb-2 group-hover:text-accent transition-colors duration-300">{f.title}</h3>
