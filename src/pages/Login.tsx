@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, Loader2, FileText } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,14 @@ import { useToast } from "@/hooks/use-toast";
 
 import { supabase } from "@/integrations/supabase/client";
 
+// Only accept a same-origin relative path (must start with a single "/" and
+// not "//"), so a caller can't smuggle in an off-site redirect via `?next=`.
+function safeNext(raw: string | null): string | null {
+  if (!raw) return null;
+  if (!raw.startsWith("/") || raw.startsWith("//")) return null;
+  return raw;
+}
+
 export default function Login() {
   const [showPass, setShowPass] = useState(false);
   const [email, setEmail] = useState("");
@@ -19,6 +27,9 @@ export default function Login() {
   const { signIn, isAdmin } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [params] = useSearchParams();
+  const next = safeNext(params.get("next"));
+  const signupHref = next ? `/signup?next=${encodeURIComponent(next)}` : "/signup";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +53,12 @@ export default function Login() {
       toast({ title: "Login failed", description: error, variant: "destructive" });
     } else {
       toast({ title: "Welcome back!" });
-      // Look up role directly to route admins to the admin dashboard
+      // Honor a safe ?next= redirect (used by the OAuth consent route) before
+      // falling back to the role-based default destination.
+      if (next) {
+        setTimeout(() => navigate(next, { replace: true }), 200);
+        return;
+      }
       const { data: { user } } = await supabase.auth.getUser();
       let dest = "/";
       if (user) {
@@ -55,6 +71,7 @@ export default function Login() {
       setTimeout(() => navigate(dest), 200);
     }
   };
+
 
   return (
     <div className="min-h-screen flex relative">
@@ -138,7 +155,7 @@ export default function Login() {
 
           <p className="text-center text-sm text-muted-foreground mt-6">
             Don't have an account?{" "}
-            <Link to="/signup" className="text-primary font-medium hover:underline">Sign Up</Link>
+            <Link to={signupHref} className="text-primary font-medium hover:underline">Sign Up</Link>
           </p>
           <p className="text-center mt-4">
             <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">← Back to Home</Link>

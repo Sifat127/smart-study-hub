@@ -41,6 +41,7 @@ import NotFound from "./pages/NotFound";
 import QaChecklist from "./pages/QaChecklist";
 import Contribution from "./pages/Contribution";
 import ContributorProfile from "./pages/ContributorProfile";
+import OAuthConsent from "./pages/OAuthConsent";
 
 const queryClient = new QueryClient();
 
