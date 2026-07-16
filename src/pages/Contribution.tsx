@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useDepartments } from "@/hooks/useDepartments";
 import { cn } from "@/lib/utils";
+import { avatarPublicUrl } from "@/lib/avatarUrl";
 
 type SortKey = "uploads" | "likes_received" | "views";
 
@@ -225,8 +226,16 @@ function ContributorCard({ row }: { row: Row }) {
     >
       <div className="flex items-start gap-4">
         <div className="h-14 w-14 rounded-full bg-primary/10 border border-white/10 overflow-hidden flex items-center justify-center shrink-0">
-          {row.avatar_url ? (
-            <img src={row.avatar_url} alt="" className="h-full w-full object-cover" />
+          {avatarPublicUrl(row.avatar_url) ? (
+            <img
+              src={avatarPublicUrl(row.avatar_url)!}
+              alt=""
+              loading="lazy"
+              className="h-full w-full object-cover"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).style.display = "none";
+              }}
+            />
           ) : (
             <UserIcon className="h-6 w-6 text-muted-foreground" />
           )}
