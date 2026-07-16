@@ -32,7 +32,7 @@ export default function ContributorProfile() {
     let refreshTimer: ReturnType<typeof setTimeout> | null = null;
 
     supabase
-      .from("profiles")
+      .from("contributor_stats")
       .select("user_id, full_name, roll_number, department, batch, avatar_url")
       .eq("user_id", userId)
       .maybeSingle()
