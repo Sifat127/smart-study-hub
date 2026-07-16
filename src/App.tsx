@@ -41,6 +41,7 @@ import NotFound from "./pages/NotFound";
 import QaChecklist from "./pages/QaChecklist";
 import Contribution from "./pages/Contribution";
 import ContributorProfile from "./pages/ContributorProfile";
+import OAuthConsent from "./pages/OAuthConsent";
 
 const queryClient = new QueryClient();
 
@@ -85,6 +86,7 @@ const App = () => (
             <Route path="/qa-checklist" element={<QaChecklist />} />
             <Route path="/contribution" element={<Contribution />} />
             <Route path="/contribution/:userId" element={<ContributorProfile />} />
+            <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
