@@ -258,7 +258,7 @@ export default function Index() {
             {features.map((f) => (
               <div
                 key={f.title}
-                className="group relative glass rounded-3xl p-5 md:p-6 card-lift overflow-hidden"
+                className="group relative glass rounded-3xl p-5 md:p-6 overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-accent/0 via-accent/0 to-accent/0 group-hover:from-accent/5 group-hover:via-transparent group-hover:to-primary/5 transition-all duration-500 rounded-2xl" />
                 <div className="relative z-10">
