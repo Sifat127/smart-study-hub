@@ -86,6 +86,7 @@ const App = () => (
             <Route path="/qa-checklist" element={<QaChecklist />} />
             <Route path="/contribution" element={<Contribution />} />
             <Route path="/contribution/:userId" element={<ContributorProfile />} />
+            <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
