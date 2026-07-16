@@ -368,6 +368,33 @@
      it caused stale-framebuffer "glitch stripes" in off-screen sections. */
 }
 
+/* Touch/no-hover devices: neutralize sticky hover states so a tap doesn't
+   leave icons/cards visually "grown". Uses pointer capability, not width,
+   so it also covers touch laptops and tablets in landscape. */
+@media (hover: none), (pointer: coarse) {
+  /* Kill the blue/gray tap flash on iOS/Android */
+  a, button, [role="button"], .card-lift, .tilt-3d, .hover-scale {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Any hover-triggered scale/translate/lift must not persist on tap. */
+  .card-lift:hover,
+  .tilt-3d:hover,
+  .hover-scale:hover,
+  [class*="hover:scale-"]:hover,
+  [class*="group-hover:scale-"]:hover,
+  .group:hover [class*="group-hover:scale-"] {
+    transform: none !important;
+  }
+
+  /* Same for hover-triggered glow/shadow growth on icon wrappers. */
+  [class*="hover:shadow-"]:hover,
+  [class*="group-hover:shadow-"]:hover,
+  .group:hover [class*="group-hover:shadow-"] {
+    box-shadow: inherit !important;
+  }
+}
+
 /* perf-safe-mode — applied by src/lib/perfGuard.ts when the client is detected
    as prone to paint / framebuffer artifacts (risky GPU, low memory, save-data,
    reduced motion, or a failed paint probe). Strips every optimization that has
