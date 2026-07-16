@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import ContributionStats from "@/components/ContributionStats";
 import RealtimeDebugPanel from "@/components/RealtimeDebugPanel";
 import PdfCard, { type PdfCardData } from "@/components/PdfCard";
+import { avatarPublicUrl } from "@/lib/avatarUrl";
 
 interface Contributor {
   user_id: string;
@@ -108,8 +109,16 @@ export default function ContributorProfile() {
           ) : (
             <div className="flex items-start gap-5">
               <div className="h-20 w-20 rounded-full bg-primary/10 border border-white/10 overflow-hidden flex items-center justify-center shrink-0">
-                {contributor.avatar_url ? (
-                  <img src={contributor.avatar_url} alt="" className="h-full w-full object-cover" />
+                {avatarPublicUrl(contributor.avatar_url) ? (
+                  <img
+                    src={avatarPublicUrl(contributor.avatar_url)!}
+                    alt=""
+                    loading="lazy"
+                    className="h-full w-full object-cover"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).style.display = "none";
+                    }}
+                  />
                 ) : (
                   <UserIcon className="h-8 w-8 text-muted-foreground" />
                 )}
