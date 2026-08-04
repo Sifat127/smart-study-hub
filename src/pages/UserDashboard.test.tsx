@@ -28,8 +28,12 @@ function makeQuery() {
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
     from: () => makeQuery(),
+    getChannels: () => [],
+    channel: () => ({ on: () => ({ subscribe: () => ({}) }), subscribe: () => ({}) }),
+    removeChannel: () => {},
   },
 }));
+
 
 vi.mock("framer-motion", () => ({
   motion: new Proxy(
@@ -51,15 +55,20 @@ vi.mock("framer-motion", () => ({
   AnimatePresence: ({ children }: any) => <>{children}</>,
 }));
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import UserDashboard from "./UserDashboard";
 
 describe("UserDashboard smoke", () => {
   it("renders without throwing and mounts FilterChaptersSection", async () => {
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     render(
-      <MemoryRouter>
-        <UserDashboard />
-      </MemoryRouter>,
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <UserDashboard />
+        </MemoryRouter>
+      </QueryClientProvider>,
     );
+
 
     // FilterChaptersSection renders a "Filter Chapters" heading/label.
     await waitFor(() => {
