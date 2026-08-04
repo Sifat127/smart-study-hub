@@ -17,9 +17,8 @@ import { useDepartments } from "@/hooks/useDepartments";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import FilterChaptersSection from "@/components/FilterChaptersSection";
-import ContributionStats from "@/components/ContributionStats";
 import RealtimeDebugPanel from "@/components/RealtimeDebugPanel";
-import RealtimeHealthIndicator from "@/components/RealtimeHealthIndicator";
+
 
 
 const deptIcons: Record<string, React.ElementType> = {
