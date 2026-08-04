@@ -28,8 +28,12 @@ function makeQuery() {
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
     from: () => makeQuery(),
+    getChannels: () => [],
+    channel: () => ({ on: () => ({ subscribe: () => ({}) }), subscribe: () => ({}) }),
+    removeChannel: () => {},
   },
 }));
+
 
 vi.mock("framer-motion", () => ({
   motion: new Proxy(
