@@ -298,7 +298,13 @@ export default function ChapterDetail() {
                           {label}
                         </div>
                         <div className="font-semibold text-sm md:text-base truncate">{item.name}</div>
+                        {item.fileId && uploaderById[item.fileId] && (
+                          <div className="text-xs text-muted-foreground truncate mt-0.5">
+                            Uploaded by {uploaderById[item.fileId]}
+                          </div>
+                        )}
                       </div>
+
                       {!user ? (
                         <Button
                           size="sm"
