@@ -55,6 +55,8 @@ export default function Materials() {
     setVisible(PAGE_SIZE);
   }, [debounced, dept, sem, chapter]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const [reloadKey, setReloadKey] = useState(0);
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -62,7 +64,7 @@ export default function Materials() {
       const [filesRes, chaptersRes] = await Promise.all([
         supabase
           .from("files")
-          .select("id, title, original_filename, upload_date, department, semester, course_code")
+          .select("id, title, original_filename, upload_date, department, semester, course_code, subject")
           .order("upload_date", { ascending: false })
           .limit(500),
         supabase.from("chapters").select("title, file_id, notes_file_id"),
@@ -78,13 +80,28 @@ export default function Materials() {
         if (c.file_id) chapterByFile.set(c.file_id, c.title);
         if (c.notes_file_id) chapterByFile.set(c.notes_file_id, c.title);
       }
-      setFiles(((filesRes.data ?? []) as FileRow[]).map((f) => ({
+      setFiles(((filesRes.data ?? []) as (FileRow & { subject?: string | null })[]).map((f) => ({
         ...f,
-        chapter: chapterByFile.get(f.id) ?? null,
+        chapter: chapterByFile.get(f.id) ?? f.subject ?? null,
       })));
     })();
     return () => { cancelled = true; };
+  }, [reloadKey]);
+
+  // New uploads (from the dashboard/upload page) show up here instantly.
+  useEffect(() => {
+    const channel = supabase
+      .channel("materials-live")
+      .on("postgres_changes", { event: "*", schema: "public", table: "files" }, () =>
+        setReloadKey((k) => k + 1),
+      )
+      .on("postgres_changes", { event: "*", schema: "public", table: "chapters" }, () =>
+        setReloadKey((k) => k + 1),
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
   }, []);
+
 
   const departments = useMemo(
     () => Array.from(new Set((files ?? []).map((f) => f.department).filter(Boolean) as string[])).sort(),
