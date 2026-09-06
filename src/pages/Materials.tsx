@@ -128,8 +128,9 @@ export default function Materials() {
       if (sem !== ALL && f.semester !== sem) return false;
       if (chapter !== ALL && f.chapter !== chapter) return false;
       if (!q) return true;
-      return [f.title, f.original_filename, f.course_code, f.department, f.chapter]
+      return [f.title, f.original_filename, f.course_code, f.department, f.chapter, f.uploader_name]
         .some((v) => v?.toLowerCase().includes(q));
+
     });
   }, [files, debounced, dept, sem, chapter]);
 
