@@ -61,7 +61,6 @@ export default function MaterialStats({ fileId, size = "sm", className, readOnly
           <ThumbsDown className={icon} />
           <span className="tabular-nums">{fileId ? dislikes : 0}</span>
         </span>
-        {viewsBadge}
       </div>
     );
   }
@@ -104,7 +103,6 @@ export default function MaterialStats({ fileId, size = "sm", className, readOnly
         <ThumbsDown className={cn(icon, mine === "dislike" && "fill-current")} />
         <span className="tabular-nums">{dislikes}</span>
       </Button>
-      {viewsBadge}
     </div>
   );
 }
