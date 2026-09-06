@@ -15,6 +15,9 @@ import { useDepartments } from "@/hooks/useDepartments";
 import { useDashboardActivity } from "@/hooks/useDashboardActivity";
 import { useAuth } from "@/contexts/AuthContext";
 
+const FILTER_QUERY_KEY = "dashboard:filter:query";
+const FILTER_SEMESTER_KEY = "dashboard:filter:semester";
+
 export default function UserDashboard() {
   const { user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
