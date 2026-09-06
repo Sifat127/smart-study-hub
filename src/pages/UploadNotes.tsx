@@ -88,8 +88,9 @@ export default function UploadNotes() {
   }, [courseId]);
 
   const semestersForDept = useMemo(() => {
-
+    const set = new Set(courses.filter(c => c.department === department).map(c => c.semester));
     return Array.from(set).sort((a, b) => a - b);
+
   }, [courses, department]);
 
   const filteredCourses = useMemo(
