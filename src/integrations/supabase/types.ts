@@ -53,6 +53,48 @@ export type Database = {
         }
         Relationships: []
       }
+      chapter_comments: {
+        Row: {
+          body: string
+          chapter_id: string
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          chapter_id: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          chapter_id?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapter_comments_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chapter_comments_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chapter_downloads: {
         Row: {
           chapter_id: string
@@ -723,6 +765,33 @@ export type Database = {
       }
     }
     Views: {
+      chapter_comments_public: {
+        Row: {
+          avatar_url: string | null
+          body: string | null
+          chapter_id: string | null
+          created_at: string | null
+          full_name: string | null
+          id: string | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapter_comments_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chapter_comments_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chapters_public: {
         Row: {
           course_id: string | null
