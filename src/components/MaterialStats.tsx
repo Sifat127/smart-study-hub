@@ -1,4 +1,4 @@
-import { Eye, ThumbsDown, ThumbsUp } from "lucide-react";
+import { ThumbsDown, ThumbsUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -22,7 +22,7 @@ interface Props {
 export default function MaterialStats({ fileId, size = "sm", className, readOnly = false }: Props) {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { likes, dislikes, views, mine, loading, react } = useFileStats(fileId ?? null);
+  const { likes, dislikes, mine, loading, react } = useFileStats(fileId ?? null);
 
   const dim = size === "sm" ? "h-8 px-2.5 text-xs" : "h-9 px-3 text-sm";
   const icon = size === "sm" ? "h-3.5 w-3.5" : "h-4 w-4";
@@ -39,18 +39,6 @@ export default function MaterialStats({ fileId, size = "sm", className, readOnly
     if (error && error !== "auth_required") toast.error("Could not save your reaction");
   };
 
-  const viewsBadge = (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 text-muted-foreground",
-        size === "sm" ? "h-8 text-xs" : "h-9 text-sm",
-      )}
-      title={`${views.toLocaleString()} view${views === 1 ? "" : "s"}`}
-    >
-      <Eye className={icon} />
-      <span className="tabular-nums">{views.toLocaleString()}</span>
-    </span>
-  );
 
   if (!fileId || readOnly) {
     return (
@@ -73,7 +61,6 @@ export default function MaterialStats({ fileId, size = "sm", className, readOnly
           <ThumbsDown className={icon} />
           <span className="tabular-nums">{fileId ? dislikes : 0}</span>
         </span>
-        {viewsBadge}
       </div>
     );
   }
@@ -116,7 +103,6 @@ export default function MaterialStats({ fileId, size = "sm", className, readOnly
         <ThumbsDown className={cn(icon, mine === "dislike" && "fill-current")} />
         <span className="tabular-nums">{dislikes}</span>
       </Button>
-      {viewsBadge}
     </div>
   );
 }
