@@ -15,13 +15,37 @@ import { useDepartments } from "@/hooks/useDepartments";
 import { useDashboardActivity } from "@/hooks/useDashboardActivity";
 import { useAuth } from "@/contexts/AuthContext";
 
+const FILTER_QUERY_KEY = "dashboard:filter:query";
+const FILTER_SEMESTER_KEY = "dashboard:filter:semester";
+
 export default function UserDashboard() {
   const { user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const departments = useDepartments();
 
-  const [query, setQuery] = useState("");
-  const [semester, setSemester] = useState<string>("all");
+  const [query, setQuery] = useState(() => {
+    try {
+      return localStorage.getItem(FILTER_QUERY_KEY) ?? "";
+    } catch {
+      return "";
+    }
+  });
+  const [semester, setSemester] = useState<string>(() => {
+    try {
+      return localStorage.getItem(FILTER_SEMESTER_KEY) ?? "all";
+    } catch {
+      return "all";
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(FILTER_QUERY_KEY, query);
+      localStorage.setItem(FILTER_SEMESTER_KEY, semester);
+    } catch {
+      // storage unavailable (private mode) — filters just won't persist
+    }
+  }, [query, semester]);
 
   const { uploads, downloads, loadingUploads, loadingDownloads } = useDashboardActivity(user?.id);
 
