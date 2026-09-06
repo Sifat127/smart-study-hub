@@ -221,6 +221,22 @@ export default function UploadNotes() {
             )}
           </div>
 
+          {chapters.length > 0 && (
+            <div>
+              <Label>Chapter (optional)</Label>
+              <Select value={chapterTitle} onValueChange={setChapterTitle}>
+                <SelectTrigger className="h-11"><SelectValue placeholder="Select chapter" /></SelectTrigger>
+                <SelectContent>
+                  {chapters.map(ch => (
+                    <SelectItem key={ch.id} value={ch.title}>{ch.title}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+
+
           <div className={`grid grid-cols-1 ${isAdmin ? "sm:grid-cols-2" : ""} gap-4`}>
             {isAdmin && (
               <div>
