@@ -72,8 +72,23 @@ export default function UploadNotes() {
     fetchCourses();
   }, []);
 
+  useEffect(() => {
+    setChapterTitle("");
+    if (!courseId) { setChapters([]); return; }
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("chapters")
+        .select("id, title")
+        .eq("course_id", courseId)
+        .order("title");
+      if (!cancelled) setChapters(data ?? []);
+    })();
+    return () => { cancelled = true; };
+  }, [courseId]);
+
   const semestersForDept = useMemo(() => {
-    const set = new Set(courses.filter(c => c.department === department).map(c => c.semester));
+
     return Array.from(set).sort((a, b) => a - b);
   }, [courses, department]);
 
