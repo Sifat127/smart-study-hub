@@ -29,11 +29,14 @@ export default function UploadNotes() {
 
   const [courses, setCourses] = useState<CourseOption[]>([]);
   const [loadingCourses, setLoadingCourses] = useState(true);
+  const [chapters, setChapters] = useState<{ id: string; title: string }[]>([]);
+  const [chapterTitle, setChapterTitle] = useState("");
 
   const [department, setDepartment] = useState("");
   const [semester, setSemester] = useState<string>("");
   const [courseId, setCourseId] = useState("");
   const [kind, setKind] = useState<"material" | "notes">("notes");
+
   const [batch, setBatch] = useState("");
   const [studentName, setStudentName] = useState("");
   const [title, setTitle] = useState("");
