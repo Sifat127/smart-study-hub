@@ -89,7 +89,28 @@ export default function ChapterDetail() {
     };
   }, [chapterId, courseId, user]);
 
+  const [uploaderById, setUploaderById] = useState<Record<string, string>>({});
+
+  // Credit the student/admin who uploaded each chapter file.
+  useEffect(() => {
+    const ids = [chapter?.file_id, chapter?.notes_file_id].filter(Boolean) as string[];
+    if (ids.length === 0) { setUploaderById({}); return; }
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("files_public")
+        .select("id, uploader_name")
+        .in("id", ids);
+      if (cancelled) return;
+      const map: Record<string, string> = {};
+      for (const row of data ?? []) if (row.uploader_name) map[row.id] = row.uploader_name;
+      setUploaderById(map);
+    })();
+    return () => { cancelled = true; };
+  }, [chapter?.file_id, chapter?.notes_file_id]);
+
   const resolveUrl = (url: string | null, path: string | null): string | null => {
+
     if (url) return url;
     if (path) return supabase.storage.from("pdfs").getPublicUrl(path).data.publicUrl;
     return null;
