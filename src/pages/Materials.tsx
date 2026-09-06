@@ -63,8 +63,8 @@ export default function Materials() {
       setError(null);
       const [filesRes, chaptersRes] = await Promise.all([
         supabase
-          .from("files")
-          .select("id, title, original_filename, upload_date, department, semester, course_code, subject")
+          .from("files_public")
+          .select("id, title, original_filename, upload_date, department, semester, course_code, subject, uploader_name")
           .order("upload_date", { ascending: false })
           .limit(500),
         supabase.from("chapters").select("title, file_id, notes_file_id"),
@@ -87,6 +87,7 @@ export default function Materials() {
     })();
     return () => { cancelled = true; };
   }, [reloadKey]);
+
 
   // New uploads (from the dashboard/upload page) show up here instantly.
   useEffect(() => {
