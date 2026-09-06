@@ -118,10 +118,12 @@ export default function UploadNotes() {
         course_code: course?.code,
         department,
         semester,
+        subject: chapterTitle || undefined,
         tags: [safeKind, batch.trim()],
         visibility: "authenticated",
         requireAdmin: safeKind === "material",
       });
+
       // file_url is NOT NULL on student_uploads — point legacy column at our download endpoint.
       const legacyUrl =
         uploaded.public_url ??
