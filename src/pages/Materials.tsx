@@ -16,6 +16,7 @@ interface FileRow extends PdfCardData {
   department: string | null;
   semester: string | null;
   course_code: string | null;
+  chapter?: string | null;
 }
 
 const ALL = "all";
@@ -40,6 +41,7 @@ export default function Materials() {
   const [visible, setVisible] = useState(PAGE_SIZE);
   const debounced = useDebounced(query, 300);
 
+  const [chapter, setChapter] = useState(params.get("chapter") ?? ALL);
   const [files, setFiles] = useState<FileRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,26 +50,38 @@ export default function Materials() {
     if (debounced.trim()) next.set("q", debounced.trim());
     if (dept !== ALL) next.set("dept", dept);
     if (sem !== ALL) next.set("sem", sem);
+    if (chapter !== ALL) next.set("chapter", chapter);
     setParams(next, { replace: true });
     setVisible(PAGE_SIZE);
-  }, [debounced, dept, sem]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [debounced, dept, sem, chapter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       setError(null);
-      const { data, error } = await supabase
-        .from("files")
-        .select("id, title, original_filename, upload_date, department, semester, course_code")
-        .order("upload_date", { ascending: false })
-        .limit(500);
+      const [filesRes, chaptersRes] = await Promise.all([
+        supabase
+          .from("files")
+          .select("id, title, original_filename, upload_date, department, semester, course_code")
+          .order("upload_date", { ascending: false })
+          .limit(500),
+        supabase.from("chapters").select("title, file_id, notes_file_id"),
+      ]);
       if (cancelled) return;
-      if (error) {
+      if (filesRes.error) {
         setError("Sign in to browse study materials.");
         setFiles([]);
         return;
       }
-      setFiles((data ?? []) as FileRow[]);
+      const chapterByFile = new Map<string, string>();
+      for (const c of (chaptersRes.data ?? []) as { title: string; file_id: string | null; notes_file_id: string | null }[]) {
+        if (c.file_id) chapterByFile.set(c.file_id, c.title);
+        if (c.notes_file_id) chapterByFile.set(c.notes_file_id, c.title);
+      }
+      setFiles(((filesRes.data ?? []) as FileRow[]).map((f) => ({
+        ...f,
+        chapter: chapterByFile.get(f.id) ?? null,
+      })));
     })();
     return () => { cancelled = true; };
   }, []);
@@ -82,18 +96,26 @@ export default function Materials() {
     [files],
   );
 
+  const chapters = useMemo(
+    () => Array.from(new Set((files ?? [])
+      .filter((f) => (dept === ALL || f.department === dept) && (sem === ALL || f.semester === sem))
+      .map((f) => f.chapter).filter(Boolean) as string[])).sort(),
+    [files, dept, sem],
+  );
+
   const filtered = useMemo(() => {
     const q = debounced.trim().toLowerCase();
     return (files ?? []).filter((f) => {
       if (dept !== ALL && f.department !== dept) return false;
       if (sem !== ALL && f.semester !== sem) return false;
+      if (chapter !== ALL && f.chapter !== chapter) return false;
       if (!q) return true;
-      return [f.title, f.original_filename, f.course_code, f.department]
+      return [f.title, f.original_filename, f.course_code, f.department, f.chapter]
         .some((v) => v?.toLowerCase().includes(q));
     });
-  }, [files, debounced, dept, sem]);
+  }, [files, debounced, dept, sem, chapter]);
 
-  const hasFilters = dept !== ALL || sem !== ALL || !!debounced.trim();
+  const hasFilters = dept !== ALL || sem !== ALL || chapter !== ALL || !!debounced.trim();
 
   return (
     <Layout>
@@ -115,8 +137,8 @@ export default function Materials() {
                 className="h-11 pl-9 rounded-xl bg-background/60 text-base"
               />
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <Select value={dept} onValueChange={setDept}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <Select value={dept} onValueChange={(v) => { setDept(v); setChapter(ALL); }}>
                 <SelectTrigger className="h-11 rounded-xl" aria-label="Filter by department">
                   <SelectValue placeholder="Department" />
                 </SelectTrigger>
@@ -126,7 +148,7 @@ export default function Materials() {
                 </SelectContent>
               </Select>
 
-              <Select value={sem} onValueChange={setSem}>
+              <Select value={sem} onValueChange={(v) => { setSem(v); setChapter(ALL); }}>
                 <SelectTrigger className="h-11 rounded-xl" aria-label="Filter by semester">
                   <SelectValue placeholder="Semester" />
                 </SelectTrigger>
@@ -136,11 +158,21 @@ export default function Materials() {
                 </SelectContent>
               </Select>
 
+              <Select value={chapter} onValueChange={setChapter}>
+                <SelectTrigger className="h-11 rounded-xl" aria-label="Filter by chapter">
+                  <SelectValue placeholder="Chapter" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ALL}>All chapters</SelectItem>
+                  {chapters.map((c) => (<SelectItem key={c} value={c}>{c}</SelectItem>))}
+                </SelectContent>
+              </Select>
+
               <Button
                 variant="outline"
                 className="h-11 rounded-xl"
                 disabled={!hasFilters}
-                onClick={() => { setQuery(""); setDept(ALL); setSem(ALL); }}
+                onClick={() => { setQuery(""); setDept(ALL); setSem(ALL); setChapter(ALL); }}
               >
                 <X className="h-4 w-4 mr-1.5" /> Clear filters
               </Button>
@@ -167,7 +199,18 @@ export default function Materials() {
               </p>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {filtered.slice(0, visible).map((f) => (
-                  <PdfCard key={f.id} pdf={f} />
+                  <div key={f.id} className="space-y-2">
+                    <PdfCard pdf={f} />
+                    <div className="flex flex-wrap gap-1.5 px-1">
+                      {[f.department, f.semester ? `Semester ${f.semester}` : null, f.course_code, f.chapter]
+                        .filter(Boolean)
+                        .map((tag) => (
+                          <span key={tag as string} className="text-[11px] rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-muted-foreground">
+                            {tag}
+                          </span>
+                        ))}
+                    </div>
+                  </div>
                 ))}
               </div>
               {visible < filtered.length && (
