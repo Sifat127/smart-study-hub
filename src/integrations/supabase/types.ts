@@ -848,28 +848,21 @@ export type Database = {
       }
       files_public: {
         Row: {
+          course_code: string | null
+          course_id: string | null
+          department: string | null
+          file_size: number | null
+          file_type: string | null
           id: string | null
           original_filename: string | null
+          semester: string | null
+          subject: string | null
           title: string | null
           upload_date: string | null
+          uploader_avatar_url: string | null
           uploader_id: string | null
+          uploader_name: string | null
           visibility: Database["public"]["Enums"]["file_visibility"] | null
-        }
-        Insert: {
-          id?: string | null
-          original_filename?: string | null
-          title?: string | null
-          upload_date?: string | null
-          uploader_id?: string | null
-          visibility?: Database["public"]["Enums"]["file_visibility"] | null
-        }
-        Update: {
-          id?: string | null
-          original_filename?: string | null
-          title?: string | null
-          upload_date?: string | null
-          uploader_id?: string | null
-          visibility?: Database["public"]["Enums"]["file_visibility"] | null
         }
         Relationships: []
       }
