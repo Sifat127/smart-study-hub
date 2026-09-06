@@ -39,18 +39,6 @@ export default function MaterialStats({ fileId, size = "sm", className, readOnly
     if (error && error !== "auth_required") toast.error("Could not save your reaction");
   };
 
-  const viewsBadge = (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 text-muted-foreground",
-        size === "sm" ? "h-8 text-xs" : "h-9 text-sm",
-      )}
-      title={`${views.toLocaleString()} view${views === 1 ? "" : "s"}`}
-    >
-      <Eye className={icon} />
-      <span className="tabular-nums">{views.toLocaleString()}</span>
-    </span>
-  );
 
   if (!fileId || readOnly) {
     return (
