@@ -18,6 +18,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { downloadFile as downloadFileFromStorage } from "@/lib/storage";
 import MaterialStats from "@/components/MaterialStats";
+import ChapterComments from "@/components/ChapterComments";
 
 
 interface ChapterRow {
@@ -335,6 +336,9 @@ export default function ChapterDetail() {
               })}
             </ul>
           )}
+        </div>
+        <div className="container mx-auto px-4 max-w-3xl mt-8">
+          <ChapterComments chapterId={chapterId!} />
         </div>
       </section>
     </Layout>
