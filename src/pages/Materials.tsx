@@ -99,7 +99,7 @@ export default function Materials() {
     <Layout>
       <PageHeader
         title="All study materials"
-        description="Browse every uploaded PDF by department and semester — no need to open each dashboard."
+        subtitle="Browse every uploaded PDF by department and semester — no need to open each dashboard."
       />
 
       <section className="py-8 md:py-12">

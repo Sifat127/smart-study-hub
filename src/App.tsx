@@ -35,6 +35,7 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import CompleteProfile from "./pages/CompleteProfile";
 import UserDashboard from "./pages/UserDashboard";
+import Materials from "./pages/Materials";
 import Search from "./pages/Search";
 import PdfViewer from "./pages/PdfViewer";
 import NotFound from "./pages/NotFound";
@@ -81,6 +82,7 @@ const App = () => (
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="/complete-profile" element={<CompleteProfile />} />
             <Route path="/dashboard" element={<ProtectedRoute><RequireCompleteProfile><UserDashboard /></RequireCompleteProfile></ProtectedRoute>} />
+            <Route path="/materials" element={<ProtectedRoute><Materials /></ProtectedRoute>} />
             <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
             <Route path="/pdf/:fileId" element={<ProtectedRoute><PdfViewer /></ProtectedRoute>} />
             <Route path="/qa-checklist" element={<QaChecklist />} />
