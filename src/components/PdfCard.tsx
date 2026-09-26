@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import MaterialStats from "@/components/MaterialStats";
+import ReportPdfButton from "@/components/ReportPdfButton";
 import { downloadFile } from "@/lib/storage";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -68,6 +69,7 @@ export default function PdfCard({ pdf }: Props) {
       <div className="flex items-center justify-between gap-2 pt-2 border-t border-white/[0.06]">
         <MaterialStats fileId={pdf.id} size="sm" />
         <div className="flex items-center gap-1.5">
+          <ReportPdfButton itemName={pdf.title} fileId={pdf.id} className="px-2" />
           <Button asChild size="sm" variant="outline" className="rounded-full h-8 px-3 text-xs border-white/10">
             <Link to={viewerHref}>
               <Eye className="h-3.5 w-3.5 mr-1" /> View

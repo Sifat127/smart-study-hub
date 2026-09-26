@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, Layers, FileText, Users, Upload, Settings, GraduationCap, Loader2, StickyNote, FileEdit, History, ShieldCheck } from "lucide-react";
+import { BookOpen, Layers, FileText, Users, Upload, Settings, GraduationCap, Loader2, StickyNote, FileEdit, History, ShieldCheck, Flag } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,7 @@ const actions = [
   { label: "Manage Departments", icon: Layers, desc: "Add, edit, or remove departments", to: "/admin/manage-departments" },
   
   { label: "Manage Chapters", icon: FileEdit, desc: "Edit chapter info & linked PDFs", to: "/admin/manage-chapters" },
+  { label: "PDF Reports", icon: Flag, desc: "Review broken or outdated PDFs", to: "/admin/reports" },
   { label: "Audit Log", icon: History, desc: "All chapter changes with timestamps", to: "/admin/audit-log" },
   { label: "Upload Student Notes", icon: StickyNote, desc: "Submit student notes & materials", to: "/upload-notes" },
   { label: "Manage Courses", icon: BookOpen, desc: "Edit course details", to: "/admin/manage-courses" },

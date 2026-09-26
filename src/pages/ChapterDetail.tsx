@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { downloadFile as downloadFileFromStorage } from "@/lib/storage";
 import MaterialStats from "@/components/MaterialStats";
 import ChapterComments from "@/components/ChapterComments";
+import ReportPdfButton from "@/components/ReportPdfButton";
 
 
 interface ChapterRow {
@@ -354,8 +355,9 @@ export default function ChapterDetail() {
                         </Button>
                       )}
                     </div>
-                    <div className="mt-3 pl-16">
+                    <div className="mt-3 pl-16 flex items-center justify-between gap-2 flex-wrap">
                       <MaterialStats fileId={item.fileId} size="sm" />
+                      <ReportPdfButton itemName={item.name} fileId={item.fileId} chapterId={chapterId} />
                     </div>
                   </li>
 
