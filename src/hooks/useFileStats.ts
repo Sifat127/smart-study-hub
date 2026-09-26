@@ -71,7 +71,10 @@ export function useFileStats(fileId: string | null | undefined) {
   useEffect(() => {
     if (!fileId) return;
     const channel = supabase
-      .channel(`file-stats:${fileId}`)
+      // Unique suffix: the same file can render in several cards at once, and
+      // supabase.channel() returns the existing (already-subscribed) channel
+      // for a duplicate topic, which throws when adding callbacks.
+      .channel(`file-stats:${fileId}:${Math.random().toString(36).slice(2, 10)}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "pdf_reactions", filter: `file_id=eq.${fileId}` },

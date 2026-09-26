@@ -82,7 +82,7 @@ export default function ContributionStats({ userId, className, surface }: Props)
       refreshTimer = setTimeout(load, 1000);
     };
     const channel = supabase
-      .channel(`contribution-stats:${userId}`)
+      .channel(`contribution-stats:${userId}:${Math.random().toString(36).slice(2, 10)}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "pdf_reactions" }, scheduleRefresh("pdf_reactions"))
       .on("postgres_changes", { event: "*", schema: "public", table: "pdf_views" }, scheduleRefresh("pdf_views"))
       .on("postgres_changes", { event: "*", schema: "public", table: "files" }, scheduleRefresh("files"))
