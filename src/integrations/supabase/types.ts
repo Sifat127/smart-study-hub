@@ -503,6 +503,88 @@ export type Database = {
           },
         ]
       }
+      pdf_reports: {
+        Row: {
+          chapter_id: string | null
+          created_at: string
+          details: string | null
+          file_id: string | null
+          id: string
+          item_name: string
+          reason: string
+          reporter_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          chapter_id?: string | null
+          created_at?: string
+          details?: string | null
+          file_id?: string | null
+          id?: string
+          item_name: string
+          reason: string
+          reporter_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          chapter_id?: string | null
+          created_at?: string
+          details?: string | null
+          file_id?: string | null
+          id?: string
+          item_name?: string
+          reason?: string
+          reporter_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pdf_reports_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pdf_reports_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pdf_reports_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "files"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pdf_reports_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "files_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pdf_reports_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "pdf_reaction_counts"
+            referencedColumns: ["file_id"]
+          },
+          {
+            foreignKeyName: "pdf_reports_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "pdf_view_counts"
+            referencedColumns: ["file_id"]
+          },
+        ]
+      }
       pdf_views: {
         Row: {
           file_id: string
