@@ -1,0 +1,2 @@
+CREATE INDEX IF NOT EXISTS courses_dept_sem_code_idx ON public.courses (department, semester, code);
+CREATE INDEX IF NOT EXISTS chapters_course_uploaded_idx ON public.chapters (course_id, uploaded_at DESC);
