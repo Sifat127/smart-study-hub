@@ -1,66 +1,616 @@
-# DIU StudyBank
+# 📚 DIU StudyBank
 
-An academic resource platform for Daffodil International University students. Study
-materials are organized by department, semester, course and chapter, so students can
-find the right notes fast and contributors get credit for what they share.
+**An academic resource repository and sharing platform for Daffodil International University students.**
 
-**Live site:** https://diu-study-bank.vercel.app
+DIU StudyBank lets students find, read, download, discuss and share course materials — organised by **Department → Semester → Course → Chapter**. Contributors are credited for every file they upload, and administrators manage the academic catalogue from a dedicated console.
 
-## What it does
+🔗 **Live site:** https://diu-study-bank.vercel.app
 
-- **Public catalogs** — departments, semesters, courses and chapters are browsable by anyone.
-- **Protected files** — viewing or downloading a PDF requires a signed-in account.
-- **Upload notes** — students upload their own PDFs and can attach them to a specific chapter.
-- **Ratings and discussion** — like/dislike on every material, comments on each chapter, all updating live.
-- **Contribution leaderboard** — contributor profiles show uploads, likes, views and avatars.
-- **Report a problem** — students flag broken or outdated PDFs; admins triage them under Admin → PDF Reports.
-- **Admin console** — `/admin` manages departments, courses, chapters, users and roles, with an audit log.
-- **Onboarding guard** — verified users with missing roll number, department or batch are sent to `/complete-profile` before reaching the dashboard.
+---
 
-## Stack
+## 📑 Table of Contents
 
-- React 18 + Vite 5 + TypeScript
-- Tailwind CSS v3 with shadcn/ui components
-- Lovable Cloud (Supabase): Postgres, auth, storage, Row Level Security, edge functions
-- Realtime subscriptions for live like/view/upload counts
-- Vitest for unit tests, Playwright for end-to-end tests
+1. [Project Overview](#1-project-overview)
+2. [Technology Stack](#2-technology-stack)
+3. [Website Features](#3-website-features)
+4. [Student Features](#4-student-features)
+5. [Admin Features](#5-admin-features)
+6. [User Roles & Permissions](#6-user-roles--permissions)
+7. [Website Structure / Pages](#7-website-structure--pages)
+8. [How the Website Works](#8-how-the-website-works)
+9. [How to Use the Website](#9-how-to-use-the-website)
+10. [Installation & Local Development](#10-installation--local-development)
+11. [Environment Variables](#11-environment-variables)
+12. [Project Architecture](#12-project-architecture)
+13. [API & Edge Functions](#13-api--edge-functions)
+14. [Database](#14-database)
+15. [Security & Access Control](#15-security--access-control)
+16. [Responsive Design & Accessibility](#16-responsive-design--accessibility)
+17. [Live Demo](#17-live-demo)
+18. [Future Improvements](#18-future-improvements)
+19. [Contribution Guide](#19-contribution-guide)
+20. [License](#20-license)
 
-## Getting started
+---
+
+## 1. Project Overview
+
+DIU StudyBank is a web application where university students share and access study material for their courses.
+
+The academic catalogue (departments, semesters, courses, chapters) is **publicly browsable**, so anyone can see what exists. Actually **viewing or downloading a PDF requires a signed-in account**. Signed-in students can upload their own notes, like or dislike materials, comment on chapters, and report files that are broken or out of date.
+
+Every upload is attributed to the student who shared it, and a contribution page ranks contributors by uploads, likes and views. Administrators have a separate console for managing the catalogue, users, roles and reported files, backed by an audit log.
+
+**Who it's for:** DIU students (primary users), and course/administration staff who curate the material.
+
+---
+
+## 2. Technology Stack
+
+### Frontend
+| Technology | Purpose |
+| --- | --- |
+| **React 18** | UI library (single-page application) |
+| **TypeScript 5** | Type-safe application code |
+| **Vite 5** | Dev server and production bundler (`@vitejs/plugin-react-swc`) |
+| **React Router v6** | Client-side routing |
+| **Tailwind CSS v3** | Utility-first styling + `tailwindcss-animate`, `@tailwindcss/typography` |
+| **shadcn/ui + Radix UI** | Accessible component primitives (dialog, tabs, select, toast, tooltip, …) |
+| **TanStack Query v5** | Server-state fetching and caching |
+| **React Hook Form + Zod** | Form state and schema validation |
+| **Framer Motion** | Animations and transitions |
+| **lucide-react** | Icon set |
+| **pdfjs-dist** | In-browser PDF rendering |
+| **sonner / Radix Toast** | Toast notifications |
+| **@fontsource/raleway** | Raleway typeface (used across the whole UI) |
+
+### Backend
+| Technology | Purpose |
+| --- | --- |
+| **Lovable Cloud (Supabase)** | Managed backend: database, auth, storage, realtime |
+| **PostgREST auto-generated REST API** | The browser talks to the database over HTTPS |
+| **Deno Edge Functions** | Serverless endpoints for uploads, downloads, avatars, contact, admin and MCP |
+| **PostgreSQL functions (RPC)** | Server-side logic such as profile completion and reaction handling |
+
+### Database
+- **PostgreSQL** (via Lovable Cloud / Supabase), with **Row Level Security** enabled on the public tables and a set of restricted read-only views for public data.
+
+### Authentication & Authorization
+- **Supabase Auth** — email + password, with email verification and password reset.
+- **Role-based access control** — roles stored in a dedicated `user_roles` table (`admin` / `user`), checked server-side through the `has_role()` security-definer function.
+- **Protected routes** on the client (`ProtectedRoute`, `RequireCompleteProfile`), enforced again by RLS on the server.
+
+### APIs / External Services
+- **Cloudflare R2** — object storage for uploaded PDFs, accessed through signed URLs generated by edge functions.
+- **Model Context Protocol (MCP) server** (`@lovable.dev/mcp-js`) — exposes read-only tools so AI agents can query profiles, departments, courses, uploads and search results on behalf of a signed-in user.
+
+### Tools & Development Environment
+npm · Git / GitHub · ESLint (with `typescript-eslint`) · Vitest + Testing Library (unit/integration) · Playwright (end-to-end) · jsdom.
+
+### Deployment / Hosting
+- Frontend deployed to **Vercel** at `https://diu-study-bank.vercel.app`.
+- A Lovable preview deployment is also allow-listed (`diu-study-bank.lovable.app`).
+- Backend (database, auth, storage, edge functions) runs on **Lovable Cloud**.
+
+### Architecture type
+**Full-stack** — a React single-page frontend plus a managed Postgres backend, serverless edge functions and external object storage.
+
+---
+
+## 3. Website Features
+
+### 🔐 Authentication
+- Email + password registration with full name and roll number.
+- Email verification, with an `/auth/callback` handler that hydrates the session and routes the user to the right page.
+- Password reset (`/forgot-password` → `/reset-password`).
+- Duplicate roll-number detection with a clear, friendly error message.
+- **Profile completion guard:** a verified user missing roll number, department or batch is sent to `/complete-profile`, which lists exactly which fields are still needed and blocks submit until they are filled. The same rules are re-validated on the server.
+
+### 🎓 Academic catalogue
+- Departments → semesters → courses → chapters, each with its own page.
+- Course listings show course code, name and chapter counts; department pages show course counts.
+- Chapter pages show the chapter description, the attached PDF(s) and notes, with clear empty states.
+
+### 📄 Materials
+- `/materials` lists every available PDF with **search** and **department / semester / chapter filters**, URL-persisted so a filtered view can be shared.
+- PDF cards show subject, course, department, semester and the uploader's name.
+- In-browser PDF viewer (`/pdf/:fileId`) with progressive page loading.
+- Downloads run through a signed-URL endpoint with loading states and success/error toasts.
+
+### 📤 Uploads
+- Students upload PDFs through `/upload-notes`, optionally attaching them to a specific course and chapter.
+- Uploads are de-duplicated by file hash and limited to 50 MB.
+- Admins can upload official course material through `/admin/upload-pdf`.
+
+### 👍 Ratings, discussion and stats
+- Like / dislike on every material, with counts updating live for all viewers.
+- Per-chapter comment threads with avatars, live updates, and self-deletion of your own comments.
+- View tracking recorded server-side for each file.
+- Contribution page and per-contributor profiles showing uploads, likes and totals — all realtime.
+
+### 🚩 Reports
+- Any signed-in student can report a PDF as broken, outdated, the wrong file, or "other", with optional details.
+- Admins triage reports at `/admin/reports` with Open / Resolved / Dismissed tabs.
+
+### 🛠 Admin management (CRUD)
+- Departments, semesters, courses, chapters — full create / edit / delete with pagination, filtering and loading skeletons.
+- User list with promote / demote to admin.
+- Audit log of chapter and content changes with timestamps.
+
+### 🔎 Search, filter & sorting
+- Global search page (`/search`).
+- Materials page search across title, subject, course code, chapter and uploader name.
+- Dashboard filters (search text + semester) persisted in the browser between visits.
+
+### 📬 Notifications & feedback
+- Toast notifications for every save, upload, download and error.
+- Contact form (`/contact`) stored in the database and handled by an edge function.
+
+---
+
+## 4. Student Features
+
+A signed-in student (role `user`) can:
+
+**Pages they can visit**
+`/` · `/departments` and all department / semester / course / chapter pages · `/materials` · `/search` · `/pdf/:fileId` · `/dashboard` · `/upload-notes` · `/profile` · `/settings` · `/complete-profile` · `/contribution` and contributor profiles · `/about` · `/contact`
+
+**What they can view**
+- The full academic catalogue (also visible signed-out).
+- PDFs and notes, in the viewer or as a download (**requires sign-in**).
+- Like / dislike counts on every material.
+- Chapter discussions from all students.
+- Contributor profiles, avatars and contribution statistics.
+- Their own dashboard with recent downloads, recent uploads and department shortcuts.
+
+**What they can create, update or delete**
+- Their own profile: name, department, batch, section, roll number, phone, bio, current semester, avatar.
+- Their own uploaded notes.
+- Their own like / dislike reaction (changeable at any time).
+- Their own chapter comments (editable timestamps, deletable by them).
+- Their own PDF reports (they can see only the reports they filed).
+
+**Restrictions**
+- ❌ Cannot open any admin page — `/admin/*` routes are blocked client-side and the underlying data is blocked by database rules.
+- ❌ Cannot edit departments, semesters, courses or chapters.
+- ❌ Cannot change anyone's role, including their own.
+- ❌ Cannot view or edit other students' profiles beyond the public contributor fields (name, avatar, roll number).
+- ❌ Cannot reach the dashboard until roll number, department and batch are filled in.
+- ❌ Cannot download files while signed out — they are redirected to sign in.
+
+---
+
+## 5. Admin Features
+
+An administrator (role `admin`) has everything a student has, plus:
+
+### Admin dashboard — `/admin`
+Overview tiles with counts for departments, semesters, courses, chapters, files and users, plus navigation cards to every management screen and a PDF Reports card. Admins are sent here automatically after signing in.
+
+### User & role management — `/admin/manage-users`
+View registered users and promote or demote them between `admin` and `user`. Roles live in a separate table, so no role can be changed from the browser without passing the server-side check.
+
+### Content & data management
+| Screen | What it manages |
+| --- | --- |
+| `/admin/manage-departments` | Create, edit, delete departments; advanced filtering, pagination, skeleton loading |
+| `/admin/manage-semesters` | Semester records |
+| `/admin/manage-courses` | Course code, name, department and semester |
+| `/admin/manage-chapters` | Chapter titles, descriptions and the PDFs/notes linked to each chapter |
+| `/admin/upload-pdf` | Upload official course material |
+
+### Monitoring & reporting
+- **`/admin/reports`** — student-submitted PDF reports; mark **Fixed**, **Dismiss**, or reopen later. Each report links straight to the file.
+- **`/admin/audit-log`** — automatic, timestamped record of every chapter description and chapter-PDF add / edit / remove, including who made the change.
+
+### Settings
+- **`/admin/settings`** — administrative configuration screen.
+
+---
+
+## 6. User Roles & Permissions
+
+| Feature | Visitor (signed out) | Student | Admin |
+| --- | :---: | :---: | :---: |
+| Browse departments / semesters / courses / chapters | ✅ | ✅ | ✅ |
+| Register / Login | ✅ | ✅ | ✅ |
+| View chapter descriptions | ✅ | ✅ | ✅ |
+| View / download a PDF | ❌ | ✅ | ✅ |
+| Browse the Materials page | ❌ | ✅ | ✅ |
+| Personal dashboard | ❌ | ✅ | ✅ |
+| Upload notes | ❌ | ✅ | ✅ |
+| Like / dislike a material | ❌ | ✅ | ✅ |
+| Comment on a chapter | ❌ | ✅ | ✅ |
+| Report a broken / outdated PDF | ❌ | ✅ | ✅ |
+| View contributor profiles | ✅ | ✅ | ✅ |
+| Edit own profile & settings | ❌ | ✅ | ✅ |
+| Upload official course material | ❌ | ❌ | ✅ |
+| Manage departments / semesters / courses | ❌ | ❌ | ✅ |
+| Manage chapters & linked PDFs | ❌ | ❌ | ✅ |
+| Review & resolve PDF reports | ❌ | ❌ | ✅ |
+| View audit log | ❌ | ❌ | ✅ |
+| Promote / demote users | ❌ | ❌ | ✅ |
+| Admin settings | ❌ | ❌ | ✅ |
+
+---
+
+## 7. Website Structure / Pages
+
+### Public routes
+| Route | Purpose |
+| --- | --- |
+| `/` | Home — introduction, features and entry points |
+| `/departments` | All departments with course counts |
+| `/departments/:deptId` | Semesters within a department |
+| `/departments/:deptId/semester/:semId` | Courses in that semester |
+| `/.../course/:courseId` | Chapters in a course |
+| `/.../chapter/:chapterId` | Chapter description, files and comments |
+| `/login` · `/signup` | Sign in / register |
+| `/verify-email` · `/auth/callback` | Email verification and session hand-off |
+| `/forgot-password` · `/reset-password` | Password recovery |
+| `/complete-profile` | Fill in required profile fields after verifying |
+| `/contribution` · `/contribution/:userId` | Leaderboard and contributor profiles |
+| `/about` · `/contact` | Information and feedback form |
+| `*` | Not-found page |
+
+### Student (sign-in required)
+| Route | Purpose |
+| --- | --- |
+| `/dashboard` | Personal dashboard: shortcuts, filters, recent uploads and downloads |
+| `/materials` | All materials with search and filters |
+| `/search` | Global search |
+| `/pdf/:fileId` | In-browser PDF viewer |
+| `/upload-notes` | Upload a note or PDF |
+| `/profile` · `/settings` | Profile view and editing |
+
+### Admin (admin role required)
+`/admin` · `/admin/upload-pdf` · `/admin/manage-departments` · `/admin/manage-semesters` · `/admin/manage-courses` · `/admin/manage-chapters` · `/admin/reports` · `/admin/audit-log` · `/admin/manage-users` · `/admin/settings`
+
+---
+
+## 8. How the Website Works
+
+```text
+Visitor
+   │
+   ├─ browses public catalogue ───────────────┐
+   │                                          │
+   └─ Sign up ─► Email verification ─► /auth/callback
+                                          │
+                        profile complete? ─┴─ no ─► /complete-profile
+                                          │
+                                         yes
+                                          │
+                            admin? ─ yes ─► /admin
+                                 └─ no ──► /dashboard
+                                             │
+              ┌──────────────────────────────┼───────────────────────────┐
+              ▼                              ▼                           ▼
+      Browse / search              View or download PDF            Upload notes
+              │                              │                           │
+              ▼                              ▼                           ▼
+   PostgREST queries over RLS      storage-download edge fn      storage-upload edge fn
+              │                              │                           │
+              ▼                              ▼                           ▼
+        PostgreSQL DB  ◄── realtime ──►  signed R2 URL            R2 object + files row
+```
+
+**In words:**
+
+1. The React app talks to the database directly over the auto-generated REST API. Every request carries the signed-in user's token, and **Row Level Security decides what that user is allowed to read or write** — the client never has privileged access.
+2. Public, non-sensitive data (course lists, chapter titles, contributor names and avatars) is exposed through dedicated read-only views (`files_public`, `chapters_public`, `contributor_stats`, `profiles_public`) that deliberately omit storage paths and private profile fields.
+3. File bytes never pass through the browser's database connection. Uploads go to the `storage-upload` edge function, which validates the user, stores the object in Cloudflare R2, and inserts the matching `files` row. Downloads go to `storage-download`, which checks permission and returns a short-lived signed URL.
+4. Likes, views, comments and upload counts are broadcast over **Supabase Realtime**, so counters update on every open page without a refresh.
+5. Sensitive writes (completing a profile, recording a view, setting a reaction) go through Postgres functions that re-validate the input on the server, so bypassing the UI does not bypass the rules.
+
+---
+
+## 9. How to Use the Website
+
+### For students
+1. **Open the site** — https://diu-study-bank.vercel.app
+2. **Browse freely.** Pick your department, then a semester, then a course to see its chapters. No account needed to look around.
+3. **Create an account.** Click **Sign Up**, enter your name, DIU roll number, email and password. Confirm the email we send you.
+4. **Complete your profile.** After verifying, fill in your roll number, department and batch. The page tells you exactly what is still missing.
+5. **Use your dashboard.** Shortcuts to your departments, your recent downloads and your recent uploads. Your search and semester filters are remembered next time.
+6. **Find material.** Use **Materials** to search everything at once, or drill down through a course to a chapter. Open a PDF in the viewer or download it.
+7. **Join in.** Like or dislike a material, leave a comment on a chapter, and report anything broken or out of date.
+8. **Contribute.** Use **Upload Notes**, choose the course and chapter, and pick your PDF. Your name is shown on the material and your stats appear on the contribution leaderboard.
+
+### For administrators
+1. Sign in with an admin account — you land on the **Admin Console** automatically.
+2. Use the dashboard cards to manage **departments, semesters, courses, chapters and users**.
+3. Upload official material through **Upload PDF**, and link PDFs to chapters in **Manage Chapters**.
+4. Review student-submitted issues under **PDF Reports** and mark them Fixed or Dismissed.
+5. Check **Audit Log** to see who changed what, and when.
+6. Promote trusted students to admin in **Manage Users**.
+
+---
+
+## 10. Installation & Local Development
+
+### Prerequisites
+- **Node.js 18+** and **npm**
+- Git
+- A Lovable Cloud / Supabase project (the backend), if you are running against your own database
+
+### Setup
 
 ```bash
+# 1. Clone the repository
+git clone <repository-url>
+cd diu-studybank
+
+# 2. Install dependencies
 npm install
+
+# 3. Create the environment file (see the table in section 11)
+cp .env.example .env   # if present, otherwise create .env manually
+
+# 4. Start the development server
 npm run dev
 ```
 
-The app runs at http://localhost:8080.
+The app runs at **http://localhost:8080**.
 
-## Scripts
+### Database & backend setup
+The database schema, Row Level Security policies and functions live as SQL migrations in `supabase/migrations/`. Apply them to your own Supabase project before running the app against it; edge functions in `supabase/functions/` are deployed alongside it. No separate backend server needs to be started locally — the backend is managed.
 
-```bash
-npm run build          # production build
-npm run test           # Vitest unit tests
-npx playwright test    # end-to-end tests
-```
+### Available scripts
 
-## Project layout
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Start the Vite dev server on port 8080 |
+| `npm run build` | Production build |
+| `npm run build:dev` | Build in development mode |
+| `npm run preview` | Preview the production build locally |
+| `npm run lint` | Run ESLint over the project |
+| `npm run test` | Run the Vitest unit and integration tests |
+| `npm run test:watch` | Vitest in watch mode |
+| `npm run test:e2e` | Run the Playwright end-to-end suite |
+| `npm run test:rls` | Run the RLS regression spec only |
+
+---
+
+## 11. Environment Variables
+
+Create a `.env` file in the project root. **Never commit real secrets.**
+
+| Variable | Purpose | Required |
+| --- | --- | --- |
+| `VITE_SUPABASE_URL` | Base URL of the backend project | ✅ Yes |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Public (anon) API key used by the browser client; safe to ship | ✅ Yes |
+| `VITE_SUPABASE_PROJECT_ID` | Backend project identifier | ✅ Yes |
+| `VITE_SITE_URL` | Overrides the site URL used in verification / reset emails (useful for staging) | ⬜ Optional |
+
+**Server-side secrets** (configured on the backend, never in the frontend `.env`): the service-role key used by edge functions, and the Cloudflare R2 credentials (account, bucket, access key, secret) read by `supabase/functions/_shared/r2.ts`. These are never exposed to the browser.
+
+---
+
+## 12. Project Architecture
 
 ```text
-src/
-  components/     shared UI (cards, stats, report button, admin widgets)
-  components/dashboard/  modular student dashboard sections
-  hooks/          data + realtime hooks
-  lib/            helpers (storage, profile rules, stats consistency)
-  pages/          routes: public catalog, student area, admin console
-supabase/
-  functions/      edge functions (upload, download, avatars, contact email, MCP)
-e2e/              Playwright specs
+diu-studybank/
+├── public/                     # Static assets served as-is (favicon, robots.txt)
+├── src/
+│   ├── assets/                 # Images and logo assets used by the app
+│   ├── components/             # Shared UI
+│   │   ├── ui/                 # shadcn/ui primitives (button, dialog, table, …)
+│   │   ├── dashboard/          # Modular student-dashboard sections
+│   │   ├── PdfCard.tsx         # Material card with stats, download and report
+│   │   ├── MaterialStats.tsx   # Live like / dislike counters
+│   │   ├── ChapterComments.tsx # Chapter discussion thread
+│   │   ├── ReportPdfButton.tsx # "Report this PDF" dialog
+│   │   ├── ProtectedRoute.tsx  # Sign-in / admin route guard
+│   │   └── RequireCompleteProfile.tsx
+│   ├── contexts/
+│   │   └── AuthContext.tsx     # Session, profile and role state
+│   ├── hooks/                  # Data + realtime hooks (e.g. useFileStats)
+│   ├── integrations/supabase/  # Auto-generated backend client and types
+│   ├── lib/
+│   │   ├── siteUrl.ts          # Production URL used for auth email links
+│   │   ├── profileCompleteness.ts
+│   │   ├── avatarUrl.ts
+│   │   ├── mcp/                # MCP server definition and agent tools
+│   │   └── utils.ts
+│   ├── pages/                  # One file per route (public, student, admin)
+│   ├── test/                   # Vitest unit & integration tests
+│   ├── index.css               # Design tokens, theme and global styles
+│   └── App.tsx                 # Route table and query client configuration
+├── supabase/
+│   ├── functions/              # Deno edge functions
+│   │   ├── _shared/            # Shared helpers, including R2 access
+│   │   ├── storage-upload/     # Authenticated upload → R2 → files row
+│   │   ├── storage-download/   # Permission check → signed download URL
+│   │   ├── storage-delete/     # Remove a stored object
+│   │   ├── download-file/      # Proxy download for externally hosted files
+│   │   ├── public-avatar/      # Cached, public avatar images
+│   │   ├── send-contact-email/ # Contact form handling
+│   │   ├── admin-users/        # Admin-only user listing
+│   │   └── mcp/                # MCP server endpoint for AI agents
+│   ├── migrations/             # SQL schema, RLS policies, views, triggers
+│   └── config.toml
+├── e2e/                        # Playwright end-to-end specs
+├── tests/                      # Additional automated checks
+├── index.html                  # SPA entry document and page metadata
+├── tailwind.config.ts          # Theme tokens and Tailwind configuration
+├── vite.config.ts              # Build and dev-server configuration
+└── package.json
 ```
 
-## Notes
+**Key files**
+- `src/App.tsx` — every route, the route guards, and the cache policy for data queries.
+- `src/contexts/AuthContext.tsx` — loads the session, profile and role; the single source of truth for "who is signed in and what are they".
+- `src/index.css` + `tailwind.config.ts` — all colours, shadows and typography as semantic design tokens.
+- `supabase/migrations/` — the authoritative definition of the schema and every access rule.
 
-- Access control lives in Row Level Security policies plus the `public.*_public`
-  views; the browser never reads private storage paths directly.
-- Contributor identity is exposed through `public.contributor_stats` and
-  `public.profiles_public` so avatars and names render for other users.
-- Auth redirects and email links point at the production URL defined in
-  `src/lib/siteUrl.ts`.
+---
+
+## 13. API & Edge Functions
+
+The frontend has no custom REST server; it queries the database through the auto-generated API. Operations that need elevated privileges or file access go through edge functions.
+
+### Edge functions
+
+| Method | Endpoint | Purpose | Access |
+| --- | --- | --- | --- |
+| `POST` | `/functions/v1/storage-upload` | Upload a PDF (multipart `file` + optional `title`, `subject`, `department`, `semester`, `course_code`, `course_id`, `year`, `tags`, `visibility`). Max 50 MB, de-duplicated by SHA-256. Creates the `files` row. | Signed in (admin-only when `require_admin=true`) |
+| `GET` | `/functions/v1/storage-download?file_id=<uuid>` | Permission-checked download; redirects to a short-lived signed URL. Supports `disposition=attachment` and `preview=1` (range requests for the in-browser viewer). | Signed in |
+| `POST` | `/functions/v1/storage-delete` | Delete a stored object and its record. | Owner / admin |
+| `GET` | `/functions/v1/download-file?url=<url>&name=<filename>` | Proxy download for allow-listed external file hosts, forcing a proper filename. | Public |
+| `GET` | `/functions/v1/public-avatar?path=<userId>/<file>` | Serves contributor avatars with ETag and long-lived caching; returns a blank image when none exists. | Public |
+| `POST` | `/functions/v1/send-contact-email` | Processes a contact-form submission (`name`, `email`, `problemType`, `message`). | Public |
+| `GET/POST` | `/functions/v1/admin-users` | Lists registered users for the admin console. | Admin |
+| `POST` | `/functions/v1/mcp` | MCP server endpoint for AI agents. | OAuth-authorised agent |
+
+### Database functions (RPC)
+
+| Function | Purpose | Access |
+| --- | --- | --- |
+| `complete_profile(...)` | Validates and saves roll number, department and batch server-side, rejecting blank or malformed values even if the UI is bypassed. | Signed in |
+| `has_role(user_id, role)` | Security-definer role check used by every admin access rule. | Internal / signed in |
+| `record_pdf_view(file_id)` | Records a view without duplicating it. | Signed in |
+| `set_pdf_reaction(...)` | Sets or changes a like / dislike. | Signed in |
+| `admin_list_users()` | Returns the user list for the admin console. | Admin |
+
+### MCP agent tools
+`get_my_profile` · `list_departments` · `list_courses` · `search_files` · `list_my_uploads` — all read-only, all executed with the signed-in user's own permissions.
+
+---
+
+## 14. Database
+
+**Technology:** PostgreSQL, managed by Lovable Cloud (Supabase).
+
+### Main tables
+| Table | Stores |
+| --- | --- |
+| `profiles` | Student details: full name, roll number, phone, section, department, batch, current semester, bio, avatar |
+| `user_roles` | Role assignments (`admin` / `user`) — deliberately separate from `profiles` |
+| `departments` | Department name, full name, description, sort order |
+| `semesters` | Semester records |
+| `courses` | Course code, name, department, semester |
+| `chapters` | Chapter title, description, and links to its PDF and notes |
+| `files` | Uploaded materials: title, subject, department, semester, course code, type, size, hash, uploader, download count, visibility |
+| `student_uploads` | Notes shared by students |
+| `pdf_reactions` | One like / dislike per user per file |
+| `pdf_views` | View records per user per file |
+| `chapter_comments` | Discussion messages on a chapter |
+| `chapter_downloads` | Download history per chapter |
+| `pdf_reports` | Student-submitted issue reports (reason, details, status) |
+| `chapter_audit_log` | Timestamped record of chapter content changes |
+| `profile_audit_log` | Profile change history |
+| `contact_submissions` | Contact-form messages |
+| `file_deletion_failures` | Storage cleanup failures for follow-up |
+
+### Public read-only views
+`files_public` · `chapters_public` · `chapter_comments_public` · `contributor_stats` · `profiles_public` · `pdf_reaction_counts` · `pdf_view_counts`
+
+These expose only safe columns (names, titles, counts, avatars) and deliberately hide storage paths and private profile data.
+
+### Key relationships
+```text
+departments ──< courses ──< chapters ──< chapter_comments
+                   │            │
+                   │            └──< chapter_downloads
+                   └──< files ──< pdf_reactions
+                            └──< pdf_views
+                            └──< pdf_reports
+
+auth.users ──1:1── profiles
+           ──1:N── user_roles
+           ──1:N── files (uploader)
+```
+
+Performance indexes exist on the hottest lookups, including `courses(department, semester, code)` and `chapters(course_id, uploaded_at DESC)`.
+
+---
+
+## 15. Security & Access Control
+
+- **Authentication** — Supabase Auth with email verification; passwords are hashed and managed by the auth service and never stored by the application.
+- **Row Level Security** — enabled on every public table, with explicit grants per role. Without a matching policy, a request simply returns nothing.
+- **Role separation** — roles live in `user_roles`, never on the profile, and are checked through the `has_role()` security-definer function. This prevents privilege escalation from the browser.
+- **Protected routes** — `ProtectedRoute` (sign-in and admin) and `RequireCompleteProfile` guard the client; the same rules are enforced again in the database, so a crafted request cannot bypass them.
+- **Restricted public views** — anonymous and cross-user reads go through `*_public` views that omit storage paths, emails and private profile fields.
+- **File access** — stored objects are private. Every download is authorised by an edge function which then issues a short-lived signed URL; the browser never holds a permanent file URL or a storage credential.
+- **Upload safety** — server-side size limit (50 MB), filename sanitisation, content-hash de-duplication, and schema validation of all metadata.
+- **Input validation** — Zod schemas on the client, matched by server-side validation in the edge functions and in `complete_profile()`; comment and report fields have enforced length limits.
+- **Auditing** — chapter and profile changes are written to append-only audit tables that ordinary users cannot modify.
+- **Secrets** — only the publishable anon key reaches the browser; service-role and storage credentials exist solely in the server environment.
+
+---
+
+## 16. Responsive Design & Accessibility
+
+- **Mobile first** — layouts, spacing and typography scale from phone to tablet to desktop using Tailwind breakpoints; the dashboard, catalogue grids and admin tables all have dedicated compact mobile layouts.
+- **Touch friendly** — interactive controls meet a 44 px minimum tap target, and hover-only effects are disabled on touch devices so nothing sticks after a tap.
+- **Accessible components** — the UI is built on Radix primitives, which provide keyboard navigation, focus trapping in dialogs, and correct ARIA roles out of the box.
+- **Announcements and focus** — the profile-completion page announces missing fields with `aria-live`, moves focus appropriately, and marks inputs with `aria-required` / `aria-invalid`.
+- **Consistent theming** — all colours, gradients and shadows come from semantic design tokens, keeping contrast consistent across light and dark surfaces.
+- **Clear states** — every data view has explicit loading skeletons, empty states and error states rather than blank screens.
+
+---
+
+## 17. Live Demo
+
+🌐 **Production:** https://diu-study-bank.vercel.app
+
+Browse the departments and courses without an account. Create an account to open PDFs, comment and upload your own notes.
+
+---
+
+## 18. Future Improvements
+
+> These are **ideas, not existing features**.
+
+- Offline / installable (PWA) access to previously opened materials
+- Bookmarks and personal study collections
+- Email or in-app notifications when new material is added to a followed course
+- Bulk material import for administrators
+- Full-text search inside PDF contents
+- Analytics dashboard for material popularity over time
+
+---
+
+## 19. Contribution Guide
+
+1. **Fork** the repository to your own GitHub account.
+2. **Create a branch** for your change:
+   ```bash
+   git checkout -b feature/short-description
+   ```
+3. **Make your changes**, keeping to the existing TypeScript, component and styling conventions (semantic design tokens — no hard-coded colours).
+4. **Check your work** before committing:
+   ```bash
+   npm run lint
+   npm run test
+   npm run build
+   ```
+5. **Commit** with a clear message:
+   ```bash
+   git commit -m "Add chapter bookmark button"
+   ```
+6. **Push and open a pull request** describing what changed, why, and how to test it.
+
+---
+
+## 20. License
+
+No license file is currently present in this repository, so all rights are reserved by the project owner by default. If you intend to reuse this code, please contact the maintainer.
+
+---
+
+## ✅ Summary
+
+| | |
+| --- | --- |
+| **What it is** | DIU StudyBank — an academic resource platform where university students find, share and discuss course material, organised by department, semester, course and chapter. |
+| **Who can use it** | Anyone can browse the catalogue. DIU students sign up to read, download, upload, rate and discuss material. Administrators manage the catalogue, users and reported files. |
+| **Main features** | Public academic catalogue · authenticated PDF viewing and download · student note uploads with chapter tagging · live likes and chapter comments · contributor leaderboard · PDF issue reporting · full admin console with audit log and role management. |
+| **Tech stack** | React 18 + TypeScript + Vite + Tailwind CSS + shadcn/ui on the frontend; Lovable Cloud (PostgreSQL, Auth, Realtime, Row Level Security) with Deno edge functions and Cloudflare R2 storage on the backend. Full-stack. |
+| **How to run it** | `npm install` → create `.env` → `npm run dev` → open http://localhost:8080 |
+
+---
+
+<p align="center">Built for the students of Daffodil International University 💙</p>
