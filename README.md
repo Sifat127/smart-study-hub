@@ -1,73 +1,66 @@
-# Welcome to your Lovable project
+# DIU StudyBank
 
-## Project info
+An academic resource platform for Daffodil International University students. Study
+materials are organized by department, semester, course and chapter, so students can
+find the right notes fast and contributors get credit for what they share.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+**Live site:** https://diu-study-bank.vercel.app
 
-## How can I edit this code?
+## What it does
 
-There are several ways of editing your application.
+- **Public catalogs** — departments, semesters, courses and chapters are browsable by anyone.
+- **Protected files** — viewing or downloading a PDF requires a signed-in account.
+- **Upload notes** — students upload their own PDFs and can attach them to a specific chapter.
+- **Ratings and discussion** — like/dislike on every material, comments on each chapter, all updating live.
+- **Contribution leaderboard** — contributor profiles show uploads, likes, views and avatars.
+- **Report a problem** — students flag broken or outdated PDFs; admins triage them under Admin → PDF Reports.
+- **Admin console** — `/admin` manages departments, courses, chapters, users and roles, with an audit log.
+- **Onboarding guard** — verified users with missing roll number, department or batch are sent to `/complete-profile` before reaching the dashboard.
 
-**Use Lovable**
+## Stack
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+- React 18 + Vite 5 + TypeScript
+- Tailwind CSS v3 with shadcn/ui components
+- Lovable Cloud (Supabase): Postgres, auth, storage, Row Level Security, edge functions
+- Realtime subscriptions for live like/view/upload counts
+- Vitest for unit tests, Playwright for end-to-end tests
 
-Changes made via Lovable will be committed automatically to this repo.
+## Getting started
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```bash
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The app runs at http://localhost:8080.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Scripts
 
-**Use GitHub Codespaces**
+```bash
+npm run build          # production build
+npm run test           # Vitest unit tests
+npx playwright test    # end-to-end tests
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Project layout
 
-## What technologies are used for this project?
+```text
+src/
+  components/     shared UI (cards, stats, report button, admin widgets)
+  components/dashboard/  modular student dashboard sections
+  hooks/          data + realtime hooks
+  lib/            helpers (storage, profile rules, stats consistency)
+  pages/          routes: public catalog, student area, admin console
+supabase/
+  functions/      edge functions (upload, download, avatars, contact email, MCP)
+e2e/              Playwright specs
+```
 
-This project is built with:
+## Notes
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+- Access control lives in Row Level Security policies plus the `public.*_public`
+  views; the browser never reads private storage paths directly.
+- Contributor identity is exposed through `public.contributor_stats` and
+  `public.profiles_public` so avatars and names render for other users.
+- Auth redirects and email links point at the production URL defined in
+  `src/lib/siteUrl.ts`.
