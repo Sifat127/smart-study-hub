@@ -1,4 +1,4 @@
-# 📚 DIU StudyBank
+# DIU StudyBank
 
 **An academic resource repository and sharing platform for Daffodil International University students.**
 
